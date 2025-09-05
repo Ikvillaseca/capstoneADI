@@ -8,7 +8,14 @@
 </head>
 
 <body>
-    <h1>Navbar</h1>
+    <nav><ul>
+        <li><a href="{% url 'choferes'%}">Enlace a {% url 'choferes'%}</a></li>
+        <li><a href="{% url 'pasajeros'%}">Enlace a {% url 'pasajeros'%}</a></li>
+        <li><a href="{% url 'rutas'%}">Enlace a {% url 'rutas'%}</a></li>
+        <li><a href="{% url 'destinos'%}">Enlace a {% url 'destinos'%}</a></li>
+        <li><a href="{% url 'generar_ruta'%}">Enlace a {% url 'generar_ruta'%}</a></li> 
+    </ul></nav>
+
     {% block contenido %}
     Sample contenido
     {% endblock contenido %}
