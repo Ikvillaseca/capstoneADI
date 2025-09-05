@@ -5,10 +5,10 @@ FROM python:3.13.7-slim
 WORKDIR /app
 
 # Copy requirements.txt
-COPY requirements.txt .
+COPY dev-requirements.txt .
 
 # Install dependencies
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r dev-requirements.txt
 
 # Copy project files
 COPY . .
