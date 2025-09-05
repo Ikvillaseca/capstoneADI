@@ -17,6 +17,10 @@ def pasajeros(request):
 def rutas(request):
     return render(request, 'index.html')
 
+def destinos(request):
+    return render(request, 'index.html')
+
+
 
 def generar_ruta(request):
     return render(request, 'index.html')

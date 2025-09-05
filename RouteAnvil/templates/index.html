@@ -3,5 +3,13 @@
 {% block titulo %}Titulo{% endblock titulo %}
 
 {% block contenido %}
-HOla mundo
+
+
+<a href="{% url 'choferes'%}">Enlace a {% url 'choferes'%}</a>
+<a href="{% url 'vehiculos'%}">Enlace a {% url 'vehiculos'%}</a>
+<a href="{% url 'pasajeros'%}">Enlace a {% url 'pasajeros'%}</a>
+<a href="{% url 'rutas'%}">Enlace a {% url 'rutas'%}</a>
+<a href="{% url 'destinos'%}">Enlace a {% url 'destinos'%}</a>
+<a href="{% url 'generar_ruta'%}">Enlace a {% url 'generar_ruta'%}</a>
+
 {% endblock contenido %}
