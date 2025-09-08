@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block titulo %}Lista de Pasajeros{% endblock titulo %}
+
+{% block contenido %}
+
+<ul>
+    <li><a href="{% url 'pasajeros_lista'%}">Enlace a {% url 'pasajeros_lista'%}</a></li>
+    <li><a href="{% url 'pasajero_crear'%}">Enlace a {% url 'pasajero_crear'%}</a></li>
+</ul>
+
+{% for pasajero in pasajeros %}
+<hr>
+<div>
+    {{pasajero.Nombre}} {{pasajero.Apellido}}
+    <li><a href="{% url 'pasajero_detalles' pasajero.id_Pasajero %}">Enlace a {% url 'pasajero_detalles' pasajero.id_Pasajero %}</a></li>
+    <li><a href="{% url 'pasajero_modificar' pasajero.id_Pasajero %}">Enlace a {% url 'pasajero_modificar' pasajero.id_Pasajero %}</a></li>
+    <li><a href="{% url 'pasajero_eliminar' pasajero.id_Pasajero %}">Enlace a {% url 'pasajero_eliminar' pasajero.id_Pasajero %}</a></li> 
+</div>
+<hr>
+{% endfor %}
+{% endblock contenido %}
+
