@@ -10,9 +10,6 @@
 </ul>
 
 {% for pasajero in pasajeros %}
-
-<img src="{% static 'RouteAnvil\images\IMG_0023.jpg' %}" alt="My image">
-
 <hr>
 <div>
     {{pasajero.Nombre}} {{pasajero.Apellido}}
@@ -22,5 +19,8 @@
 </div>
 <hr>
 {% endfor %}
+
+<img src="{% static 'RouteAnvil\images\IMG_0023.jpg' %}" alt="My image">
+
 {% endblock contenido %}
 

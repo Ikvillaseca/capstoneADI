@@ -36,12 +36,16 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    # Para poder correr por defecto whitenoise cuando se hace un runserver
+    "whitenoise.runserver_nostatic",
     'django.contrib.staticfiles',
     'RouteAnvil.apps.RouteanvilConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    #Agregar whitenoise para poder distribuir los assets static como si fuera en produccion
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -103,11 +107,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-CL'
 
 TIME_ZONE = 'UTC'
 
-USE_I18N = True
+USE_I18N = False
 
 USE_TZ = True
 
@@ -116,6 +120,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Esto ayuda con los archivos static para whitenoise
+# https://whitenoise.readthedocs.io/en/stable/django.html#make-sure-staticfiles-is-configured-correctly
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
