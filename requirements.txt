@@ -2,5 +2,6 @@ asgiref==3.9.1
 Django==5.2.5
 sqlparse==0.5.3
 tzdata==2025.2
-gunicorn
-whitenoise
+gunicorn==23.0.0
+whitenoise==6.10.0
+dj-database-url==3.0.1
