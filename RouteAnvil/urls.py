@@ -5,10 +5,16 @@ from RouteAnvil import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('vehiculos/', views.vehiculos, name='vehiculos'),
-    path('pasajeros/', views.pasajeros, name='pasajeros'),
     path('destinos/', views.destinos, name='destinos'),
     path('rutas/', views.rutas, name='rutas'),
     path('generar_ruta/', views.generar_ruta, name='generar_ruta'),
+
+
+    path('pasajeros/', views.pasajeros_lista, name='pasajeros_lista'),
+    path('pasajero/crear/', views.pasajero_crear, name='pasajero_crear'),
+    path('pasajero/detalles/<int:id>', views.pasajero_detalles, name='pasajero_detalles'),
+    path('pasajero/modificar/<int:id>', views.pasajero_modificar, name='pasajero_modificar'),
+    path('pasajero/eliminar/<int:id>', views.pasajero_eliminar, name='pasajero_eliminar'),
 
 
 
