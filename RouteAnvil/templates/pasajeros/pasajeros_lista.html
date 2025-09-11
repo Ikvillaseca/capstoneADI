@@ -12,7 +12,7 @@
 {% for pasajero in pasajeros %}
 <hr>
 <div>
-    {{pasajero.Nombre}} {{pasajero.Apellido}}
+    {{pasajero.nombre}} {{pasajero.apellido}}
     <li><a href="{% url 'pasajero_detalles' pasajero.id_pasajero %}">Enlace a {% url 'pasajero_detalles' pasajero.id_pasajero %}</a></li>
     <li><a href="{% url 'pasajero_modificar' pasajero.id_pasajero %}">Enlace a {% url 'pasajero_modificar' pasajero.id_pasajero %}</a></li>
     <li><a href="{% url 'pasajero_eliminar' pasajero.id_pasajero %}">Enlace a {% url 'pasajero_eliminar' pasajero.id_pasajero %}</a></li> 

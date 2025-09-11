@@ -40,7 +40,7 @@ def pasajero_crear(request):
 
 #Detalles (READ)
 def pasajero_detalles(request, id):
-    pasajero =  get_object_or_404(Pasajero, id_Pasajero=id)
+    pasajero =  get_object_or_404(Pasajero, id_pasajero=id)
     data = {
         'pasajero' : pasajero,
     }
