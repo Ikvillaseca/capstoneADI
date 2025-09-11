@@ -13,9 +13,9 @@
 <hr>
 <div>
     {{pasajero.Nombre}} {{pasajero.Apellido}}
-    <li><a href="{% url 'pasajero_detalles' pasajero.id_Pasajero %}">Enlace a {% url 'pasajero_detalles' pasajero.id_Pasajero %}</a></li>
-    <li><a href="{% url 'pasajero_modificar' pasajero.id_Pasajero %}">Enlace a {% url 'pasajero_modificar' pasajero.id_Pasajero %}</a></li>
-    <li><a href="{% url 'pasajero_eliminar' pasajero.id_Pasajero %}">Enlace a {% url 'pasajero_eliminar' pasajero.id_Pasajero %}</a></li> 
+    <li><a href="{% url 'pasajero_detalles' pasajero.id_pasajero %}">Enlace a {% url 'pasajero_detalles' pasajero.id_pasajero %}</a></li>
+    <li><a href="{% url 'pasajero_modificar' pasajero.id_pasajero %}">Enlace a {% url 'pasajero_modificar' pasajero.id_pasajero %}</a></li>
+    <li><a href="{% url 'pasajero_eliminar' pasajero.id_pasajero %}">Enlace a {% url 'pasajero_eliminar' pasajero.id_pasajero %}</a></li> 
 </div>
 <hr>
 {% endfor %}
