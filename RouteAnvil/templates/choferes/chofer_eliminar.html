@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+<h2>chofer_eliminar</h2>
+<p>¿Estás seguro de que deseas eliminar al chofer <strong>{{ chofer.nombre }} {{ chofer.apellido }}</strong>?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Sí, eliminar</button>
+    <a href="{% url 'chofer_detalle' chofer.id_chofer %}">Cancelar</a>
+</form>
+{% endblock contenido %}

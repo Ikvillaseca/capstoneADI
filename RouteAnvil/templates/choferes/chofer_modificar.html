@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block titulo %}Modificar Chofer{% endblock titulo %}
+
+{% block contenido %}
+<h2>Modificar Chofer</h2>
+<form method="post">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<button type="submit">Guardar cambios</button>
+	<a href="{% url 'chofer_detalle' chofer.id_chofer %}">Cancelar</a>
+</form>
+{% endblock contenido %}
