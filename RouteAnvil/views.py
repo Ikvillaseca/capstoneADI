@@ -1,12 +1,19 @@
-from django.shortcuts import render
+# Eliminar chofer (DELETE)
+from django.views.decorators.http import require_POST
+def chofer_eliminar(request, id):
+    from .models import Chofer
+    chofer = Chofer.objects.get(id_chofer=id)
+    if request.method == 'POST':
+        chofer.delete()
+        return redirect('chofer_lista')
+    return render(request, 'choferes/chofer_eliminar.html', {'chofer': chofer})
+from django.shortcuts import render, redirect
+from .models import Chofer
 
 #Aqui definimos cada vista de django (backend en python)
 def index(request):
     return render(request, 'index.html')
 
-
-def choferes(request):
-    return render(request, 'choferes.html')
 
 def vehiculos(request):
     return render(request, 'vehiculos.html')
@@ -24,3 +31,49 @@ def destinos(request):
 
 def generar_ruta(request):
     return render(request, 'generar_ruta.html')
+
+
+
+#CHOFERES CRUD - VISTAS
+#Listar (READ ALL)
+def choferes_lista(request):
+    choferes = Chofer.objects.all()
+    data = {'choferes': choferes}
+    return render(request, 'choferes/chofer_lista.html', data)
+
+
+
+#Crear chofer (CREATE)
+def chofer_crear(request):
+    from .forms import FormularioChofer
+    if request.method == 'POST':
+        form = FormularioChofer(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('chofer_lista')
+    else:
+        form = FormularioChofer()
+    return render(request, 'choferes/chofer_crear.html', {'form': form})
+
+
+
+#Detalle chofer (READ 1)
+def chofer_detalle(request, id):
+    chofer = Chofer.objects.get(id_chofer=id)
+    data = {'chofer': chofer}
+    return render(request, 'choferes/chofer_detalle.html', data)
+    
+
+
+#Modificar chofer (UPDATE)
+def chofer_modificar(request, id):
+    from .forms import FormularioChofer
+    chofer = Chofer.objects.get(id_chofer=id)
+    if request.method == 'POST':
+        form = FormularioChofer(request.POST, instance=chofer)
+        if form.is_valid():
+            form.save()
+            return redirect('chofer_detalle', id=chofer.id_chofer)
+    else:
+        form = FormularioChofer(instance=chofer)
+    return render(request, 'choferes/chofer_modificar.html', {'form': form, 'chofer': chofer})

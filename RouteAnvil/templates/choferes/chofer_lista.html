@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block titulo %}Lista de Choferes{% endblock titulo %}
+
+{% block contenido %}
+
+<ul>
+    <li><a href="{% url 'chofer_crear'%}">Enlace a {% url 'chofer_crear'%}</a></li>
+</ul>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Detalles</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for chofer in choferes %}
+        <tr>
+            <td>{{ chofer.id_chofer }}</td>
+            <td>{{ chofer.nombre }}</td>
+            <td>{{ chofer.apellido }}</td>
+            <td>
+                <a href="{% url 'chofer_detalle' chofer.id_chofer %}"><button type="button">Detalles</button></a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="4">No hay choferes registrados.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock contenido %}
