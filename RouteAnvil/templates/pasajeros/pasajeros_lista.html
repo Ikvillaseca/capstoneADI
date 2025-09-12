@@ -4,21 +4,33 @@
 
 {% block contenido %}
 
-<ul>
-    <li><a href="{% url 'pasajeros_lista'%}">Enlace a {% url 'pasajeros_lista'%}</a></li>
-    <li><a href="{% url 'pasajero_crear'%}">Enlace a {% url 'pasajero_crear'%}</a></li>
-</ul>
 
-{% for pasajero in pasajeros %}
-<hr>
-<div>
-    {{pasajero.nombre}} {{pasajero.apellido}}
-    <li><a href="{% url 'pasajero_detalles' pasajero.id_pasajero %}">Enlace a {% url 'pasajero_detalles' pasajero.id_pasajero %}</a></li>
-    <li><a href="{% url 'pasajero_modificar' pasajero.id_pasajero %}">Enlace a {% url 'pasajero_modificar' pasajero.id_pasajero %}</a></li>
-    <li><a href="{% url 'pasajero_eliminar' pasajero.id_pasajero %}">Enlace a {% url 'pasajero_eliminar' pasajero.id_pasajero %}</a></li> 
-</div>
-<hr>
-{% endfor %}
+<a href="{% url 'pasajero_crear' %}"><button type="button">Registrar Pasajero</button></a>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Modificar</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for pasajero in pasajeros %}
+        <tr>
+            <td>{{ pasajero.id_pasajero }}</td>
+            <td>{{ pasajero.nombre }}</td>
+            <td>{{ pasajero.apellido }}</td>
+            <td>
+                <a href="{% url 'pasajero_modificar' pasajero.id_pasajero %}"><button type="button">Modificar</button></a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="4">No hay pasajeros registrados.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
 
 <img src="{% static 'RouteAnvil\images\IMG_0023.jpg' %}" alt="My image">
 

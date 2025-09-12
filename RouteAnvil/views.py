@@ -8,7 +8,8 @@ def chofer_eliminar(request, id):
         return redirect('chofer_lista')
     return render(request, 'choferes/chofer_eliminar.html', {'chofer': chofer})
 from django.shortcuts import render, redirect
-from .models import Chofer, get_object_or_404
+from .models import Chofer
+from django.shortcuts import get_object_or_404
 from .models import Pasajero
 
 #Aqui definimos cada vista de django (backend en python)
