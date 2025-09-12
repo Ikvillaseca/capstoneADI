@@ -90,7 +90,15 @@ def pasajeros_lista(request):
 
 #Crear (CREATE)
 def pasajero_crear(request):
-    return render(request, 'pasajeros/pasajero_crear.html')
+    from .forms import FormularioPasajero
+    if request.method == 'POST':
+        form = FormularioPasajero(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('pasajeros_lista')
+    else:
+        form = FormularioPasajero()
+    return render(request, 'pasajeros/pasajero_crear.html', {'form': form})
 
 #Detalles (READ)
 def pasajero_detalles(request, id):
