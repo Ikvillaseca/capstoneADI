@@ -8,6 +8,7 @@ urlpatterns = [
     path('destinos/', views.destinos, name='destinos'),
     path('rutas/', views.rutas, name='rutas'),
     path('generar_ruta/', views.generar_ruta, name='generar_ruta'),
+    path('testeo-api/', views.test_api, name='testeo_api'),
 
 
     path('pasajeros/', views.pasajeros_lista, name='pasajeros_lista'),
