@@ -13,7 +13,7 @@
             <th>ID</th>
             <th>Nombre</th>
             <th>Apellido</th>
-            <th>Modificar</th>
+            <th>Detalle</th>
         </tr>
     </thead>
     <tbody>
@@ -23,7 +23,7 @@
             <td>{{ pasajero.nombre }}</td>
             <td>{{ pasajero.apellido }}</td>
             <td>
-                <a href="{% url 'pasajero_modificar' pasajero.id_pasajero %}"><button type="button">Modificar</button></a>
+                <a href="{% url 'pasajero_detalles' pasajero.id_pasajero %}"><button type="button">Detalle</button></a>
             </td>
         </tr>
     {% empty %}

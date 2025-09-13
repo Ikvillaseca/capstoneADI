@@ -110,9 +110,22 @@ def pasajero_detalles(request, id):
 
 #Modificar (UPDATE)
 def pasajero_modificar(request, id):
-    return render(request, 'pasajeros/pasajero_modificar.html')
+    from .forms import FormularioPasajero
+    pasajero = Pasajero.objects.get(id_pasajero=id)
+    if request.method == 'POST':
+        form = FormularioPasajero(request.POST, instance=pasajero)
+        if form.is_valid():
+            form.save()
+            return redirect('pasajero_detalles', id=pasajero.id_pasajero)
+    else:
+        form = FormularioPasajero(instance=pasajero)
+    return render(request, 'pasajeros/pasajero_modificar.html', {'form': form, 'pasajero': pasajero})
 
 #Eliminar (DELETE)
 def pasajero_eliminar(request, id):
-    return render(request, 'pasajeros/pasajero_eliminar.html')
+    pasajero = Pasajero.objects.get(id_pasajero=id)
+    if request.method == 'POST':
+        pasajero.delete()
+        return redirect('pasajeros_lista')
+    return render(request, 'pasajeros/pasajero_eliminar.html', {'pasajero': pasajero})
 
