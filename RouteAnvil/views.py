@@ -1,4 +1,16 @@
 # Eliminar chofer (DELETE)
+from django.views.decorators.http import require_POST
+def chofer_eliminar(request, id):
+    from .models import Chofer
+    chofer = Chofer.objects.get(id_chofer=id)
+    if request.method == 'POST':
+        chofer.delete()
+        return redirect('chofer_lista')
+    return render(request, 'choferes/chofer_eliminar.html', {'chofer': chofer})
+from django.shortcuts import render, redirect
+from .models import Chofer
+from django.shortcuts import get_object_or_404
+from .models import Pasajero
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Chofer, Pasajero
 
@@ -87,7 +99,15 @@ def pasajeros_lista(request):
 
 #Crear (CREATE)
 def pasajero_crear(request):
-    return render(request, 'pasajeros/pasajero_crear.html')
+    from .forms import FormularioPasajero
+    if request.method == 'POST':
+        form = FormularioPasajero(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('pasajeros_lista')
+    else:
+        form = FormularioPasajero()
+    return render(request, 'pasajeros/pasajero_crear.html', {'form': form})
 
 #Detalles (READ)
 def pasajero_detalles(request, id):
@@ -99,9 +119,22 @@ def pasajero_detalles(request, id):
 
 #Modificar (UPDATE)
 def pasajero_modificar(request, id):
-    return render(request, 'pasajeros/pasajero_modificar.html')
+    from .forms import FormularioPasajero
+    pasajero = Pasajero.objects.get(id_pasajero=id)
+    if request.method == 'POST':
+        form = FormularioPasajero(request.POST, instance=pasajero)
+        if form.is_valid():
+            form.save()
+            return redirect('pasajero_detalles', id=pasajero.id_pasajero)
+    else:
+        form = FormularioPasajero(instance=pasajero)
+    return render(request, 'pasajeros/pasajero_modificar.html', {'form': form, 'pasajero': pasajero})
 
 #Eliminar (DELETE)
 def pasajero_eliminar(request, id):
-    return render(request, 'pasajeros/pasajero_eliminar.html')
+    pasajero = Pasajero.objects.get(id_pasajero=id)
+    if request.method == 'POST':
+        pasajero.delete()
+        return redirect('pasajeros_lista')
+    return render(request, 'pasajeros/pasajero_eliminar.html', {'pasajero': pasajero})
 
