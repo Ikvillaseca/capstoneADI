@@ -1,5 +1,6 @@
 from django import forms
 from .models import Chofer, Pasajero
+import re
 
 
 #Formulario para poder crear un chofer de forma simple con los datos que definimos en el modelo
@@ -12,9 +13,56 @@ class FormularioChofer(forms.ModelForm):
         input_formats=['%d-%m-%Y'],
         widget=forms.DateInput(format='%d-%m-%Y', attrs={'placeholder': 'DD-MM-AAAA'})
     )
+
     class Meta:
         model = Chofer
         fields = ['rut', 'nombre', 'apellido', 'tipo_licencia', 'direccion', 'fecha_ultimo_control', 'fecha_proximo_control']
+    
+    
+    def clean_rut(self):
+        rut = self.cleaned_data['rut']
+        if not re.match(r'^\d{7,8}-[\dkK]$', rut):
+            raise forms.ValidationError("El RUT debe tener el siguiente formato (ejemplo: 12345678-9).")
+        return rut
+    
+
+    def clean_tipo_licencia(self):
+        tipo_licencia = self.cleaned_data['tipo_licencia']
+        tipos_validos = ['A', 'B', 'C', 'D', 'E']
+        if tipo_licencia not in tipos_validos:
+            raise forms.ValidationError("El tipo de licencia debe ser uno de los siguientes: A, B, C, D, E.")
+        return tipo_licencia
+
+
+    def clean_nombre(self):
+        nombre = self.cleaned_data['nombre']
+        if not nombre.isalpha():
+            raise forms.ValidationError("El nombre solo debe contener letras.")
+        return nombre
+
+
+    def clean_apellido(self):
+        apellido = self.cleaned_data['apellido']
+        if not apellido.isalpha():
+            raise forms.ValidationError("El apellido solo debe contener letras.")
+        return apellido
+
+
+    def clean_direccion(self):
+        direccion = self.cleaned_data['direccion']
+        if len(direccion) < 5:
+            raise forms.ValidationError("La direccion debe tener al menos 5 caracteres.")
+        return direccion
+
+
+    def clean(self):
+        cleaned_data = super().clean()
+        fecha_ultimo = cleaned_data.get('fecha_ultimo_control')
+        fecha_proximo = cleaned_data.get('fecha_proximo_control')
+        if fecha_ultimo and fecha_proximo:
+            if fecha_proximo <= fecha_ultimo:
+                raise forms.ValidationError("La fecha del proximo control debe ser posterior a la del ultimo control.")
+        return cleaned_data
 
 
 
