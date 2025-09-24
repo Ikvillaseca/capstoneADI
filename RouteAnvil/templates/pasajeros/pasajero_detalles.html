@@ -1,8 +1,27 @@
 {% extends "base.html" %}
 
-{% block titulo %}Detalles Pasajero{% endblock titulo %}
-
 {% block contenido %}
 
-{% endblock contenido %}
 
+<h2>Detalles del Pasajero</h2>
+<ul>
+	<li><strong>ID:</strong> {{ pasajero.id_pasajero }}</li>
+	<li><strong>RUT:</strong> {{ pasajero.rut }}</li>
+	<li><strong>Nombre:</strong> {{ pasajero.nombre }}</li>
+	<li><strong>Apellido:</strong> {{ pasajero.apellido }}</li>
+	<li><strong>Telefono:</strong> {{ pasajero.telefono }}</li>
+	<li><strong>Empresa de Trabajo:</strong> {{ pasajero.empresa_trabajo }}</li>
+</ul>
+
+<form action="{% url 'pasajero_eliminar' pasajero.id_pasajero %}" method="post" style="display:inline;">
+	{% csrf_token %}
+	<button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este pasajero?');">Eliminar</button>
+</form>
+<a href="{% url 'pasajero_modificar' pasajero.id_pasajero %}"><button type="button">Modificar</button></a>
+<a href="{% url 'pasajeros_lista' %}">Volver a la lista</a>
+
+
+
+
+
+{% endblock contenido %}

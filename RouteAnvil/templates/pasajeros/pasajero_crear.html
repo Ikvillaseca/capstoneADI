@@ -3,6 +3,11 @@
 {% block titulo %}Crear Pasajero{% endblock titulo %}
 
 {% block contenido %}
-
+<h2>Registrar Pasajero</h2>
+<form method="post">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<button type="submit">Guardar</button>
+</form>
 {% endblock contenido %}
 

@@ -3,6 +3,12 @@
 {% block titulo %}Modificar Pasajero{% endblock titulo %}
 
 {% block contenido %}
-
+<h2>Modificar Pasajero</h2>
+<form method="post">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<button type="submit">Guardar cambios</button>
+	<a href="{% url 'pasajero_detalles' pasajero.id_pasajero %}">Cancelar</a>
+</form>
 {% endblock contenido %}
 

@@ -1,0 +1,8 @@
+Fase 1/
+Fase 2/
+features/
+*.md
+.git/
+.vscode/
+__pycache__/
+*.pyc

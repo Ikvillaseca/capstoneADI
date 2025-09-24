@@ -1,8 +1,19 @@
 {% extends "base.html" %}
 
-{% block titulo %}Eliminar Pasajero{% endblock titulo %}
 
 {% block contenido %}
+
+
+
+<h2>pasajero_eliminar</h2>
+<p>¿Seguro de que deseas eliminar al pasajero <strong>{{ pasajero.nombre }} {{ pasajero.apellido }}</strong>?</p>
+<form method="post">
+	{% csrf_token %}
+	<button type="submit">Sí, eliminar</button>
+	<a href="{% url 'pasajero_detalles' pasajero.id_pasajero %}">Cancelar</a>
+</form>
+
+
 
 {% endblock contenido %}
 

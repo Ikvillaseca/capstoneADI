@@ -1,0 +1,43 @@
+================================================================================
+                            HISTORIAS DE USUARIO
+================================================================================
+
+┌──────────────────────┬─────────────────────────────────────┬──────────────────────────────────────┐
+│ YO COMO...           │ QUIERO...                           │ PARA...                              │
+├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────┤
+│ Dueño del negocio    │ Ver los datos de los vehículos      │ Tomar decisiones referente a los    │
+│                      │ que componen mi flota               │ vehículos, como asignar              │
+│                      │                                     │ conductores, destinos, ver fechas    │
+│                      │                                     │ de revisión técnica, kilometraje,    │
+│                      │                                     │ uso...                               │
+├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────┤
+│ Dueño del negocio    │ Ver los datos de los choferes       │ Tener acceso a los datos             │
+│                      │ que trabajan en mi empresa          │ referentes a la licencia de          │
+│                      │                                     │ conducir, fono de contacto y para    │
+│                      │                                     │ asignarles vehículos de mi flota     │
+├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────┤
+│ Dueño del negocio    │ Ver los pasajeros que solicitan     │ Poder asignar pasajeros a la flota   │
+│                      │ las empresas que sean llevados      │ de vehículos, administrar la         │
+│                      │                                     │ información de cada uno (Nombre,     │
+│                      │                                     │ teléfono, empresa) y destino         │
+│                      │                                     │ deseado                              │
+├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────┤
+│ Dueño del negocio    │ Ver las paradas que se solicitan    │ Poder designar puntos de partida /   │
+│                      │                                     │ destinos de viaje                    │
+├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────┤
+│ Dueño del negocio    │ Ver el cálculo de la bencina        │ Para ver gastos referentes al        │
+│                      │ ocupada por vehículo                │ consumo de los vehículos             │
+├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────┤
+│ Dueño del negocio    │ Definir un itinerario de viaje      │ Asignar vehículos, choferes y        │
+│                      │                                     │ pasajeros                            │
+├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────┤
+│ Chofer               │ Poder optimizar las rutas de        │ Poder dejar a los pasajeros de la    │
+│                      │ viaje                               │ manera más eficaz posible            │
+├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────┤
+│ Chofer               │ Ver mi itinerario asignado          │ Saber cuándo debo recoger            │
+│                      │                                     │ pasajeros, y dónde se solicitan     │
+│                      │                                     │ mis servicios                       │
+├──────────────────────┼─────────────────────────────────────┼──────────────────────────────────────┤
+│ Chofer               │ Ver los pasajeros que debo tomar    │ Saber a quiénes debo recoger y       │
+│                      │                                     │ dónde debo dejarlos                  │
+└──────────────────────┴─────────────────────────────────────┴──────────────────────────────────────┘
