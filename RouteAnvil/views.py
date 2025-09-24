@@ -1,23 +1,9 @@
-# Eliminar chofer (DELETE)
-from django.views.decorators.http import require_POST
-def chofer_eliminar(request, id):
-    from .models import Chofer
-    chofer = Chofer.objects.get(id_chofer=id)
-    if request.method == 'POST':
-        chofer.delete()
-        return redirect('chofer_lista')
-    return render(request, 'choferes/chofer_eliminar.html', {'chofer': chofer})
-from django.shortcuts import render, redirect
-from .models import Chofer
-from django.shortcuts import get_object_or_404
-from .models import Pasajero
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Chofer, Pasajero
 
 #Aqui definimos cada vista de django (backend en python)
 def index(request):
     return render(request, 'index.html')
-
 
 def vehiculos(request):
     return render(request, 'vehiculos.html')
@@ -28,12 +14,8 @@ def rutas(request):
 def destinos(request):
     return render(request, 'destinos.html')
 
-
-
 def generar_ruta(request):
     return render(request, 'generar_ruta.html')
-
-
 
 #CHOFERES CRUD - VISTAS
 #Listar (READ ALL)
