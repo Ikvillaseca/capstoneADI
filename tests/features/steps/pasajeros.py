@@ -24,6 +24,7 @@ def step_impl(context, nombre_pagina):
 @when('Agregue los datos de un pasajero')
 def step_impl(context):
     for fila in context.table:
+        context.browser.find_element(By.CSS_SELECTOR, "a:nth-child(2) > button").click()
         context.browser.find_element(By.ID, "id_rut").click()
         context.browser.find_element(By.ID, "id_rut").send_keys("19083514-6")
         context.browser.find_element(By.ID, "id_nombre").click()
