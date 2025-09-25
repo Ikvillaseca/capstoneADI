@@ -16,3 +16,8 @@ docker run -p 8000:8000 routeanvil
 
 behave -f html -o behave-report.html
 ```
+
+#Pruebas
+```
+.\tests\run-tests.py
+```
