@@ -123,6 +123,12 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+         
+    if "test" in os.environ:
+        pass
+    
+    else:
+        pass
 
 
 

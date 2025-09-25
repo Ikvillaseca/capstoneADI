@@ -1,5 +1,6 @@
 from behave import given, when, then
 from behave.api.pending_step import StepNotImplementedError
+from selenium.webdriver.common.by import By
 
 from features.environment import get_url
 
@@ -19,10 +20,22 @@ def step_impl(context, nombre_pagina):
     url_actual = context.browser.current_url
     assert url_actual == full_url
 
-@given('Ingrese los datos de prueba de pasajero')
-def step_impl(context):
-    raise StepNotImplementedError(u'Given Ingrese los datos de prueba de pasajero')
 
 @when('Agregue los datos de un pasajero')
 def step_impl(context):
-    raise StepNotImplementedError(u'When Ingrese los datos de prueba de pasajero')
+    for fila in context.table:
+        context.browser.find_element(By.ID, "id_rut").click()
+        context.browser.find_element(By.ID, "id_rut").send_keys("19083514-6")
+        context.browser.find_element(By.ID, "id_nombre").click()
+        context.browser.find_element(By.ID, "id_nombre").send_keys("Juanito")
+        context.browser.find_element(By.ID, "id_apellido").click()
+        context.browser.find_element(By.ID, "id_apellido").send_keys("Perez")
+        context.browser.find_element(By.ID, "id_telefono").click()
+        context.browser.find_element(By.ID, "id_telefono").send_keys("+56909021679")
+        context.browser.find_element(By.ID, "id_empresa_trabajo").click()
+        context.browser.find_element(By.ID, "id_empresa_trabajo").send_keys("Fontabella")
+        context.browser.find_element(By.CSS_SELECTOR, "button").click()
+
+@then('Observare que los pasajeros se agregaron a la lista')
+def step_impl(context):
+            raise StepNotImplementedError(u'Then Observare que los pasajeros se agregaron a la lista')
