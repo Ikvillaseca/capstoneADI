@@ -26,7 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&&^)2wa(y&cz9gl$&k)v51t3a#8_qvk(%)ieboi29)bze7ix!4'
+
+if IS_HEROKU_APP:
+    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+    GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
+else:
+    #Borrar una vez que se haga el deploy
+    GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
+    SECRET_KEY = 'e!wu4o2&%aavtm!(!bqy8fyma9nq(#*yhheeb#(l8ry2@35*gs'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

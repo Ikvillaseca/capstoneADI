@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block titulo %}Api Test{% endblock titulo %}
+
+{% block contenido %}
+
+<h1>Testeo de api</h1>
+
+{% if error %}
+    <div style="color: red;">
+        <h2>Error al llamar a la API:</h2>
+        <p>{{ error }}</p>
+    </div>
+{% endif %}
+
+{% if response_data %}
+    <h2>Respuesta de la API:</h2>
+    {% if response_data.routes %}
+        {% with route=response_data.routes.0 %}
+            <p><strong>Distancia:</strong> {{ route.distanceMeters }} metros</p>
+            <p><strong>Duración:</strong> {{ route.duration }}</p>
+        {% endwith %}
+    {% else %}
+        <p>La API no devolvió ninguna ruta.</p>
+    {% endif %}
+{% else %}
+    <p>No se recibieron datos de la API.</p>
+{% endif %}
+
+{% endblock contenido %}
+
