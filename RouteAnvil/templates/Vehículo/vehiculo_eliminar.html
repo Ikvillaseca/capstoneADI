@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Eliminar Vehículo</title>
+</head>
+<body>
+    <h2>¿Estás seguro que deseas eliminar el vehículo {{ vehiculo.patente }}?</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+        <a href="{% url 'vehiculo_lista' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</body>
+</html>
