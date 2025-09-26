@@ -1,28 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <title>{% block titulo %} Sample titulo {% endblock titulo %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{% block titulo %}RouteAnvil{% endblock titulo %}</title>
 </head>
 
 <body>
-    <nav><ul>
-        <li><a href="{% url 'chofer_lista'%}">Enlace a {% url 'chofer_lista'%}</a></li>
-        <li><a href="{% url 'pasajeros_lista'%}">Enlace a {% url 'pasajeros_lista'%}</a></li>
-        <li><a href="{% url 'rutas'%}">Enlace a {% url 'rutas'%}</a></li>
-        <li><a href="{% url 'destinos'%}">Enlace a {% url 'destinos'%}</a></li>
-        <li><a href="{% url 'generar_ruta'%}">Enlace a {% url 'generar_ruta'%}</a></li> 
-        <li><a href="{% url 'vehiculo_lista'%}">Enlace a {% url 'vehiculo_lista'%}</a></li> 
-    </ul></nav>
+    <!-- Header  -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'index' %}">RouteAnvil</a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                        data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'chofer_lista' %}">Choferes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'pasajeros_lista' %}">Pasajeros</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'vehiculo_lista' %}">Vehículos</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-    {% block contenido %}
-    Sample contenido
-    {% endblock contenido %}
+    <!-- contenido principal de la pagina -->
+    <main class="container mt-4">
+        {% block contenido %}
+        <h1>Bienvenido a RouteAnvil</h1>
+        {% endblock contenido %}
+    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
