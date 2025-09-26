@@ -28,6 +28,7 @@ def run_tests():
     #Correr las pruebas con behave basado en behave -f html -o behave-report.html
     sys.argv = [
         'behave',
+        '--no-capture',
         '-f', 'html',
         '-o', './behave-report.html'
     ]
