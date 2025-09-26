@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from features.environment import get_url
-
+import selenium
 @given('Navegue a la pagina de {nombre_pagina}')
 def step_impl(context, nombre_pagina):
 
@@ -70,5 +70,16 @@ def step_impl(context):
 
 @then('Observare que los pasajeros se agregaron a la lista')
 def step_impl(context):
-    print(context.datos_prueba_pasajero)
-    raise StepNotImplementedError(u'Then Observare que los pasajeros se agregaron a la lista')
+    
+    tabla = context.browser.find_element(By.TAG_NAME, "table")
+    texto_de_la_tabla = tabla.find_element(By.TAG_NAME, "tbody").text
+
+    pasajeros_encontrados = 0
+    for pasajero in context.datos_prueba_pasajero:
+        rut = pasajero['rut']
+        nombre = pasajero['nombre']
+        print(f"## Buscando a '{nombre}' (RUT: {rut}) ##")
+        # Comprobar si el RUT y el nombre están en el texto de la tabla
+        if rut in texto_de_la_tabla and nombre in texto_de_la_tabla:
+            pasajeros_encontrados += 1
+    assert context.datos_prueba_pasajero.count() == pasajeros_encontrados
