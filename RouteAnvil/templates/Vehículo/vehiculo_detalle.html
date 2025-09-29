@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buscar Vehículo</title>
+</head>
+<body>
+    <h2>Buscar Vehículo por Patente</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="patente" placeholder="Ingrese patente">
+        <button type="submit">Buscar</button>
+    </form>
+    {% if mensaje %}
+        <p>{{ mensaje }}</p>
+    {% endif %}
+    {% if vehiculo %}
+        <h3>Vehículo encontrado:</h3>
+        <ul>
+            <li>Patente: {{ vehiculo.patente }}</li>
+            <li>Marca: {{ vehiculo.marca }}</li>
+            <li>Capacidad: {{ vehiculo.capacidad }}</li>
+            <li>Estado: {{ vehiculo.estado }}</li>
+            <li>Revisión Técnica: {{ vehiculo.revision_tecnica }}</li>
+            <li>Próxima Revisión: {{ vehiculo.proxima_revision }}</li>
+        </ul>
+        <a href="{% url 'vehiculo_modificar' vehiculo.pk %}">Modificar este vehículo</a>
+    {% endif %}
+</body>
+</html>

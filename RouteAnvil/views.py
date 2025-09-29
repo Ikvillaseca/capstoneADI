@@ -1,26 +1,17 @@
+
 # Eliminar chofer (DELETE)
-from django.views.decorators.http import require_POST
-def chofer_eliminar(request, id):
-    from .models import Chofer
-    chofer = Chofer.objects.get(id_chofer=id)
-    if request.method == 'POST':
-        chofer.delete()
-        return redirect('chofer_lista')
-    return render(request, 'choferes/chofer_eliminar.html', {'chofer': chofer})
-from django.shortcuts import render, redirect
-from .models import Chofer
-from django.shortcuts import get_object_or_404
-from .models import Pasajero
+import requests, json
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Chofer, Pasajero
+from django.conf import settings
+from .models import Chofer, Pasajero, Vehiculo
+from .forms import VehiculoForm
 
 #Aqui definimos cada vista de django (backend en python)
 def index(request):
     return render(request, 'index.html')
 
-
 def vehiculos(request):
-    return render(request, 'vehiculos.html')
+    return render(request, 'Vehículo/vehiculos.html')
 
 def rutas(request):
     return render(request, 'rutas.html')
@@ -28,12 +19,67 @@ def rutas(request):
 def destinos(request):
     return render(request, 'destinos.html')
 
-
-
 def generar_ruta(request):
-    return render(request, 'generar_ruta.html')
 
 
+
+
+    return render(request, 'rutas/generador_rutas.html')
+
+def test_api(request):
+
+    context = {
+
+    }
+    
+    api_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
+    api_key = settings.GOOGLE_MAPS_API_KEY
+
+    print(f"API Key a usar: {api_key}")
+    #Solicitud de prueba editando el original de prueba https://developers.google.com/maps/documentation/routes/compute_route_directions
+    payload = {
+        "origin":{
+            "address": "Duoc Plaza Maipu"
+        },
+        "destination":{
+                "address": "Metro Las Parcelas"
+        },
+        "travelMode": "DRIVE",
+        "routingPreference": "TRAFFIC_AWARE",
+        "computeAlternativeRoutes": False,
+        "routeModifiers": {
+            "avoidTolls": False,
+            "avoidHighways": False,
+            "avoidFerries": False
+        },
+        "languageCode": "es-CL",
+        "units": "METRIC"
+    }
+
+    headers = {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': api_key,
+        'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters'
+        #routes.polyline.encodedPolyline
+    }
+
+
+    try:
+        response = requests.post(api_url, data=json.dumps(payload), headers=headers)
+        response.raise_for_status()  # Lanza un error si la respuesta falla
+        
+        # Se guarda la respuesta para poder mostrarla
+        context['response_data'] = response.json()
+
+    except requests.exceptions.RequestException as e:
+        # Si hay un error en la llamada, se hace un print para analizar
+        context['error'] = str(e)
+        if response is not None:
+            context['error_body'] = response.text
+            print(f"Error en la respuesta de la API: {response.text}")
+    print(response)
+
+    return render(request, 'rutas/test_api.html', context)
 
 #CHOFERES CRUD - VISTAS
 #Listar (READ ALL)
@@ -138,3 +184,56 @@ def pasajero_eliminar(request, id):
         return redirect('pasajeros_lista')
     return render(request, 'pasajeros/pasajero_eliminar.html', {'pasajero': pasajero})
 
+# == VEHICULOS CRUD / VISTAS ==
+
+# READ
+def vehiculo_lista(request):
+    vehiculos = Vehiculo.objects.all()
+    return render(request, 'Vehículo/vehiculo_lista.html', {'vehiculos': vehiculos})
+
+#CREATE
+def vehiculo_crear(request):
+    if request.method == 'POST':
+        form = VehiculoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('vehiculos')
+    else:
+        form = VehiculoForm()
+
+    return render(request, 'Vehículo/vehiculo_crear.html', {'form': form}) 
+
+#SEARCH
+def buscar_vehiculo(request):
+    vehiculo = None
+    mensaje = ""
+    if request.method == 'POST':
+        patente = request.POST.get('patente')
+        if patente:
+            try:
+                vehiculo = Vehiculo.objects.get(Patente__iexact=patente)
+            except Vehiculo.DoesNotExist:
+                mensaje = "No se encontró un vehículo con esa patente."
+        else:
+            mensaje = "Ingrese una patente para buscar."
+    return render(request, 'Vehículo/vehiculo_detalle.html', {'vehiculo': vehiculo, 'mensaje': mensaje})
+
+#UPDATE
+def vehiculo_modificar(request, pk):
+    vehiculo = get_object_or_404(Vehiculo, pk=pk)
+    if request.method == 'POST':
+        form = VehiculoForm(request.POST, instance=vehiculo)
+        if form.is_valid():
+            form.save()
+            return redirect('vehiculo_lista')  
+    else:
+        form = VehiculoForm(instance=vehiculo)
+    return render(request, 'Vehículo/vehiculo_modificar.html', {'form': form, 'vehiculo': vehiculo})
+
+#DELETE 
+def vehiculo_eliminar(request, pk):
+    vehiculo = get_object_or_404(Vehiculo, pk=pk)
+    if request.method == 'POST':
+        vehiculo.delete()
+        return redirect('vehiculo_lista')  
+    return render(request, 'Vehículo/vehiculo_eliminar.html', {'vehiculo': vehiculo})
