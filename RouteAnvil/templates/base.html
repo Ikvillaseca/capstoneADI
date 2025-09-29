@@ -9,7 +9,7 @@
     <title>{% block titulo %}RouteAnvil{% endblock titulo %}</title>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
     <!-- Header  -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -40,11 +40,18 @@
     </header>
 
     <!-- contenido principal de la pagina -->
-    <main class="container mt-4">
+    <main class="container mt-4 flex-grow-1">
         {% block contenido %}
         <h1>Bienvenido a RouteAnvil</h1>
         {% endblock contenido %}
     </main>
+
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 RouteAnvil. Todos los derechos reservados.</p>
+            <small class="text-muted">Sistema de gestión de transporte</small>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
