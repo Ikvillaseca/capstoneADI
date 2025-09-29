@@ -1,4 +1,4 @@
-Feature: Gestión de pasajeros
+Feature: H.U.3 - Gestión de pasajeros
   Como dueño del negocio
   Quiero gestionar los pasajeros que solicitan las empresas que sean llevados
   Para poder asignar pasajeros a la flota de vehículos
@@ -7,7 +7,7 @@ Feature: Gestión de pasajeros
     When Navegue a la pagina de pasajeros
     Then Observare que accedi a la pagina con titulo "Lista de Pasajeros"
 
-  Scenario: Navegar a pagina "Agregar un pasajero"
+  Scenario: Agregar un pasajero
 
     Given Navegue a la pagina de pasajeros
     When Agregue los datos de un pasajero
