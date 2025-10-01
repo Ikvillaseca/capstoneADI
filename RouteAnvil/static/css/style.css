@@ -1,0 +1,65 @@
+/* --- Estilos para tablas --- */
+.table-responsive {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.card {
+    border: none;
+    border-radius: 1rem;
+    margin-bottom: 3rem; /* Agrega espacio debajo de las cards */
+}
+
+.card-body {
+    padding: 2rem;
+    margin-bottom: 1rem;
+}
+
+.btn {
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 1rem 0.75rem;
+}
+
+.alert {
+    border-radius: 1rem;
+    border: none;
+}
+
+/* Iconos */
+.fas {
+    margin-right: 0.5rem;
+}
+
+/* --- Estilos para páginas de detalle --- */
+dl.row dt {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #212529;
+}
+
+dl.row dd {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.border-bottom {
+    border-bottom: 2px solid #e9ecef !important;
+}
