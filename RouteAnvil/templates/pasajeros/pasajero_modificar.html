@@ -1,14 +1,98 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block titulo %}Modificar Pasajero{% endblock titulo %}
 
 {% block contenido %}
-<h2>Modificar Pasajero</h2>
-<form method="post">
-	{% csrf_token %}
-	{{ form.as_p }}
-	<button type="submit">Guardar cambios</button>
-	<a href="{% url 'pasajero_detalles' pasajero.id_pasajero %}">Cancelar</a>
-</form>
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-user-edit"></i> Modificar Pasajero
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+
+                    <div class="mb-4">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">
+                            <i class="fas fa-id-card"></i> Información Personal
+                        </h5>
+                        <dl class="row">
+                            <dt class="col-sm-4 text-muted">ID:</dt>
+                            <dd class="col-sm-8"><strong>{{ pasajero.id_pasajero }}</strong></dd>
+                            
+                            <dt class="col-sm-4 text-muted">RUT:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.rut }}
+                                {% if form.rut.errors %}
+                                    <div class="text-danger small mt-1">{{ form.rut.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Nombre:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.nombre }}
+                                {% if form.nombre.errors %}
+                                    <div class="text-danger small mt-1">{{ form.nombre.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Apellido:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.apellido }}
+                                {% if form.apellido.errors %}
+                                    <div class="text-danger small mt-1">{{ form.apellido.errors }}</div>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+
+
+                    <div class="mb-4">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">
+                            <i class="fas fa-phone"></i> Información de Contacto
+                        </h5>
+                        <dl class="row">
+                            <dt class="col-sm-4 text-muted">Teléfono:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.telefono }}
+                                {% if form.telefono.errors %}
+                                    <div class="text-danger small mt-1">{{ form.telefono.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Empresa:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.empresa_trabajo }}
+                                {% if form.empresa_trabajo.errors %}
+                                    <div class="text-danger small mt-1">{{ form.empresa_trabajo.errors }}</div>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                        <a href="{% url 'pasajero_detalles' pasajero.id_pasajero %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock contenido %}
 

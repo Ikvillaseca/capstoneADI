@@ -1,27 +1,64 @@
 {% extends "base.html" %}
+{% load static %}
+{% block titulo %}Detalles del Pasajero{% endblock titulo %}
 
 {% block contenido %}
 
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-user"></i> Detalles del Pasajero
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <!-- Información Personal -->
+                <div class="mb-4">
+                    <h5 class="text-secondary mb-3 border-bottom pb-2">
+                        <i class="fas fa-id-card"></i> Información Personal
+                    </h5>
+                    <dl class="row">
+                        <dt class="col-sm-4 text-muted">ID:</dt>
+                        <dd class="col-sm-8"><strong>{{ pasajero.id_pasajero }}</strong></dd>
+                        
+                        <dt class="col-sm-4 text-muted">RUT:</dt>
+                        <dd class="col-sm-8">{{ pasajero.rut }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Nombre:</dt>
+                        <dd class="col-sm-8">{{ pasajero.nombre }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Apellido:</dt>
+                        <dd class="col-sm-8">{{ pasajero.apellido }}</dd>
+                    </dl>
+                </div>
 
-<h2>Detalles del Pasajero</h2>
-<ul>
-	<li><strong>ID:</strong> {{ pasajero.id_pasajero }}</li>
-	<li><strong>RUT:</strong> {{ pasajero.rut }}</li>
-	<li><strong>Nombre:</strong> {{ pasajero.nombre }}</li>
-	<li><strong>Apellido:</strong> {{ pasajero.apellido }}</li>
-	<li><strong>Telefono:</strong> {{ pasajero.telefono }}</li>
-	<li><strong>Empresa de Trabajo:</strong> {{ pasajero.empresa_trabajo }}</li>
-</ul>
+                <!-- Información de Contacto -->
+                <div class="mb-4">
+                    <h5 class="text-secondary mb-3 border-bottom pb-2">
+                        <i class="fas fa-phone"></i> Información de Contacto
+                    </h5>
+                    <dl class="row">
+                        <dt class="col-sm-4 text-muted">Teléfono:</dt>
+                        <dd class="col-sm-8">{{ pasajero.telefono }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Empresa:</dt>
+                        <dd class="col-sm-8">{{ pasajero.empresa_trabajo }}</dd>
+                    </dl>
+                </div>
 
-<form action="{% url 'pasajero_eliminar' pasajero.id_pasajero %}" method="post" style="display:inline;">
-	{% csrf_token %}
-	<button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este pasajero?');">Eliminar</button>
-</form>
-<a href="{% url 'pasajero_modificar' pasajero.id_pasajero %}"><button type="button">Modificar</button></a>
-<a href="{% url 'pasajeros_lista' %}">Volver a la lista</a>
-
-
-
-
+                <!-- Botones de Acción -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                    <a href="{% url 'pasajeros_lista' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la Lista
+                    </a>
+                    <a href="{% url 'pasajero_modificar' pasajero.id_pasajero %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Modificar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock contenido %}

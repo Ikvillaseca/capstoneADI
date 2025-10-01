@@ -1,23 +1,70 @@
 {% extends "base.html" %}
-
-{% block titulo %}Detalles Chofer{% endblock titulo %}
+{% load static %}
+{% block titulo %}Detalles del Chofer{% endblock titulo %}
 
 {% block contenido %}
-<h2>Detalles del Chofer</h2>
-<ul>
-	<li><strong>ID:</strong> {{ chofer.id_chofer }}</li>
-	<li><strong>RUT:</strong> {{ chofer.rut }}</li>
-	<li><strong>Nombre:</strong> {{ chofer.nombre }}</li>
-	<li><strong>Apellido:</strong> {{ chofer.apellido }}</li>
-	<li><strong>Tipo de licencia:</strong> {{ chofer.tipo_licencia }}</li>
-	<li><strong>Direccion:</strong> {{ chofer.direccion }}</li>
-	<li><strong>Fecha ultimo control:</strong> {{ chofer.fecha_ultimo_control }}</li>
-	<li><strong>Fecha proximo control:</strong> {{ chofer.fecha_proximo_control }}</li>
-</ul>
-<form action="{% url 'chofer_eliminar' chofer.id_chofer %}" method="post" style="display:inline;">
-	{% csrf_token %}
-	<button type="submit" onclick="return confirm('¿Seguro de que deseas eliminar este chofer?');">Eliminar</button>
-</form>
-<a href="{% url 'chofer_modificar' chofer.id_chofer %}"><button type="button">Modificar</button></a>
-<a href="{% url 'chofer_lista' %}">Volver a la lista</a>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-user-tie"></i> Detalles del Chofer
+                </h3>
+            </div>
+            <div class="card-body p-4">
+
+                <div class="mb-4">
+                    <h5 class="text-secondary mb-3 border-bottom pb-2">
+                        <i class="fas fa-id-card"></i> Información Personal
+                    </h5>
+                    <dl class="row">
+                        <dt class="col-sm-4 text-muted">ID:</dt>
+                        <dd class="col-sm-8"><strong>{{ chofer.id_chofer }}</strong></dd>
+                        
+                        <dt class="col-sm-4 text-muted">RUT:</dt>
+                        <dd class="col-sm-8">{{ chofer.rut }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Nombre:</dt>
+                        <dd class="col-sm-8">{{ chofer.nombre }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Apellido:</dt>
+                        <dd class="col-sm-8">{{ chofer.apellido }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Dirección:</dt>
+                        <dd class="col-sm-8">{{ chofer.direccion }}</dd>
+                    </dl>
+                </div>
+
+
+                <div class="mb-4">
+                    <h5 class="text-secondary mb-3 border-bottom pb-2">
+                        <i class="fas fa-id-badge"></i> Información Profesional
+                    </h5>
+                    <dl class="row">
+                        <dt class="col-sm-4 text-muted">Tipo de Licencia:</dt>
+                        <dd class="col-sm-8">{{ chofer.tipo_licencia }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Último Control:</dt>
+                        <dd class="col-sm-8">{{ chofer.fecha_ultimo_control }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Próximo Control:</dt>
+                        <dd class="col-sm-8">{{ chofer.fecha_proximo_control }}</dd>
+                    </dl>
+                </div>
+
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                    <a href="{% url 'chofer_lista' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la Lista
+                    </a>
+                    <a href="{% url 'chofer_modificar' chofer.id_chofer %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Modificar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock contenido %}
