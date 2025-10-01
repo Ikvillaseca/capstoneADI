@@ -7,3 +7,4 @@ whitenoise==6.10.0
 dj-database-url==3.0.1
 psycopg==3.2.10
 psycopg-binary==3.2.10
+requests

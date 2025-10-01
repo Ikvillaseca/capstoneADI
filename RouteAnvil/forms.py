@@ -2,6 +2,7 @@ from django import forms
 from .models import Chofer, Pasajero, Vehiculo
 import re
 
+
 #Formulario para poder crear un chofer de forma simple con los datos que definimos en el modelo
 class FormularioChofer(forms.ModelForm):
     fecha_ultimo_control = forms.DateField(
@@ -111,5 +112,39 @@ class VehiculoForm(forms.ModelForm):
     class Meta:
         model = Vehiculo
         fields = ['id_vehiculo', 'patente', 'marca', 'capacidad', 'estado', 'revision_tecnica', 'proxima_revision']
+
+    revision_tecnica = forms.DateField(
+        input_formats=['%d-%m-%Y'], 
+        widget=forms.DateInput(format='%d-%m-%Y', attrs={'placeholder': 'DD-MM-AAAA'})
+    )
+    proxima_revision = forms.DateField(
+        input_formats=['%d-%m-%Y'],
+        widget=forms.DateInput(format='%d-%m-%Y', attrs={'placeholder': 'DD-MM-AAAA'})
+    )
+
+    def clean_patente(self):
+        patente = self.cleaned_data['patente']
+        if not re.match(r'^([A-Z]{2}\d{4})|([A-Z]{4}\d{2})$', patente):
+            raise forms.ValidationError("La patente debe ser en mayúsculas y debe tener uno de los siguientes formatos (ejemplo: AB1234 o ABCD12).")
+        return patente
     
+    def clean_marca(self):
+        marca = self.cleaned_data['marca']
+        if not marca.isalpha():
+            raise forms.ValidationError("La marca solo debe contener letras.")
+        return marca
     
+    def clean_capacidad(self):
+        capacidad = self.cleaned_data['capacidad']
+        if capacidad <= 0:
+            raise forms.ValidationError("La capacidad debe ser un numero positivo.")
+        return capacidad
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        revision = cleaned_data.get('revision_tecnica')
+        proxima_revision = cleaned_data.get('proxima_revision')
+        if revision and proxima_revision:
+            if proxima_revision <= revision:
+                raise forms.ValidationError("La fecha de la proxima revision debe ser posterior a la de la revision tecnica.")
+        return cleaned_data

@@ -1,10 +1,15 @@
 from behave import fixture, use_fixture
-from selenium.webdriver import Firefox,Chrome
+from selenium.webdriver import Chrome #Firefox
+from selenium.webdriver.chrome.options import Options
 from os import getenv
-
+import webbrowser
+import os
+import time
 @fixture
 def browser_chrome(context):
-    context.browser = Chrome()
+    chrome_options = Options()
+    chrome_options.add_argument('--log-level=3')
+    context.browser = Chrome(options=chrome_options)
     yield context.browser
     context.browser.quit()
 

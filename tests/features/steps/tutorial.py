@@ -1,13 +1,13 @@
 from behave import given,when,then
 
-@given("tenemos behave instalado")
+@given("Se ejecutaron todas las pruebas")
 def step_impl(context):
     pass
 
-@when("implementamos una prueba")
+@when("Terminen de ejecutarse las pruebas")
 def step_impl(context):
     assert True is not False
 
-@then("behave lo probara por nosotros")
+@then("Todas las pruebas pasaran")
 def step_impl(context):
     assert context.failed is False
