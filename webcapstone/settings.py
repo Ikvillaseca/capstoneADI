@@ -65,16 +65,15 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    # Para poder correr por defecto whitenoise cuando se hace un runserver
-    "whitenoise.runserver_nostatic",
+    "whitenoise.runserver_nostatic", # Para poder correr por defecto whitenoise cuando se hace un runserver
     'django.contrib.staticfiles',
-    'RouteAnvil.apps.RouteanvilConfig',
+    'RouteAnvil.apps.RouteanvilConfig', #Aplicacion RouteAnvil
+    'users.apps.UsersConfig', #Aplicacion users, gestion de usuarios
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    #Agregar whitenoise para poder distribuir los assets static como si fuera en produccion
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware", #Agregar whitenoise para poder distribuir los assets static como si fuera en produccion
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -229,3 +228,5 @@ LOGGING = {
         },
     },
 }
+
+AUTH_USER_MODEL = "users.CustomUser"
