@@ -2,7 +2,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
 
 #https://testdriven.io/blog/django-custom-user-model/
-
+#Codigo utilizado para poder crear los nuevos usuarios, y superusuarios que utilizan email y contraseña para iniciar sesión
 class CustomUserManager(BaseUserManager):
     """
     Custom user model manager where email is the unique identifiers

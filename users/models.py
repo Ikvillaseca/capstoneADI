@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
+    # En base al modelo de AbstractUser que provee Django:
     # Eliminamos el campo username del modelo base
     username = None
     # Hacemos que el email sea único y el campo para el login
@@ -13,7 +14,7 @@ class CustomUser(AbstractUser):
     is_email_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = [] # email y password son requeridos por defecto
+    REQUIRED_FIELDS = [] # email y password son requeridos por defecto asi que se deja vacio
 
     objects = CustomUserManager()
 
