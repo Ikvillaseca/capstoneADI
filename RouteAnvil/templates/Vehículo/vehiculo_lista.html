@@ -22,7 +22,6 @@
                             <th scope="col">Marca</th>
                             <th scope="col">Capacidad</th>
                             <th scope="col">Estado</th>
-                            <th scope="col">Revisión Técnica</th>
                             <th scope="col">Próxima Revisión</th>
                             <th scope="col" class="text-center">Acciones</th>
                         </tr>
@@ -56,8 +55,23 @@
                                     </span>
                                 {% endif %}
                             </td>
-                            <td>{{ vehiculo.revision_tecnica }}</td>
-                            <td>{{ vehiculo.proxima_revision }}</td>
+                            <td>
+                                {% load static %}
+                                {% now "Y-m-d" as today %}
+                                {% if vehiculo.proxima_revision|date:"Y-m-d" < today %}
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-exclamation-triangle"></i> {{ vehiculo.proxima_revision }}
+                                    </span>
+                                {% elif vehiculo.proxima_revision|date:"Y-m-d" == today %}
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-clock"></i> {{ vehiculo.proxima_revision }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-calendar-check"></i> {{ vehiculo.proxima_revision }}
+                                    </span>
+                                {% endif %}
+                            </td>
                             <td class="text-center">
                                 <a href="{% url 'vehiculo_detalle' vehiculo.patente %}" 
                                    class="btn btn-primary btn-sm me-2">
