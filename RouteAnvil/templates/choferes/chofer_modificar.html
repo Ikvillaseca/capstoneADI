@@ -1,13 +1,113 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block titulo %}Modificar Chofer{% endblock titulo %}
 
 {% block contenido %}
-<h2>Modificar Chofer</h2>
-<form method="post">
-	{% csrf_token %}
-	{{ form.as_p }}
-	<button type="submit">Guardar cambios</button>
-	<a href="{% url 'chofer_detalle' chofer.id_chofer %}">Cancelar</a>
-</form>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-user-edit"></i> Modificar Chofer
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+
+                    <div class="mb-4">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">
+                            <i class="fas fa-id-card"></i> Información Personal
+                        </h5>
+                        <dl class="row">
+                            <dt class="col-sm-4 text-muted">ID:</dt>
+                            <dd class="col-sm-8"><strong>{{ chofer.id_chofer }}</strong></dd>
+                            
+                            <dt class="col-sm-4 text-muted">RUT:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.rut }}
+                                {% if form.rut.errors %}
+                                    <div class="text-danger small mt-1">{{ form.rut.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Nombre:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.nombre }}
+                                {% if form.nombre.errors %}
+                                    <div class="text-danger small mt-1">{{ form.nombre.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Apellido:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.apellido }}
+                                {% if form.apellido.errors %}
+                                    <div class="text-danger small mt-1">{{ form.apellido.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Dirección:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.direccion }}
+                                {% if form.direccion.errors %}
+                                    <div class="text-danger small mt-1">{{ form.direccion.errors }}</div>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+
+
+                    <div class="mb-4">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">
+                            <i class="fas fa-id-badge"></i> Información Profesional
+                        </h5>
+                        <dl class="row">
+                            <dt class="col-sm-4 text-muted">Tipo de Licencia:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.tipo_licencia }}
+                                {% if form.tipo_licencia.errors %}
+                                    <div class="text-danger small mt-1">{{ form.tipo_licencia.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Último Control:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.fecha_ultimo_control }}
+                                {% if form.fecha_ultimo_control.errors %}
+                                    <div class="text-danger small mt-1">{{ form.fecha_ultimo_control.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Próximo Control:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.fecha_proximo_control }}
+                                {% if form.fecha_proximo_control.errors %}
+                                    <div class="text-danger small mt-1">{{ form.fecha_proximo_control.errors }}</div>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                        <a href="{% url 'chofer_detalle' chofer.id_chofer %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock contenido %}

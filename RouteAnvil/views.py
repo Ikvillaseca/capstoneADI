@@ -128,7 +128,7 @@ def chofer_eliminar(request, id):
     if request.method == 'POST':
         chofer.delete()
         return redirect('chofer_lista')
-    return render(request, 'choferes/chofer_eliminar.html', {'chofer': chofer})
+    return redirect('chofer_lista') 
 
 
 # =====          PASAJEROS CRUD / VISTAS           =====
@@ -179,7 +179,7 @@ def pasajero_eliminar(request, id):
     if request.method == 'POST':
         pasajero.delete()
         return redirect('pasajeros_lista')
-    return render(request, 'pasajeros/pasajero_eliminar.html', {'pasajero': pasajero})
+    return redirect('pasajeros_lista')  
 
 # =====          VEHICULOS CRUD / VISTAS           =====
 # READ
