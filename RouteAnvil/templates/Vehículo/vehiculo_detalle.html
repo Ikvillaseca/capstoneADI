@@ -1,29 +1,86 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Buscar Vehículo</title>
-</head>
-<body>
-    <h2>Buscar Vehículo por Patente</h2>
-    <form method="post">
-        {% csrf_token %}
-        <input type="text" name="patente" placeholder="Ingrese patente">
-        <button type="submit">Buscar</button>
-    </form>
-    {% if mensaje %}
-        <p>{{ mensaje }}</p>
-    {% endif %}
-    {% if vehiculo %}
-        <h3>Vehículo encontrado:</h3>
-        <ul>
-            <li>Patente: {{ vehiculo.patente }}</li>
-            <li>Marca: {{ vehiculo.marca }}</li>
-            <li>Capacidad: {{ vehiculo.capacidad }}</li>
-            <li>Estado: {{ vehiculo.estado }}</li>
-            <li>Revisión Técnica: {{ vehiculo.revision_tecnica }}</li>
-            <li>Próxima Revisión: {{ vehiculo.proxima_revision }}</li>
-        </ul>
-        <a href="{% url 'vehiculo_modificar' vehiculo.pk %}">Modificar este vehículo</a>
-    {% endif %}
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Detalles del Vehículo{% endblock titulo %}
+
+{% block contenido %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-car"></i> Detalles del Vehículo
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="mb-4">
+                    <h5 class="text-secondary mb-3 border-bottom pb-2">
+                        <i class="fas fa-id-card"></i> Información del Vehículo
+                    </h5>
+                    <dl class="row">
+                        <dt class="col-sm-4 text-muted">ID Vehículo:</dt>
+                        <dd class="col-sm-8"><strong>{{ vehiculo.id_vehiculo }}</strong></dd>
+                        
+                        <dt class="col-sm-4 text-muted">Patente:</dt>
+                        <dd class="col-sm-8"><strong>{{ vehiculo.patente }}</strong></dd>
+                        
+                        <dt class="col-sm-4 text-muted">Marca:</dt>
+                        <dd class="col-sm-8">{{ vehiculo.marca }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Capacidad:</dt>
+                        <dd class="col-sm-8">{{ vehiculo.capacidad }} pasajeros</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Estado:</dt>
+                        <dd class="col-sm-8">
+                            {% if vehiculo.estado == 'A' %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle"></i> Activo
+                                </span>
+                            {% elif vehiculo.estado == 'I' %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times-circle"></i> Inactivo
+                                </span>
+                            {% elif vehiculo.estado == 'M' %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-wrench"></i> Mantenimiento
+                                </span>
+                            {% elif vehiculo.estado == 'E' %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-road"></i> En Ruta
+                                </span>
+                            {% else %}
+                                <span class="badge bg-info">
+                                    <i class="fas fa-question-circle"></i> {{ vehiculo.estado }}
+                                </span>
+                            {% endif %}
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="text-secondary mb-3 border-bottom pb-2">
+                        <i class="fas fa-tools"></i> Información de Revisión
+                    </h5>
+                    <dl class="row">
+                        <dt class="col-sm-4 text-muted">Revisión Técnica:</dt>
+                        <dd class="col-sm-8">{{ vehiculo.revision_tecnica }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Próxima Revisión:</dt>
+                        <dd class="col-sm-8">{{ vehiculo.proxima_revision }}</dd>
+                    </dl>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                    <a href="{% url 'vehiculo_lista' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la Lista
+                    </a>
+                    <a href="{% url 'vehiculo_modificar' vehiculo.patente %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Modificar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock contenido %}

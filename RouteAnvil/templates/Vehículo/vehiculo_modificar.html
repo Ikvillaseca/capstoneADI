@@ -1,16 +1,100 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Modificar Vehículo</title>
-</head>
-<body>
-    <h2>Modificar Vehículo</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Guardar Cambios</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Modificar Vehículo{% endblock titulo %}
 
+{% block contenido %}
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-car-side"></i> Modificar Vehículo
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">
+                            <i class="fas fa-id-card"></i> Información del Vehículo
+                        </h5>
+                        <dl class="row">
+                            <dt class="col-sm-4 text-muted">ID Vehículo:</dt>
+                            <dd class="col-sm-8"><strong>{{ vehiculo.id_vehiculo }}</strong></dd>
+                            
+                            <dt class="col-sm-4 text-muted">Patente:</dt>
+                            <dd class="col-sm-8"><strong>{{ vehiculo.patente }}</strong></dd>
+                            
+                            <dt class="col-sm-4 text-muted">Marca:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.marca }}
+                                {% if form.marca.errors %}
+                                    <div class="text-danger small mt-1">{{ form.marca.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Capacidad:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.capacidad }}
+                                <small class="form-text text-muted d-block">Número de pasajeros</small>
+                                {% if form.capacidad.errors %}
+                                    <div class="text-danger small mt-1">{{ form.capacidad.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Estado:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.estado }}
+                                {% if form.estado.errors %}
+                                    <div class="text-danger small mt-1">{{ form.estado.errors }}</div>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
 
+                    <div class="mb-4">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">
+                            <i class="fas fa-tools"></i> Información de Revisión
+                        </h5>
+                        <dl class="row">
+                            <dt class="col-sm-4 text-muted">Revisión Técnica:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.revision_tecnica }}
+                                <small class="form-text text-muted d-block">Formato: DD-MM-AAAA</small>
+                                {% if form.revision_tecnica.errors %}
+                                    <div class="text-danger small mt-1">{{ form.revision_tecnica.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Próxima Revisión:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.proxima_revision }}
+                                <small class="form-text text-muted d-block">Formato: DD-MM-AAAA</small>
+                                {% if form.proxima_revision.errors %}
+                                    <div class="text-danger small mt-1">{{ form.proxima_revision.errors }}</div>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                        <a href="{% url 'vehiculo_detalle' vehiculo.patente %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}
