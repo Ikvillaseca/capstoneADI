@@ -1,5 +1,5 @@
-# Eliminar chofer (DELETE)
-import requests, json
+import requests
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from .models import Chofer, Pasajero, Vehiculo
@@ -19,11 +19,9 @@ def destinos(request):
     return render(request, 'destinos.html')
 
 def generar_ruta(request):
-
-
-
-
     return render(request, 'rutas/generador_rutas.html')
+
+# =====          USO DE API GOOGLE MAPS ROUTES          =====
 
 def test_api(request):
 
@@ -80,7 +78,7 @@ def test_api(request):
 
     return render(request, 'rutas/test_api.html', context)
 
-#CHOFERES CRUD - VISTAS
+# =====          CHOFERES CRUD / VISTAS           =====
 #Listar (READ ALL)
 def choferes_lista(request):
     choferes = Chofer.objects.all()
@@ -133,7 +131,7 @@ def chofer_eliminar(request, id):
     return redirect('chofer_lista') 
 
 
-# == PASAJEROS CRUD / VISTAS ==
+# =====          PASAJEROS CRUD / VISTAS           =====
 #Listar (READ *)
 def pasajeros_lista(request):
     pasajeros = Pasajero.objects.all()
@@ -183,8 +181,7 @@ def pasajero_eliminar(request, id):
         return redirect('pasajeros_lista')
     return redirect('pasajeros_lista')  
 
-# == VEHICULOS CRUD / VISTAS ==
-
+# =====          VEHICULOS CRUD / VISTAS           =====
 # READ
 def vehiculo_lista(request):
     vehiculos = Vehiculo.objects.all()
