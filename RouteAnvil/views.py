@@ -3,7 +3,7 @@ import requests, json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from .models import Chofer, Pasajero, Vehiculo
-from .forms import VehiculoForm
+from .forms import VehiculoForm, VehiculoModificarForm
 
 #Aqui definimos cada vista de django (backend en python)
 def index(request):
@@ -19,17 +19,10 @@ def destinos(request):
     return render(request, 'destinos.html')
 
 def generar_ruta(request):
-
-
-
-
     return render(request, 'rutas/generador_rutas.html')
 
 def test_api(request):
-
-    context = {
-
-    }
+    context = {}
     
     api_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
     api_key = settings.GOOGLE_MAPS_API_KEY
@@ -62,7 +55,6 @@ def test_api(request):
         #routes.polyline.encodedPolyline
     }
 
-
     try:
         response = requests.post(api_url, data=json.dumps(payload), headers=headers)
         response.raise_for_status()  # Lanza un error si la respuesta falla
@@ -87,8 +79,6 @@ def choferes_lista(request):
     data = {'choferes': choferes}
     return render(request, 'choferes/chofer_lista.html', data)
 
-
-
 #Crear chofer (CREATE)
 def chofer_crear(request):
     from .forms import FormularioChofer
@@ -101,27 +91,23 @@ def chofer_crear(request):
         form = FormularioChofer()
     return render(request, 'choferes/chofer_crear.html', {'form': form})
 
-
-
 #Detalle chofer (READ 1)
 def chofer_detalle(request, id):
     chofer = Chofer.objects.get(id_chofer=id)
     data = {'chofer': chofer}
     return render(request, 'choferes/chofer_detalle.html', data)
-    
-
 
 #Modificar chofer (UPDATE)
 def chofer_modificar(request, id):
-    from .forms import FormularioChofer
+    from .forms import FormularioChoferModificar  # Nuevo import
     chofer = Chofer.objects.get(id_chofer=id)
     if request.method == 'POST':
-        form = FormularioChofer(request.POST, instance=chofer)
+        form = FormularioChoferModificar(request.POST, instance=chofer)  # Usar nuevo formulario
         if form.is_valid():
             form.save()
             return redirect('chofer_detalle', id=chofer.id_chofer)
     else:
-        form = FormularioChofer(instance=chofer)
+        form = FormularioChoferModificar(instance=chofer)  # Usar nuevo formulario
     return render(request, 'choferes/chofer_modificar.html', {'form': form, 'chofer': chofer})
 
 #Eliminar chofer (DELETE)
@@ -131,7 +117,6 @@ def chofer_eliminar(request, id):
         chofer.delete()
         return redirect('chofer_lista')
     return redirect('chofer_lista') 
-
 
 # == PASAJEROS CRUD / VISTAS ==
 #Listar (READ *)
@@ -162,17 +147,17 @@ def pasajero_detalles(request, id):
     }
     return render(request, 'pasajeros/pasajero_detalles.html', data)
 
-#Modificar (UPDATE)
+#Modificar pasajero (UPDATE)
 def pasajero_modificar(request, id):
-    from .forms import FormularioPasajero
+    from .forms import FormularioPasajeroModificar  # Nuevo import
     pasajero = Pasajero.objects.get(id_pasajero=id)
     if request.method == 'POST':
-        form = FormularioPasajero(request.POST, instance=pasajero)
+        form = FormularioPasajeroModificar(request.POST, instance=pasajero)  # Usar nuevo formulario
         if form.is_valid():
             form.save()
             return redirect('pasajero_detalles', id=pasajero.id_pasajero)
     else:
-        form = FormularioPasajero(instance=pasajero)
+        form = FormularioPasajeroModificar(instance=pasajero)  # Usar nuevo formulario
     return render(request, 'pasajeros/pasajero_modificar.html', {'form': form, 'pasajero': pasajero})
 
 #Eliminar (DELETE)
@@ -185,7 +170,7 @@ def pasajero_eliminar(request, id):
 
 # == VEHICULOS CRUD / VISTAS ==
 
-# READ
+# READ ALL
 def vehiculo_lista(request):
     vehiculos = Vehiculo.objects.all()
     return render(request, 'Vehículo/vehiculo_lista.html', {'vehiculos': vehiculos})
@@ -195,12 +180,38 @@ def vehiculo_crear(request):
     if request.method == 'POST':
         form = VehiculoForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('vehiculos')
+            vehiculo = form.save()
+            return redirect('vehiculo_detalle', patente=vehiculo.patente)
     else:
         form = VehiculoForm()
-
     return render(request, 'Vehículo/vehiculo_crear.html', {'form': form}) 
+
+#DETAIL (READ ONE)
+def vehiculo_detalle(request, patente):
+    vehiculo = get_object_or_404(Vehiculo, patente=patente)
+    return render(request, 'Vehículo/vehiculo_detalle.html', {'vehiculo': vehiculo})
+
+#UPDATE
+def vehiculo_modificar(request, patente):
+    vehiculo = get_object_or_404(Vehiculo, patente=patente)
+    if request.method == 'POST':
+        form = VehiculoModificarForm(request.POST, instance=vehiculo)
+        if form.is_valid():
+            form.save()
+            return redirect('vehiculo_detalle', patente=vehiculo.patente)
+        else:
+            print("Errores del formulario:", form.errors)
+    else:
+        form = VehiculoModificarForm(instance=vehiculo)
+    return render(request, 'Vehículo/vehiculo_modificar.html', {'form': form, 'vehiculo': vehiculo})
+
+#DELETE 
+def vehiculo_eliminar(request, patente):
+    vehiculo = get_object_or_404(Vehiculo, patente=patente)
+    if request.method == 'POST':
+        vehiculo.delete()
+        return redirect('vehiculo_lista')
+    return redirect('vehiculo_lista')
 
 #SEARCH
 def buscar_vehiculo(request):
@@ -210,29 +221,9 @@ def buscar_vehiculo(request):
         patente = request.POST.get('patente')
         if patente:
             try:
-                vehiculo = Vehiculo.objects.get(Patente__iexact=patente)
+                vehiculo = Vehiculo.objects.get(patente__iexact=patente)
             except Vehiculo.DoesNotExist:
                 mensaje = "No se encontró un vehículo con esa patente."
         else:
             mensaje = "Ingrese una patente para buscar."
     return render(request, 'Vehículo/vehiculo_detalle.html', {'vehiculo': vehiculo, 'mensaje': mensaje})
-
-#UPDATE
-def vehiculo_modificar(request, pk):
-    vehiculo = get_object_or_404(Vehiculo, pk=pk)
-    if request.method == 'POST':
-        form = VehiculoForm(request.POST, instance=vehiculo)
-        if form.is_valid():
-            form.save()
-            return redirect('vehiculo_lista')  
-    else:
-        form = VehiculoForm(instance=vehiculo)
-    return render(request, 'Vehículo/vehiculo_modificar.html', {'form': form, 'vehiculo': vehiculo})
-
-#DELETE 
-def vehiculo_eliminar(request, pk):
-    vehiculo = get_object_or_404(Vehiculo, pk=pk)
-    if request.method == 'POST':
-        vehiculo.delete()
-        return redirect('vehiculo_lista')  
-    return render(request, 'Vehículo/vehiculo_eliminar.html', {'vehiculo': vehiculo})

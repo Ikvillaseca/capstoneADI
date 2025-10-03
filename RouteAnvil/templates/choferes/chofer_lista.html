@@ -18,18 +18,40 @@
                 <table class="table table-striped table-hover">
                     <thead class="table-dark">
                         <tr>
-                            <th scope="col">#ID</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Apellido</th>
+                            <th scope="col">RUT</th>
+                            <th scope="col">Nombre Completo</th>
+                            <th scope="col">Tipo de Licencia</th>
+                            <th scope="col">Próximo Control</th>
                             <th scope="col" class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for chofer in choferes %}
                         <tr>
-                            <td><strong>{{ chofer.id_chofer }}</strong></td>
-                            <td>{{ chofer.nombre }}</td>
-                            <td>{{ chofer.apellido }}</td>
+                            <td><strong>{{ chofer.rut }}</strong></td>
+                            <td>{{ chofer.nombre }} {{ chofer.apellido }}</td>
+                            <td>
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-id-card"></i> Licencia {{ chofer.tipo_licencia }}
+                                </span>
+                            </td>
+                            <td>
+                                {% load static %}
+                                {% now "Y-m-d" as today %}
+                                {% if chofer.fecha_proximo_control|date:"Y-m-d" < today %}
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-exclamation-triangle"></i> {{ chofer.fecha_proximo_control }}
+                                    </span>
+                                {% elif chofer.fecha_proximo_control|date:"Y-m-d" == today %}
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-clock"></i> {{ chofer.fecha_proximo_control }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-calendar-check"></i> {{ chofer.fecha_proximo_control }}
+                                    </span>
+                                {% endif %}
+                            </td>
                             <td class="text-center">
                                 <a href="{% url 'chofer_detalle' chofer.id_chofer %}" 
                                    class="btn btn-primary btn-sm me-2">
@@ -53,7 +75,6 @@
             <div class="alert alert-info text-center" role="alert">
                 <i class="fas fa-info-circle"></i>
                 <h5>No hay choferes registrados</h5>
-                <p class="mb-0">Comienza registrando tu primer chofer usando el botón "Registrar Chofer".</p>
             </div>
         {% endif %}
     </div>
