@@ -1,5 +1,5 @@
-# Eliminar chofer (DELETE)
-import requests, json
+import requests
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from .models import Chofer, Pasajero, Vehiculo
@@ -20,6 +20,8 @@ def destinos(request):
 
 def generar_ruta(request):
     return render(request, 'rutas/generador_rutas.html')
+
+# =====          USO DE API GOOGLE MAPS ROUTES          =====
 
 def test_api(request):
     context = {}
@@ -72,7 +74,7 @@ def test_api(request):
 
     return render(request, 'rutas/test_api.html', context)
 
-#CHOFERES CRUD - VISTAS
+# =====          CHOFERES CRUD / VISTAS           =====
 #Listar (READ ALL)
 def choferes_lista(request):
     choferes = Chofer.objects.all()
@@ -118,7 +120,8 @@ def chofer_eliminar(request, id):
         return redirect('chofer_lista')
     return redirect('chofer_lista') 
 
-# == PASAJEROS CRUD / VISTAS ==
+
+# =====          PASAJEROS CRUD / VISTAS           =====
 #Listar (READ *)
 def pasajeros_lista(request):
     pasajeros = Pasajero.objects.all()
@@ -168,9 +171,8 @@ def pasajero_eliminar(request, id):
         return redirect('pasajeros_lista')
     return redirect('pasajeros_lista')  
 
-# == VEHICULOS CRUD / VISTAS ==
-
-# READ ALL
+# =====          VEHICULOS CRUD / VISTAS           =====
+# READ
 def vehiculo_lista(request):
     vehiculos = Vehiculo.objects.all()
     return render(request, 'Vehículo/vehiculo_lista.html', {'vehiculos': vehiculos})
@@ -227,3 +229,23 @@ def buscar_vehiculo(request):
         else:
             mensaje = "Ingrese una patente para buscar."
     return render(request, 'Vehículo/vehiculo_detalle.html', {'vehiculo': vehiculo, 'mensaje': mensaje})
+
+#UPDATE
+def vehiculo_modificar(request, pk):
+    vehiculo = get_object_or_404(Vehiculo, pk=pk)
+    if request.method == 'POST':
+        form = VehiculoForm(request.POST, instance=vehiculo)
+        if form.is_valid():
+            form.save()
+            return redirect('vehiculo_lista')  
+    else:
+        form = VehiculoForm(instance=vehiculo)
+    return render(request, 'Vehículo/vehiculo_modificar.html', {'form': form, 'vehiculo': vehiculo})
+
+#DELETE 
+def vehiculo_eliminar(request, pk):
+    vehiculo = get_object_or_404(Vehiculo, pk=pk)
+    if request.method == 'POST':
+        vehiculo.delete()
+        return redirect('vehiculo_lista')  
+    return render(request, 'Vehículo/vehiculo_eliminar.html', {'vehiculo': vehiculo})
