@@ -45,7 +45,7 @@ def step_impl(context):
         wait = WebDriverWait(context.browser, 10) # Esperará hasta 10 segundos
         #Script para realizar las acciones - extraido de Selenium IDE
         try:
-            context.browser.find_element(By.CSS_SELECTOR, "a:nth-child(2) > button").click()
+            context.browser.find_element(By.CSS_SELECTOR, "a[href='/pasajero/crear/']").click()
             wait.until(EC.presence_of_element_located((By.ID, "id_rut")))
             context.browser.find_element(By.ID, "id_rut").click()
             context.browser.find_element(By.ID, "id_rut").send_keys(input_prueba_rut)
@@ -57,7 +57,7 @@ def step_impl(context):
             context.browser.find_element(By.ID, "id_telefono").send_keys(input_prueba_telefono)
             context.browser.find_element(By.ID, "id_empresa_trabajo").click()
             context.browser.find_element(By.ID, "id_empresa_trabajo").send_keys(input_prueba_empresa_trabajo)
-            context.browser.find_element(By.CSS_SELECTOR, "button").click()
+            context.browser.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
 
             context.datos_prueba_pasajero.append(persona_prueba)
 
@@ -82,4 +82,4 @@ def step_impl(context):
         # Comprobar si el RUT y el nombre están en el texto de la tabla
         if rut in texto_de_la_tabla and nombre in texto_de_la_tabla:
             pasajeros_encontrados += 1
-    assert context.datos_prueba_pasajero.count() == pasajeros_encontrados
+    assert len(context.datos_prueba_pasajero) == pasajeros_encontrados
