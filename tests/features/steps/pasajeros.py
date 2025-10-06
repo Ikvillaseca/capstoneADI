@@ -1,11 +1,9 @@
 from behave import given, when, then
-from behave.api.pending_step import StepNotImplementedError
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from features.environment import get_url
-import selenium
 @given('Navegue a la pagina de {nombre_pagina}')
 def step_impl(context, nombre_pagina):
 
@@ -28,12 +26,14 @@ def step_impl(context):
     #Guardar los datos de prueba de la persona en el contexto
     context.datos_prueba_pasajero = []
     for fila in context.table:
+        #Extraigo los datos de la tabla en .feature
         input_prueba_rut = fila['rut']
         input_prueba_nombre = fila['nombre']
         input_prueba_apellido = fila['apellido']
         input_prueba_telefono = fila['telefono']
         input_prueba_empresa_trabajo = fila['empresa_trabajo']
 
+        #Genero una persona de prueba con los datos de prueba para despues agregarlo a una lista y mandarlo al context de behave
         persona_prueba = {
             'rut' : input_prueba_rut,
             'nombre' : input_prueba_nombre,
@@ -42,11 +42,17 @@ def step_impl(context):
             'empresa_trabajo' : input_prueba_empresa_trabajo
         }
 
-        wait = WebDriverWait(context.browser, 10) # Esperará hasta 10 segundos
+        #Funcion para poder hacer que el enavegador espere hasta qeu ciertos elementos aparezcan
+        wait = WebDriverWait(context.browser, 3) #Esperará hasta 3 segundos
         #Script para realizar las acciones - extraido de Selenium IDE
         try:
+            #Ubicamos el boton para agregar pasajero
+            #Utilizar element_to_be_clickable con cuidado
+            wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a[href='/pasajero/crear/']")))
             context.browser.find_element(By.CSS_SELECTOR, "a[href='/pasajero/crear/']").click()
+            #Verificamos que estamos en la pagina de crear pasajero
             wait.until(EC.presence_of_element_located((By.ID, "id_rut")))
+            #Llenamos los datos del pasajero
             context.browser.find_element(By.ID, "id_rut").click()
             context.browser.find_element(By.ID, "id_rut").send_keys(input_prueba_rut)
             context.browser.find_element(By.ID, "id_nombre").click()
@@ -58,13 +64,14 @@ def step_impl(context):
             context.browser.find_element(By.ID, "id_empresa_trabajo").click()
             context.browser.find_element(By.ID, "id_empresa_trabajo").send_keys(input_prueba_empresa_trabajo)
             context.browser.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-
+            #Luego de clickear enviar, abre la pagina detalles, por lo tanto queremos volver a la pagina de lista
+            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "a.btn-secondary[href='/pasajeros/']")))
+            context.browser.find_element(By.CSS_SELECTOR, "a.btn-secondary[href='/pasajeros/']").click()
+            #Verificamos que llegamos a la pagina con la lista
+            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/pasajero/crear/']")))
             context.datos_prueba_pasajero.append(persona_prueba)
-
-            
-
         except TimeoutException:
-            print("Timeout occurred while adding passenger data.")
+            print(f"Timeout mientras se intentó agregar pasajero {input_prueba_rut}")
 
 
 
