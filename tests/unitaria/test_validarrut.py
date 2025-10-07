@@ -16,6 +16,16 @@ class TestValidarRut(unittest.TestCase):
         resultado = validar_rut("20534144-7",Chofer, None)
         self.assertEqual(resultado, "20534144-7")
 
+    def test_rut_invalido_formato(self):
+        with self.assertRaises(Exception) as context:
+            validar_rut("205341447",Chofer, None)
+        self.assertTrue("El RUT debe tener el siguiente formato (ejemplo: 12345678-9)." in str(context.exception))
+        
+    def test_rut_invalido_dv(self):
+        with self.assertRaises(Exception) as context:
+            validar_rut("20534144-8",Chofer, None)
+        self.assertTrue("El RUT ingresado no es válido. Verifique el dígito verificador." in str(context.exception))
+
 
 
 
