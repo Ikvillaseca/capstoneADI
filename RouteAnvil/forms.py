@@ -1,6 +1,11 @@
 from django import forms
 from .models import Chofer, Pasajero, Vehiculo
 from .choices import estado, tipo_licencia
+from .validadores import (
+    validar_rut, validar_texto, validar_telefono, 
+    validar_empresa, validar_direccion, validar_fechas_control_medico,
+    validar_patente, validar_capacidad, validar_fechas_revision_tecnica
+)  # Importar los validadores
 import re
 
 #Formulario para poder crear un chofer
@@ -26,40 +31,22 @@ class FormularioChofer(forms.ModelForm):
         }
     
     def clean_rut(self):
-        rut = self.cleaned_data['rut']
-        if not re.match(r'^\d{7,8}-[\dkK]$', rut):
-            raise forms.ValidationError("El RUT debe tener el siguiente formato (ejemplo: 12345678-9).")
-        
-        if not self.instance.pk and Chofer.objects.filter(rut=rut).exists():
-            raise forms.ValidationError("Ya existe un chofer con este RUT.")
-        
-        return rut
+        return validar_rut(self.cleaned_data['rut'], Chofer, self.instance)
     
     def clean_nombre(self):
-        nombre = self.cleaned_data['nombre']
-        if not nombre.isalpha():
-            raise forms.ValidationError("El nombre solo debe contener letras.")
-        return nombre
+        return validar_texto(self.cleaned_data['nombre'])
 
     def clean_apellido(self):
-        apellido = self.cleaned_data['apellido']
-        if not apellido.isalpha():
-            raise forms.ValidationError("El apellido solo debe contener letras.")
-        return apellido
+        return validar_texto(self.cleaned_data['apellido'])
 
     def clean_direccion(self):
-        direccion = self.cleaned_data['direccion']
-        if len(direccion) < 5:
-            raise forms.ValidationError("La direccion debe tener al menos 5 caracteres.")
-        return direccion
+        return validar_direccion(self.cleaned_data['direccion'])
 
     def clean(self):
         cleaned_data = super().clean()
         fecha_ultimo = cleaned_data.get('fecha_ultimo_control')
         fecha_proximo = cleaned_data.get('fecha_proximo_control')
-        if fecha_ultimo and fecha_proximo:
-            if fecha_proximo <= fecha_ultimo:
-                raise forms.ValidationError("La fecha del proximo control debe ser posterior a la del ultimo control.")
+        validar_fechas_control_medico(fecha_ultimo, fecha_proximo)
         return cleaned_data
 
 # Formulario para modificar choferes
@@ -84,30 +71,19 @@ class FormularioChoferModificar(forms.ModelForm):
         }
     
     def clean_nombre(self):
-        nombre = self.cleaned_data['nombre']
-        if not nombre.isalpha():
-            raise forms.ValidationError("El nombre solo debe contener letras.")
-        return nombre
+        return validar_texto(self.cleaned_data['nombre'])
 
     def clean_apellido(self):
-        apellido = self.cleaned_data['apellido']
-        if not apellido.isalpha():
-            raise forms.ValidationError("El apellido solo debe contener letras.")
-        return apellido
+        return validar_texto(self.cleaned_data['apellido'])
 
     def clean_direccion(self):
-        direccion = self.cleaned_data['direccion']
-        if len(direccion) < 5:
-            raise forms.ValidationError("La direccion debe tener al menos 5 caracteres.")
-        return direccion
+        return validar_direccion(self.cleaned_data['direccion'])
 
     def clean(self):
         cleaned_data = super().clean()
         fecha_ultimo = cleaned_data.get('fecha_ultimo_control')
         fecha_proximo = cleaned_data.get('fecha_proximo_control')
-        if fecha_ultimo and fecha_proximo:
-            if fecha_proximo <= fecha_ultimo:
-                raise forms.ValidationError("La fecha del proximo control debe ser posterior a la del ultimo control.")
+        validar_fechas_control_medico(fecha_ultimo, fecha_proximo)
         return cleaned_data
 
 #Formulario para poder crear un pasajero
@@ -124,38 +100,19 @@ class FormularioPasajero(forms.ModelForm):
         }
         
     def clean_rut(self):
-        rut = self.cleaned_data['rut']
-        if not re.match(r'^\d{7,8}-[\dkK]$', rut):
-            raise forms.ValidationError("El RUT debe tener el siguiente formato (ejemplo: 12345678-9).")
-        
-        if not self.instance.pk and Pasajero.objects.filter(rut=rut).exists():
-            raise forms.ValidationError("Ya existe un pasajero con este RUT.")
-        
-        return rut
+        return validar_rut(self.cleaned_data['rut'], Pasajero, self.instance)
     
     def clean_nombre(self):
-        nombre = self.cleaned_data['nombre']
-        if not nombre.isalpha():
-            raise forms.ValidationError("El nombre solo debe contener letras.")
-        return nombre
+        return validar_texto(self.cleaned_data['nombre'])
 
     def clean_apellido(self):
-        apellido = self.cleaned_data['apellido']
-        if not apellido.isalpha():
-            raise forms.ValidationError("El apellido solo debe contener letras.")
-        return apellido
+        return validar_texto(self.cleaned_data['apellido'])
     
     def clean_telefono(self):
-        telefono = self.cleaned_data['telefono']
-        if not re.match(r'^\+?1?\d{9,15}$', telefono):
-            raise forms.ValidationError("El numero de telefono debe tener entre 9 y 15 digitos y puede incluir el codigo de pais.")
-        return telefono
+        return validar_telefono(self.cleaned_data['telefono'])
     
     def clean_empresa_trabajo(self):
-        empresa_trabajo = self.cleaned_data['empresa_trabajo']
-        if len(empresa_trabajo) < 3:
-            raise forms.ValidationError("El nombre de la empresa debe tener al menos 3 caracteres.")
-        return empresa_trabajo
+        return validar_empresa(self.cleaned_data['empresa_trabajo'])
 
 # Formulario para modificar pasajeros 
 class FormularioPasajeroModificar(forms.ModelForm):
@@ -170,28 +127,16 @@ class FormularioPasajeroModificar(forms.ModelForm):
         }
     
     def clean_nombre(self):
-        nombre = self.cleaned_data['nombre']
-        if not nombre.isalpha():
-            raise forms.ValidationError("El nombre solo debe contener letras.")
-        return nombre
+        return validar_texto(self.cleaned_data['nombre'])
 
     def clean_apellido(self):
-        apellido = self.cleaned_data['apellido']
-        if not apellido.isalpha():
-            raise forms.ValidationError("El apellido solo debe contener letras.")
-        return apellido
+        return validar_texto(self.cleaned_data['apellido'])
     
     def clean_telefono(self):
-        telefono = self.cleaned_data['telefono']
-        if not re.match(r'^\+?1?\d{9,15}$', telefono):
-            raise forms.ValidationError("El numero de telefono debe tener entre 9 y 15 digitos y puede incluir el codigo de pais.")
-        return telefono
+        return validar_telefono(self.cleaned_data['telefono'])
     
     def clean_empresa_trabajo(self):
-        empresa_trabajo = self.cleaned_data['empresa_trabajo']
-        if len(empresa_trabajo) < 3:
-            raise forms.ValidationError("El nombre de la empresa debe tener al menos 3 caracteres.")
-        return empresa_trabajo
+        return validar_empresa(self.cleaned_data['empresa_trabajo'])
 
 # Formularios de vehículos
 class VehiculoForm(forms.ModelForm):
@@ -218,34 +163,19 @@ class VehiculoForm(forms.ModelForm):
     )
 
     def clean_patente(self):
-        patente = self.cleaned_data['patente']
-        if not re.match(r'^([A-Z]{2}\d{4})|([A-Z]{4}\d{2})$', patente):
-            raise forms.ValidationError("La patente debe ser en mayúsculas y debe tener uno de los siguientes formatos (ejemplo: AB1234 o ABCD12).")
-        
-        if not self.instance.pk and Vehiculo.objects.filter(patente=patente).exists():
-            raise forms.ValidationError("Ya existe un vehículo con esta patente.")
-        
-        return patente
+        return validar_patente(self.cleaned_data['patente'], self.instance)
     
     def clean_marca(self):
-        marca = self.cleaned_data['marca']
-        if not marca.isalpha():
-            raise forms.ValidationError("La marca solo debe contener letras.")
-        return marca
+        return validar_texto(self.cleaned_data['marca'])
     
     def clean_capacidad(self):
-        capacidad = self.cleaned_data['capacidad']
-        if capacidad <= 0:
-            raise forms.ValidationError("La capacidad debe ser un numero positivo.")
-        return capacidad
+        return validar_capacidad(self.cleaned_data['capacidad'])
     
     def clean(self):
         cleaned_data = super().clean()
         revision = cleaned_data.get('revision_tecnica')
         proxima_revision = cleaned_data.get('proxima_revision')
-        if revision and proxima_revision:
-            if proxima_revision <= revision:
-                raise forms.ValidationError("La fecha de la proxima revision debe ser posterior a la de la revision tecnica.")
+        validar_fechas_revision_tecnica(revision, proxima_revision)
         return cleaned_data
 
 class VehiculoModificarForm(forms.ModelForm):
@@ -270,22 +200,13 @@ class VehiculoModificarForm(forms.ModelForm):
     )
     
     def clean_marca(self):
-        marca = self.cleaned_data['marca']
-        if not marca.isalpha():
-            raise forms.ValidationError("La marca solo debe contener letras.")
-        return marca
-    
+        return validar_texto(self.cleaned_data['marca'])
     def clean_capacidad(self):
-        capacidad = self.cleaned_data['capacidad']
-        if capacidad <= 0:
-            raise forms.ValidationError("La capacidad debe ser un numero positivo.")
-        return capacidad
+        return validar_capacidad(self.cleaned_data['capacidad'])
     
     def clean(self):
         cleaned_data = super().clean()
         revision = cleaned_data.get('revision_tecnica')
         proxima_revision = cleaned_data.get('proxima_revision')
-        if revision and proxima_revision:
-            if proxima_revision <= revision:
-                raise forms.ValidationError("La fecha de la proxima revision debe ser posterior a la de la revision tecnica.")
+        validar_fechas_revision_tecnica(revision, proxima_revision)
         return cleaned_data
