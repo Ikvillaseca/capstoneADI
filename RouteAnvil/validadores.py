@@ -57,13 +57,23 @@ def validar_texto(texto):
 #Validaroes de pasajeros
 
 def validar_telefono(telefono):
-    if not re.match(r'^\d{8,15}$', telefono):
-        raise ValidationError("El teléfono debe contener entre 8 y 15 dígitos numéricos.")
-    return telefono
+    #Formato internacional y nacional de celulares chilenos
+    if re.match(r'^\+56\d{9}$', telefono):
+        return telefono
+    if re.match(r'^9\d{8}$', telefono):
+        return ('+56'+telefono)
+    #Formato internacional cualquier otro pais
+    if re.match(r'^\+\d{9,15}$', telefono):
+        return telefono
+    #Formato invalido
+    if not re.match(r'^\+\d{9,15}$', telefono):
+        raise ValidationError("El teléfono debe tener un formato válido (ej: +56912345678 o 912345678 para Chile, o formato internacional como +51912345678)")
 
 def validar_empresa(empresa):
     if len(empresa) < 3:
         raise ValidationError("El nombre de la empresa debe tener al menos 3 caracteres.")
+    if len(empresa) > 45:
+        raise ValidationError("El nombre de la empresa no debe exceder los 45 caracteres.")
     return empresa
 
 
