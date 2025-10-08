@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}RouteAnvil{% endblock titulo %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% comment %}<link href="{% static "css/custom.css" %}" rel="stylesheet">{% endcomment %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
@@ -20,32 +21,62 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav me-auto nav-underline">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'index' %}">
+                        {% url 'index' as url_esperada %}
+                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'index' %}">
                             <i class="fas fa-home"></i> Inicio
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'chofer_lista' %}">
+                        {% url 'chofer_lista' as url_esperada %}
+                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'chofer_lista' %}">
                             <i class="fas fa-users"></i> Choferes
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'pasajeros_lista' %}">
+                        {% url 'pasajeros_lista' as url_esperada %}
+                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'pasajeros_lista' %}">
                             <i class="fas fa-user-friends"></i> Pasajeros
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'vehiculo_lista' %}">
+                        {% url 'vehiculo_lista' as url_esperada %}
+                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'vehiculo_lista' %}">
                             <i class="fas fa-car"></i> Vehículos
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'testeo_api' %}">
-                            <i class="fas fa-map-marked-alt"></i>  API Rutas
+                        {% url 'rutas' as url_esperada %}
+                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'rutas' %}">
+                            <i class="fas fa-map-marked-alt"></i>  Rutas
                         </a>
                     </li>
+
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                    <span class="navbar-text email-navbar user-select-none ">
+                        {{user.email}}
+                    </span>
+                    {% endif %}
+
+                    {% if not user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="fa-solid fa-right-to-bracket"></i>  Iniciar Sesión
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button class="nav-link" type="submit"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+                        </form>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -72,6 +103,7 @@
         </div>
     </footer>
 
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

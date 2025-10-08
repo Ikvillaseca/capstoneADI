@@ -2,6 +2,7 @@ import requests
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from .models import Chofer, Pasajero, Vehiculo
 from .forms import (VehiculoForm, VehiculoModificarForm, FormularioChofer, 
                    FormularioChoferModificar, FormularioPasajero, FormularioPasajeroModificar)
@@ -58,7 +59,7 @@ def chofer_eliminar(request, id):
 #READ
 def pasajeros_lista(request):
     pasajeros = Pasajero.objects.all()
-    return render(request, 'pasajeros/pasajeros_lista.html', {'pasajeros': pasajeros})
+    return render(request, 'pasajeros/pasajero_lista.html', {'pasajeros': pasajeros})
 
 #CREATE
 def pasajero_crear(request):
@@ -164,10 +165,12 @@ def vehiculo_eliminar(request, patente):
 
 # ============ VISTAS RUTAS/API ============
 
+def ruta_home(request):
+    return render(request, 'rutas/generador_rutas.html')
+
+# TEST FUNCIONAMIENTO API
+@login_required()
 def testeo_api(request):
-    import requests
-    import json
-    
     api_key = settings.GOOGLE_MAPS_API_KEY
     
     if not api_key:

@@ -27,6 +27,7 @@ urlpatterns = [
     path('vehiculo/modificar/<str:patente>/', views.vehiculo_modificar, name='vehiculo_modificar'),
     path('vehiculo/eliminar/<str:patente>/', views.vehiculo_eliminar, name='vehiculo_eliminar'),
     
-    # URLs para API de rutas
-    path('testeo-api/', views.testeo_api, name='testeo_api'),
+    # URLs para rutas
+    path('rutas/', views.ruta_home, name='rutas'),
+    path('ruta/testeo-api/', views.testeo_api, name='testeo_api'),
 ]
