@@ -46,16 +46,12 @@ def validar_rut(rut, modelo, instance=None):
     
     return rut
 
-def validar_nombre(nombre):
-    if not nombre.isalpha():
-        raise ValidationError("El nombre solo debe contener letras.")
-    return nombre
+def validar_texto(texto):
+    if not texto.isalpha():
+        raise ValidationError("El texto solo debe contener letras.")
+    return texto
 
 
-def validar_apellido(apellido):
-    if not apellido.isalpha():
-        raise ValidationError("El apellido solo debe contener letras.")
-    return apellido
 
 
 #Validaroes de pasajeros

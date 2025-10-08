@@ -2,7 +2,7 @@ from django import forms
 from .models import Chofer, Pasajero, Vehiculo
 from .choices import estado, tipo_licencia
 from .validadores import (
-    validar_rut, validar_nombre, validar_apellido, validar_telefono, 
+    validar_rut, validar_texto, validar_telefono, 
     validar_empresa, validar_direccion, validar_fechas_control_medico,
     validar_patente, validar_capacidad, validar_fechas_revision_tecnica
 )  # Importar los validadores
@@ -34,10 +34,10 @@ class FormularioChofer(forms.ModelForm):
         return validar_rut(self.cleaned_data['rut'], Chofer, self.instance)
     
     def clean_nombre(self):
-        return validar_nombre(self.cleaned_data['nombre'])
+        return validar_texto(self.cleaned_data['nombre'])
 
     def clean_apellido(self):
-        return validar_apellido(self.cleaned_data['apellido'])
+        return validar_texto(self.cleaned_data['apellido'])
 
     def clean_direccion(self):
         return validar_direccion(self.cleaned_data['direccion'])
@@ -71,10 +71,10 @@ class FormularioChoferModificar(forms.ModelForm):
         }
     
     def clean_nombre(self):
-        return validar_nombre(self.cleaned_data['nombre'])
+        return validar_texto(self.cleaned_data['nombre'])
 
     def clean_apellido(self):
-        return validar_apellido(self.cleaned_data['apellido'])
+        return validar_texto(self.cleaned_data['apellido'])
 
     def clean_direccion(self):
         return validar_direccion(self.cleaned_data['direccion'])
@@ -103,10 +103,10 @@ class FormularioPasajero(forms.ModelForm):
         return validar_rut(self.cleaned_data['rut'], Pasajero, self.instance)
     
     def clean_nombre(self):
-        return validar_nombre(self.cleaned_data['nombre'])
+        return validar_texto(self.cleaned_data['nombre'])
 
     def clean_apellido(self):
-        return validar_apellido(self.cleaned_data['apellido'])
+        return validar_texto(self.cleaned_data['apellido'])
     
     def clean_telefono(self):
         return validar_telefono(self.cleaned_data['telefono'])
@@ -127,10 +127,10 @@ class FormularioPasajeroModificar(forms.ModelForm):
         }
     
     def clean_nombre(self):
-        return validar_nombre(self.cleaned_data['nombre'])
+        return validar_texto(self.cleaned_data['nombre'])
 
     def clean_apellido(self):
-        return validar_apellido(self.cleaned_data['apellido'])
+        return validar_texto(self.cleaned_data['apellido'])
     
     def clean_telefono(self):
         return validar_telefono(self.cleaned_data['telefono'])
@@ -166,7 +166,7 @@ class VehiculoForm(forms.ModelForm):
         return validar_patente(self.cleaned_data['patente'], self.instance)
     
     def clean_marca(self):
-        return validar_nombre(self.cleaned_data['marca'])
+        return validar_texto(self.cleaned_data['marca'])
     
     def clean_capacidad(self):
         return validar_capacidad(self.cleaned_data['capacidad'])
@@ -200,7 +200,7 @@ class VehiculoModificarForm(forms.ModelForm):
     )
     
     def clean_marca(self):
-        return validar_nombre(self.cleaned_data['marca'])
+        return validar_texto(self.cleaned_data['marca'])
     def clean_capacidad(self):
         return validar_capacidad(self.cleaned_data['capacidad'])
     
