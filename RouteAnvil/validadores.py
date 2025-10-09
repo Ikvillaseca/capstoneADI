@@ -93,6 +93,10 @@ def validar_fechas_control_medico(fecha_ultimo_control, fecha_proximo_control):
 
 #Validadores de vehiculos
 def validar_patente(patente, instance=None):
+    if re.match(r'^([A-Z]{2}\d{4})$', patente):
+        return patente
+    if re.match(r'^([A-Z]{4}\d{2})$', patente):
+        return patente
     if not re.match(r'^([A-Z]{2}\d{4})|([A-Z]{4}\d{2})$', patente):
             raise ValidationError("La patente debe ser en mayúsculas y debe tener uno de los siguientes formatos (ejemplo: AB1234 o ABCD12).")
     
@@ -103,7 +107,13 @@ def validar_patente(patente, instance=None):
     
     return patente
 
-def validar_capacidad(capacidad):
+def validar_capacidad(capacidad: str):
+    try:
+        capacidad = float(capacidad)
+    except ValueError:
+        raise ValidationError("La capacidad debe ser un número positivo.")
+    if capacidad != int(capacidad):
+        raise ValidationError("La capacidad debe ser un número positivo.")
     if capacidad <= 0:
         raise ValidationError("La capacidad debe ser un número positivo.")
     return capacidad
