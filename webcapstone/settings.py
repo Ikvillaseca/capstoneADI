@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+try:
+    import api
+    API_EXISTE=True 
+except ImportError:
+    API_EXISTE=False
 import dj_database_url
 
 #Para poder detectar que la app de Django está corriendo en Heroku y no localmente 
@@ -233,3 +238,15 @@ AUTH_USER_MODEL = "users.CustomUser"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = "/cuentas/login/"
+
+#Enviador de mails
+if API_EXISTE:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = str(api.EMAIL_HOST)
+    EMAIL_PORT = str(api.EMAIL_PORT)
+    EMAIL_HOST_USER = str(api.EMAIL_HOST_USER)
+    EMAIL_HOST_PASSWORD = str(api.EMAIL_HOST_PASSWORD)
+    EMAIL_USE_TLS = bool(api.EMAIL_USE_TLS)
+    EMAIL_USE_SSL = bool(api.EMAIL_USE_SSL)
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
