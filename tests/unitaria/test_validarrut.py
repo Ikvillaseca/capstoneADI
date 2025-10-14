@@ -26,6 +26,18 @@ class TestValidarRut(unittest.TestCase):
             validar_rut("20534144-8",Chofer, None)
         self.assertTrue("El RUT ingresado no es válido. Verifique el dígito verificador." in str(context.exception))
 
+    # Pruebas adicionales con digito verificador '0' y 'k'
+    def test_rut_0(self):
+        resultado = validar_rut("6124839-0", Pasajero, None)
+        self.assertEqual(resultado, "6124839-0")
+
+    def test_rut_k(self):
+        resultado = validar_rut("13065360-k", Chofer, None)
+        self.assertEqual(resultado, "13065360-k")
+    
+
+
+
 
 
 
