@@ -4,18 +4,18 @@ from .choices import estado, tipo_licencia
 # Create your models here.
 
 #Tabla Origen del viaje 
-class Origen(models.Model):
-    id_origen = models.AutoField(primary_key=True, verbose_name="ID Origen")
-    nombre_origen = models.CharField(max_length=45, verbose_name="Nombre Origen")
-    comuna = models.CharField(max_length=45, verbose_name="Comuna")
+class Empresa(models.Model):
+    id_empresa = models.AutoField(primary_key=True, verbose_name="ID Empresa")
+    nombre_empresa = models.CharField(max_length=45, verbose_name="Nombre Empresa")
+    ubicacion = models.CharField(max_length=45, verbose_name="Comuna")
 
     def __str__(self):
         return self.nombre_origen
 
 #Tabla Destino del viaje
-class Destino(models.Model):
+class Punto_toma_pasajero(models.Model):
     id_destino = models.AutoField(primary_key=True, verbose_name="ID Destino")
-    nombre_destino = models.CharField(max_length=45, verbose_name="Nombre Destino")
+    parada = models.CharField(max_length=45, verbose_name="Nombre parada")
     comuna = models.CharField(max_length=45, verbose_name="Comuna")
 
     def __str__(self):
@@ -68,8 +68,8 @@ class Viaje(models.Model):
     hora_Llegada = models.DateTimeField(verbose_name="Hora de Llegada")
     id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, verbose_name="Vehiculo")
     id_chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE, verbose_name="Chofer")
-    id_origen = models.ForeignKey(Origen, on_delete=models.CASCADE, verbose_name="Origen")
-    id_destino = models.ForeignKey(Destino, on_delete=models.CASCADE, verbose_name="Destino")
+    id_origen = models.ForeignKey(Empresa, on_delete=models.CASCADE, verbose_name="Origen")
+    id_destino = models.ForeignKey(Punto_toma_pasajero, on_delete=models.CASCADE, verbose_name="Destino")
 
     def __str__(self):
         return f"Viaje {self.id_viaje} - {self.id_origen} hacia {self.id_destino}"
