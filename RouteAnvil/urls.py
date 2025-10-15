@@ -29,5 +29,6 @@ urlpatterns = [
     
     # URLs para rutas
     path('rutas/', views.ruta_home, name='rutas'),
+    path('ruta/crear/', views.ruta_crear, name='ruta_crear'),
     path('ruta/testeo-api/', views.testeo_api, name='testeo_api'),
 ]

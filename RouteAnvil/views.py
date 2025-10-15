@@ -168,6 +168,21 @@ def vehiculo_eliminar(request, patente):
 def ruta_home(request):
     return render(request, 'rutas/generador_rutas.html')
 
+
+# TEST CONEXION DE DATOS PARA GENERAR VIAJE
+def ruta_crear(request):
+    if request.method == 'POST':
+        """ form = VehiculoForm(request.POST)
+        if form.is_valid():
+            vehiculo = form.save()
+            return redirect('vehiculo_detalle', patente=vehiculo.patente) """
+    else:
+        datos = {
+            'texto_de_prueba' : 'Veniam ut veniam aliqua non nisi occaecat nostrud ipsum incididunt adipisicing magna consectetur laborum.'
+        }
+    return render(request, 'rutas/ruta_crear.html', datos)
+
+
 # TEST FUNCIONAMIENTO API
 @login_required()
 def testeo_api(request):
