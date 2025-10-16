@@ -31,6 +31,8 @@ class Vehiculo(models.Model):
     id_vehiculo = models.AutoField(primary_key=True, verbose_name="ID Vehiculo")
     patente = models.CharField(max_length=7, unique=True, verbose_name="Patente") 
     marca = models.CharField(max_length=45, verbose_name="Marca")
+    modelo = models.CharField(max_length=45, verbose_name="Modelo")
+    anio = models.IntegerField(verbose_name="Año")
     capacidad = models.IntegerField(verbose_name="Capacidad")
     estado = models.CharField(max_length=1, choices=estado, default='A', verbose_name="Estado")
     revision_tecnica = models.DateField(verbose_name="Revision Tecnica")

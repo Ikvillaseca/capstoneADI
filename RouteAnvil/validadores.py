@@ -2,6 +2,7 @@ import re
 from itertools import cycle
 from django.core.exceptions import ValidationError
 from .models import Chofer, Pasajero, Vehiculo
+from datetime import datetime
 
 def _validar_rut_chileno(rut):
     # Limpiar el RUT de puntos y guiones
@@ -106,6 +107,20 @@ def validar_patente(patente, instance=None):
             raise ValidationError("Ya existe un vehículo con esta patente.")
     
     return patente
+
+def validar_modelo(modelo: str):
+    if not modelo:
+        raise ValidationError("El modelo no puede estar vacío.")
+    if len(modelo) < 3:
+        raise ValidationError("El modelo debe tener al menos 3 caracteres.")
+    if len(modelo) > 45:
+        raise ValidationError("El modelo no puede exceder los 45 caracteres.")
+    return modelo
+
+def validar_anio(anio: int):
+    if anio and (anio < 1950 or anio > datetime.now().year):
+        raise ValidationError("El año debe estar entre 1950 y el año actual.")
+    return anio
 
 def validar_capacidad(capacidad: str):
     try:

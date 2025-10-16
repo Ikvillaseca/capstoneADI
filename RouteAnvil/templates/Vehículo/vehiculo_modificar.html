@@ -33,6 +33,22 @@
                                     <div class="text-danger small mt-1">{{ form.marca.errors }}</div>
                                 {% endif %}
                             </dd>
+
+                            <dt class="col-sm-4 text-muted">Modelo:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.modelo }}
+                                {% if form.modelo.errors %}
+                                    <div class="text-danger small mt-1">{{ form.modelo.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Año:</dt>
+                            <dd class="col-sm-8">   
+                                {{ form.anio }}
+                                {% if form.anio.errors %}
+                                    <div class="text-danger small mt-1">{{ form.anio.errors }}</div>
+                                {% endif %}
+                            </dd>
                             
                             <dt class="col-sm-4 text-muted">Capacidad:</dt>
                             <dd class="col-sm-8">
