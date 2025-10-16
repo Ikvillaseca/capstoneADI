@@ -1,25 +1,16 @@
 from django.db import models
-from .choices import estado, tipo_licencia
+from .choices import estado, tipo_licencia, parada
 
 # Create your models here.
 
-#Tabla Origen del viaje 
-class Empresa(models.Model):
-    id_empresa = models.AutoField(primary_key=True, verbose_name="ID Empresa")
-    nombre_empresa = models.CharField(max_length=45, verbose_name="Nombre Empresa")
-    ubicacion = models.CharField(max_length=45, verbose_name="Comuna")
-
+#Tabla de destinos posibles
+class Ubicacion(models.Model):
+    id_ubicacion = models.AutoField(primary_key=True, verbose_name="ID Ubicacion")
+    tipo_parada = models.CharField(max_length=1, choices=parada, verbose_name="Tipo de Parada")
+    nombre = models.CharField(max_length=45, verbose_name="Nombre del Lugar")
+    direccion = models.CharField(max_length=100, verbose_name="Direccion del Lugar")
     def __str__(self):
-        return self.nombre_origen
-
-#Tabla Destino del viaje
-class Punto_toma_pasajero(models.Model):
-    id_destino = models.AutoField(primary_key=True, verbose_name="ID Destino")
-    parada = models.CharField(max_length=45, verbose_name="Nombre parada")
-    comuna = models.CharField(max_length=45, verbose_name="Comuna")
-
-    def __str__(self):
-        return self.nombre_destino
+        return self.nombre
 
 #Tabla Choferes 
 class Chofer(models.Model):
@@ -27,11 +18,11 @@ class Chofer(models.Model):
     rut = models.CharField(max_length=12, unique=True, verbose_name="RUT")
     nombre = models.CharField(max_length=45, verbose_name="Nombre")
     apellido = models.CharField(max_length=45, verbose_name="Apellido")
-    tipo_licencia = models.CharField(max_length=1, choices=tipo_licencia, verbose_name="Tipo de Licencia")  # Agregar choices
+    tipo_licencia = models.CharField(max_length=1, choices=tipo_licencia, verbose_name="Tipo de Licencia") 
     direccion = models.CharField(max_length=45, verbose_name="Direccion")
     fecha_ultimo_control = models.DateField(verbose_name="Fecha Ultimo Control")
     fecha_proximo_control = models.DateField(verbose_name="Fecha Proximo Control")
-
+    id_vehiculo = models.ForeignKey('Vehiculo', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Vehiculo Asignado")
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
 
@@ -64,22 +55,23 @@ class Pasajero(models.Model):
 class Viaje(models.Model):
     id_viaje = models.AutoField(primary_key=True, verbose_name="ID Viaje")
     fecha = models.DateField(verbose_name="Fecha del Viaje")
-    hora_Salida = models.DateTimeField(verbose_name="Hora de Salida")
-    hora_Llegada = models.DateTimeField(verbose_name="Hora de Llegada")
-    id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, verbose_name="Vehiculo")
+    hora_Salida = models.TimeField(verbose_name="Hora de Salida")
+    hora_Llegada = models.TimeField(verbose_name="Hora de Llegada")
+    id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Vehiculo")    
     id_chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE, verbose_name="Chofer")
-    id_origen = models.ForeignKey(Empresa, on_delete=models.CASCADE, verbose_name="Origen")
-    id_destino = models.ForeignKey(Punto_toma_pasajero, on_delete=models.CASCADE, verbose_name="Destino")
+    
+    origen = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, verbose_name="Origen", related_name='viajes_origen')
+    destino = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, verbose_name="Destino", related_name='viajes_destino')
 
     def __str__(self):
-        return f"Viaje {self.id_viaje} - {self.id_origen} hacia {self.id_destino}"
+        vehiculo_str = self.id_vehiculo.patente if self.id_vehiculo else "Sin Vehículo"
+        return f"Viaje {self.id_viaje} - {self.origen} → {self.destino} ({vehiculo_str})"
 
 #Tabla Reservas
-class Reserva(models.Model):
+class Pasajero_Viaje(models.Model):
     id_reserva = models.AutoField(primary_key=True, verbose_name="ID Reserva")
     id_pasajero = models.ForeignKey(Pasajero, on_delete=models.CASCADE, verbose_name="Pasajero")
     id_viaje = models.ForeignKey(Viaje, on_delete=models.CASCADE, verbose_name="Viaje")
 
     def __str__(self):
-        return f"Reserva {self.id_reserva} - Pasajero {self.id_pasajero} para Viaje {self.id_viaje}"
-
+        return f"Reserva {self.id_reserva} - Pasajero {self.id_pasajero} en Viaje {self.id_viaje}"
