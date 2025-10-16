@@ -14,6 +14,40 @@
             <div class="card-body p-4">
 
                 {{ texto_de_prueba }}
+                <hr>
+
+                <ul>
+                    <h1>Empresas</h1>
+                    {% for empresa in empresas %}
+                    <li>{{ empresa }}</li>
+                    lmao
+                    {% endfor %}
+                </ul>
+                <hr>
+
+                <ul>
+                    <h1>Pasajeros</h1>
+                    {% for pasajero in pasajeros %}
+                    <li>{{ pasajero.nombre }}</li>
+                    {% endfor %}
+                </ul>
+                <hr>
+
+                <ul>
+                    <h1>Choferes</h1>
+                    {% for chofer in choferes %}
+                    <li>{{ chofer.nombre }}</li>
+                    {% endfor %}
+                </ul>
+                <hr>
+                
+                <ul>
+                    <h1>Vehiculos</h1>
+                    {% for vehiculo in vehiculos %}
+                     <li>{{ vehiculo.patente }}</li>
+                    {% endfor %}
+                </ul>
+                <hr>
 
             </div>
         </div>

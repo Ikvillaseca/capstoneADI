@@ -176,11 +176,19 @@ def ruta_crear(request):
         if form.is_valid():
             vehiculo = form.save()
             return redirect('vehiculo_detalle', patente=vehiculo.patente) """
-    else:
+    if request.method == 'GET':
+        pasajeros = Pasajero.objects.all()
+        empresas = list(pasajeros.values_list('empresa_trabajo', flat=True).order_by('empresa_trabajo'))
+        vehiculos = Vehiculo.objects.all()
+        choferes = Chofer.objects.all()
         datos = {
-            'texto_de_prueba' : 'Veniam ut veniam aliqua non nisi occaecat nostrud ipsum incididunt adipisicing magna consectetur laborum.'
+            'empresas' : empresas,
+            'pasajeros' : pasajeros,
+            'vehiculos' : vehiculos,
+            'choferes' : choferes,
+            'texto_de_prueba' : 'Veniam ut veniam aliqua non nisi occaecat nostrud ipsum incididunt adipisicing magna consectetur laborum.',
         }
-    return render(request, 'rutas/ruta_crear.html', datos)
+        return render(request, 'rutas/ruta_crear.html', datos)
 
 
 # TEST FUNCIONAMIENTO API
