@@ -189,6 +189,21 @@ def ruta_crear(request):
             'texto_de_prueba' : 'Veniam ut veniam aliqua non nisi occaecat nostrud ipsum incididunt adipisicing magna consectetur laborum.',
         }
         return render(request, 'rutas/ruta_crear.html', datos)
+    
+def ruta_crear_seleccionar_pasajeros(request):
+    if request.method == 'GET':
+        pasajeros = Pasajero.objects.all()
+        empresas = set(pasajeros.values_list('empresa_trabajo', flat=True).order_by('empresa_trabajo'))
+        empresas = set(map(str.upper, empresas))
+        
+        print(empresas)
+        datos = {
+            'empresas' : empresas,
+            'pasajeros' : pasajeros,
+            'texto_de_prueba' : 'Veniam ut veniam aliqua non nisi occaecat nostrud ipsum incididunt adipisicing magna consectetur laborum.',
+        }
+        return render(request, 'rutas/ruta_crear_seleccionar_pasajeros.html', datos)
+
 
 
 # TEST FUNCIONAMIENTO API

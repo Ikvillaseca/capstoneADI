@@ -30,5 +30,6 @@ urlpatterns = [
     # URLs para rutas
     path('rutas/', views.ruta_home, name='rutas'),
     path('ruta/crear/', views.ruta_crear, name='ruta_crear'),
+    path('ruta/crear/pasajeros/', views.ruta_crear_seleccionar_pasajeros, name='ruta_crear_seleccionar_pasajeros'),
     path('ruta/testeo-api/', views.testeo_api, name='testeo_api'),
 ]

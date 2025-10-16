@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block titulo %}Crear ruta - Seleccionar Pasajeros{% endblock titulo %}
+
+{% block contenido %}
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fa-solid fa-route"></i> Crear Ruta
+                </h3>
+            </div>
+            <div class="card-body p-4">
+
+                {{ texto_de_prueba }}
+                <hr>
+
+                <ul>
+                    <h1>Empresas</h1>
+                    {% for empresa in empresas %}
+                    <li>{{ empresa }}</li>
+                    {% endfor %}
+                </ul>
+                <hr>
+
+                <ul>
+                    <h1>Pasajeros</h1>
+                    {% for pasajero in pasajeros %}
+                    <li>{{ pasajero.nombre }} - {{ pasajero.empresa_trabajo }}</li>
+                    {% endfor %}
+                </ul>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock contenido %}
