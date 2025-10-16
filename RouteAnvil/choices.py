@@ -15,3 +15,15 @@ tipo_licencia = (
     ('E', 'Licencia Clase E'),
 )
 
+
+#Destinos de viajes
+parada = (
+    ('M', 'Metro'),
+    ('E', 'Empresa'),
+    ('H', 'Hotel'),
+    ('A', 'Aeropuerto'),
+    ('P', 'Paradero'),
+    ('O', 'Otro')
+    
+)
+

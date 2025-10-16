@@ -86,6 +86,21 @@
                         </dl>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="{{ form.id_vehiculo.id_for_label }}" class="form-label">Vehículo Asignado</label>
+                        {{ form.id_vehiculo }}
+                        {% if form.id_vehiculo.errors %}
+                            <div class="text-danger">{{ form.id_vehiculo.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">
+                            {% if form.instance.id_vehiculo %}
+                                Actualmente asignado: {{ form.instance.id_vehiculo.patente }}
+                            {% else %}
+                                Sin vehículo asignado actualmente
+                            {% endif %}
+                        </div>
+                    </div>
+
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger" role="alert">
                             {{ form.non_field_errors }}
