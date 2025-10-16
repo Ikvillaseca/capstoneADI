@@ -19,37 +19,29 @@
                     <thead class="table-dark">
                         <tr>
                             <th scope="col">RUT</th>
-                            <th scope="col">Nombre Completo</th>
-                            <th scope="col">Tipo de Licencia</th>
-                            <th scope="col">Próximo Control</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Apellido</th>
+                            <th scope="col">Tipo Licencia</th>
+                            <th scope="col">Vehículo Asignado</th>
                             <th scope="col" class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for chofer in choferes %}
                         <tr>
-                            <td><strong>{{ chofer.rut }}</strong></td>
-                            <td>{{ chofer.nombre }} {{ chofer.apellido }}</td>
+                            <td>{{ chofer.rut }}</td>
+                            <td>{{ chofer.nombre }}</td>
+                            <td>{{ chofer.apellido }}</td>
                             <td>
-                                <span class="badge bg-secondary">
-                                    <i class="fas fa-id-card"></i> Licencia {{ chofer.tipo_licencia }}
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-bus"></i> {{ chofer.get_tipo_licencia_display }}
                                 </span>
                             </td>
                             <td>
-                                {% load static %}
-                                {% now "Y-m-d" as today %}
-                                {% if chofer.fecha_proximo_control|date:"Y-m-d" < today %}
-                                    <span class="badge bg-danger">
-                                        <i class="fas fa-exclamation-triangle"></i> {{ chofer.fecha_proximo_control }}
-                                    </span>
-                                {% elif chofer.fecha_proximo_control|date:"Y-m-d" == today %}
-                                    <span class="badge bg-warning text-dark">
-                                        <i class="fas fa-clock"></i> {{ chofer.fecha_proximo_control }}
-                                    </span>
+                                {% if chofer.id_vehiculo %}
+                                    <span class="badge bg-success">{{ chofer.id_vehiculo.patente }}</span>
                                 {% else %}
-                                    <span class="badge bg-success">
-                                        <i class="fas fa-calendar-check"></i> {{ chofer.fecha_proximo_control }}
-                                    </span>
+                                    <span class="badge bg-secondary">Sin asignar</span>
                                 {% endif %}
                             </td>
                             <td class="text-center">

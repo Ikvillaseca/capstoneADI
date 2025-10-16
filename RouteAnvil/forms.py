@@ -10,26 +10,30 @@ import re
 
 #Formulario para poder crear un chofer
 class FormularioChofer(forms.ModelForm):
-    fecha_ultimo_control = forms.DateField(
-        input_formats=['%d-%m-%Y'],
-        widget=forms.DateInput(format='%d-%m-%Y', attrs={'placeholder': 'DD-MM-AAAA', 'class': 'form-control'})
-    )
-    fecha_proximo_control = forms.DateField(
-        input_formats=['%d-%m-%Y'],
-        widget=forms.DateInput(format='%d-%m-%Y', attrs={'placeholder': 'DD-MM-AAAA', 'class': 'form-control'})
-    )
-
     class Meta:
         model = Chofer
-        fields = ['rut', 'nombre', 'apellido', 'tipo_licencia', 'direccion', 'fecha_ultimo_control', 'fecha_proximo_control']
+        fields = ['rut', 'nombre', 'apellido', 'tipo_licencia', 'direccion', 
+                 'fecha_ultimo_control', 'fecha_proximo_control', 'id_vehiculo']  # ✅ AGREGADO id_vehiculo
         widgets = {
-            'rut': forms.TextInput(attrs={'class': 'form-control'}),
+            'rut': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 12345678-9'}),
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'apellido': forms.TextInput(attrs={'class': 'form-control'}),
-            'tipo_licencia': forms.Select(choices=tipo_licencia, attrs={'class': 'form-select'}),
+            'tipo_licencia': forms.Select(attrs={'class': 'form-select'}),
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'fecha_ultimo_control': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'fecha_proximo_control': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'id_vehiculo': forms.Select(attrs={'class': 'form-select'}),  
         }
-    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Hacer el vehículo opcional
+        self.fields['id_vehiculo'].required = False
+        self.fields['id_vehiculo'].empty_label = "Sin vehículo asignado"
+        
+        #Solo mostrar vehículos disponibles
+        self.fields['id_vehiculo'].queryset = Vehiculo.objects.filter(estado='A')
+
     def clean_rut(self):
         return validar_rut(self.cleaned_data['rut'], Chofer, self.instance)
     
@@ -62,13 +66,22 @@ class FormularioChoferModificar(forms.ModelForm):
 
     class Meta:
         model = Chofer
-        fields = ['nombre', 'apellido', 'tipo_licencia', 'direccion', 'fecha_ultimo_control', 'fecha_proximo_control']  # Sin RUT
+        fields = ['nombre', 'apellido', 'tipo_licencia', 'direccion', 'fecha_ultimo_control', 'fecha_proximo_control', 'id_vehiculo']  # ✅ AGREGADO id_vehiculo
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'apellido': forms.TextInput(attrs={'class': 'form-control'}),
             'tipo_licencia': forms.Select(choices=tipo_licencia, attrs={'class': 'form-select'}),
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'id_vehiculo': forms.Select(attrs={'class': 'form-select'}),  
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.fields['id_vehiculo'].required = False
+        self.fields['id_vehiculo'].empty_label = "Sin vehículo asignado"
+        
+        self.fields['id_vehiculo'].queryset = Vehiculo.objects.filter(estado='A')
     
     def clean_nombre(self):
         return validar_texto(self.cleaned_data['nombre'])

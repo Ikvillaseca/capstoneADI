@@ -50,9 +50,19 @@
                         
                         <dt class="col-sm-4 text-muted">Próximo Control:</dt>
                         <dd class="col-sm-8">{{ chofer.fecha_proximo_control }}</dd>
+                        
+                        <!-- ✅ MOVER LA INFORMACIÓN DEL VEHÍCULO AQUÍ -->
+                        <dt class="col-sm-4 text-muted">Vehículo Asignado:</dt>
+                        <dd class="col-sm-8">
+                            {% if chofer.id_vehiculo %}
+                                <span class="badge bg-success">{{ chofer.id_vehiculo.patente }} - {{ chofer.id_vehiculo.marca }}</span>
+                                <br><small class="text-muted">Capacidad: {{ chofer.id_vehiculo.capacidad }} pasajeros</small>
+                            {% else %}
+                                <span class="badge bg-secondary">Sin vehículo asignado</span>
+                            {% endif %}
+                        </dd>
                     </dl>
                 </div>
-
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-between">
                     <a href="{% url 'chofer_lista' %}" class="btn btn-secondary">
@@ -62,6 +72,7 @@
                         <i class="fas fa-edit"></i> Modificar
                     </a>
                 </div>
+
             </div>
         </div>
     </div>
