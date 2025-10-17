@@ -13,7 +13,7 @@ class FormularioChofer(forms.ModelForm):
     class Meta:
         model = Chofer
         fields = ['rut', 'nombre', 'apellido', 'tipo_licencia', 'direccion', 
-                 'fecha_ultimo_control', 'fecha_proximo_control', 'id_vehiculo']  # ✅ AGREGADO id_vehiculo
+                 'fecha_ultimo_control', 'fecha_proximo_control', 'id_vehiculo']
         widgets = {
             'rut': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 12345678-9'}),
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
@@ -66,7 +66,7 @@ class FormularioChoferModificar(forms.ModelForm):
 
     class Meta:
         model = Chofer
-        fields = ['nombre', 'apellido', 'tipo_licencia', 'direccion', 'fecha_ultimo_control', 'fecha_proximo_control', 'id_vehiculo']  # ✅ AGREGADO id_vehiculo
+        fields = ['nombre', 'apellido', 'tipo_licencia', 'direccion', 'fecha_ultimo_control', 'fecha_proximo_control', 'id_vehiculo']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'apellido': forms.TextInput(attrs={'class': 'form-control'}),
@@ -155,9 +155,8 @@ class FormularioPasajeroModificar(forms.ModelForm):
 class VehiculoForm(forms.ModelForm):
     class Meta:
         model = Vehiculo
-        fields = ['id_vehiculo', 'patente', 'marca', 'capacidad', 'estado', 'revision_tecnica', 'proxima_revision']
+        fields = ['patente', 'marca', 'capacidad', 'estado', 'revision_tecnica', 'proxima_revision']
         widgets = {
-            'id_vehiculo': forms.NumberInput(attrs={'class': 'form-control'}),
             'patente': forms.TextInput(attrs={'class': 'form-control'}),
             'marca': forms.TextInput(attrs={'class': 'form-control'}),
             'capacidad': forms.NumberInput(attrs={'class': 'form-control'}),
