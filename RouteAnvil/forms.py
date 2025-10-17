@@ -222,3 +222,9 @@ class VehiculoModificarForm(forms.ModelForm):
         proxima_revision = cleaned_data.get('proxima_revision')
         validar_fechas_revision_tecnica(revision, proxima_revision)
         return cleaned_data
+    
+class FormularioViajeSeleccionarPasajeros(forms.Form):
+        choices = forms.ModelMultipleChoiceField(
+        queryset = Pasajero.objects.all().order_by('empresa_trabajo','apellido','nombre'),
+        widget  = forms.CheckboxSelectMultiple,
+    )

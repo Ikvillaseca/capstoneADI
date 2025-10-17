@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from .models import Chofer, Pasajero, Vehiculo
 from .forms import (VehiculoForm, VehiculoModificarForm, FormularioChofer, 
-                   FormularioChoferModificar, FormularioPasajero, FormularioPasajeroModificar)
+                   FormularioChoferModificar, FormularioPasajero, FormularioPasajeroModificar, FormularioViajeSeleccionarPasajeros)
 
 # Create your views here.
 def index(request):
@@ -191,13 +191,22 @@ def ruta_crear(request):
         return render(request, 'rutas/ruta_crear.html', datos)
     
 def ruta_crear_seleccionar_pasajeros(request):
+    if request.method == 'POST':
+        form = FormularioViajeSeleccionarPasajeros(request.POST)
+        if form.is_valid():
+            opciones_elegidas = request.POST.getlist('choices')
+            print(form)
+
     if request.method == 'GET':
+        form = FormularioViajeSeleccionarPasajeros()
+        print(form)
         pasajeros = Pasajero.objects.all().order_by('empresa_trabajo','apellido','nombre')
         empresas = set(pasajeros.values_list('empresa_trabajo', flat=True).order_by('empresa_trabajo'))
         empresas = set(map(str.upper, empresas))
         
         print(empresas)
         datos = {
+            'form': form,
             'empresas' : empresas,
             'pasajeros' : pasajeros,
             'texto_de_prueba' : 'Veniam ut veniam aliqua non nisi occaecat nostrud ipsum incididunt adipisicing magna consectetur laborum.',

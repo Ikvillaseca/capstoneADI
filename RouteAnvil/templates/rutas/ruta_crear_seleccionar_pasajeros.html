@@ -1,8 +1,10 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block titulo %}Crear ruta - Seleccionar Pasajeros{% endblock titulo %}
 
 {% block contenido %}
+<script type="text/javascript" src="{% static "js/routeanvil.viaje-pasajeros.js" %}"></script>
+
 <div class="row justify-content-center mb-5">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow">
@@ -12,6 +14,8 @@
                 </h3>
             </div>
             <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
 
                 {{ texto_de_prueba }}
                 <hr>
@@ -23,17 +27,26 @@
                     {% endfor %}
                 </ul>
                 <hr>
-
+                    {% for persona in form.choices %}
+                    {{ persona }}
+                    {% endfor %}
+                <hr>
                 <ul>
                     <h1>Pasajeros</h1>
                     {% for pasajero in pasajeros %}
-                    <li>{{ pasajero.nombre }} - {{ pasajero.empresa_trabajo }}</li>
+                    <li><input type='checkbox' name='check-pasajero' value="{{ pasajero.id_pasajero }}" onClick="toggle(this,'{{ pasajero.nombre }}')"></input> {{ pasajero.nombre }} - {{ pasajero.empresa_trabajo }}</li>
                     {% endfor %}
                 </ul>
                 <hr>
+                </form>
             </div>
         </div>
     </div>
 </div>
-
+{% comment%}
+BORRAR ESTO LUEGO - Pruebo que el js este funcionando
+{% endcomment %}
+<script>
+    testload()
+</script>
 {% endblock contenido %}
