@@ -1,29 +1,27 @@
-#Estados para vehiculos
+# Estados para vehiculos
 estado = (
-    ('A', 'Activo'),
-    ('I', 'Inactivo'),
-    ('M', 'Mantenimiento'),
-    ('E', 'En Ruta'),
+    ("A", "Activo"),
+    ("I", "Inactivo"),
+    ("M", "Mantenimiento"),
+    ("E", "En Ruta"),
 )
 
-#Tipos licencia para choferes
+# Tipos licencia para choferes
 tipo_licencia = (
-    ('A', 'Licencia Clase A'),
-    ('B', 'Licencia Clase B'),
-    ('C', 'Licencia Clase C'),
-    ('D', 'Licencia Clase D'),
-    ('E', 'Licencia Clase E'),
+    ("A", "Licencia Clase A"),
+    ("B", "Licencia Clase B"),
+    ("C", "Licencia Clase C"),
+    ("D", "Licencia Clase D"),
+    ("E", "Licencia Clase E"),
 )
 
 
-#Destinos de viajes
+# Destinos de viajes
 parada = (
-    ('M', 'Metro'),
-    ('E', 'Empresa'),
-    ('H', 'Hotel'),
-    ('A', 'Aeropuerto'),
-    ('P', 'Paradero'),
-    ('O', 'Otro')
-    
+    ("M", "Metro"),
+    ("E", "Empresa"),
+    ("H", "Hotel"),
+    ("A", "Aeropuerto"),
+    ("P", "Paradero"),
+    ("O", "Otro"),
 )
-

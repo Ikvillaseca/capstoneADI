@@ -38,7 +38,7 @@ class Vehiculo(models.Model):
     proxima_revision = models.DateField(verbose_name="Proxima Revision")
 
     def __str__(self):
-        return self.patente
+        return f"{self.patente}"
 
 #Tabla Pasajeros
 class Pasajero(models.Model):
