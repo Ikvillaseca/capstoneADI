@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Crear ruta - Seleccionar Pasajeros{% endblock titulo %}
+
+{% block contenido %}
+<script type="text/javascript" src="{% static "js/routeanvil.viaje-pasajeros.js" %}"></script>
+
+<div class="card shadow">
+    <div class="card-header bg-dark text-white text-center">
+        <h3 class="mb-0">
+            <i class="fa-solid fa-route"></i> Crear Ruta
+        </h3>
+    </div>
+    <div class="card-body p-4">
+        {% comment %}TEMPORAL, ES PARA MOSTRAR ERRORES USANDO LOS MENSAJES DE DJANGO{% endcomment %}
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                {{ message }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <h3>Empresas</h3>
+                <div class="list-group">
+                    <button type="button" class="list-group-item list-group-item-action empresa-filter active" data-empresa="todos">
+                        Mostrar Todos
+                    </button>
+                    {% for empresa in empresas %}
+                    <button type="button" class="list-group-item list-group-item-action empresa-filter" data-empresa="{{ empresa }}">
+                        {{ empresa }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% comment %}Seccion con el "seleccionar todos"{% endcomment %}
+                <div class="mb-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAllVisible(true)">
+                        <i class="fas fa-check-square"></i> Seleccionar todos los visibles
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="selectAllVisible(false)">
+                        <i class="fas fa-square"></i> Deseleccionar todos los visibles
+                    </button>
+                </div>
+
+            <div class="mb-4">
+                <h3>Pasajeros</h3>
+                <div >
+                    {% comment %}Este es el form original pero oculto para mantener la funcionalidad{% endcomment %}
+                    <div class="d-none">
+                        {{ form.choices }}
+                    </div>
+                    {% comment %}Form utilizadno los datos de pasajero_info{% endcomment %}
+                    {% for pasajero in pasajero_info %}
+                    <div class="form-check pasajero-item mb-2" data-empresa="{{ pasajero.empresa }}">
+                        <input type="checkbox" name="choices" value="{{ pasajero.id }}" id="pasajero_{{ forloop.counter }}" class="form-check-input">
+                        <label class="form-check-label pasajero-label" for="pasajero_{{ forloop.counter }}">
+                            {{ pasajero.nombre }} {{ pasajero.apellido }} <small class="text-muted">({{ pasajero.empresa }})</small>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        
+            <!-- Botones -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{% url 'rutas' %}" class="btn btn-secondary me-md-2">
+                    <i class="fas fa-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Siguiente
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>inicializar()</script>
+{% endblock contenido %}

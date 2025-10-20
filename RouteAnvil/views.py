@@ -1,8 +1,10 @@
 import requests
 import json
+import time
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import Chofer, Pasajero, Vehiculo
 from .forms import (VehiculoForm, VehiculoModificarForm, FormularioChofer, 
                    FormularioChoferModificar, FormularioPasajero, FormularioPasajeroModificar, FormularioViajeSeleccionarPasajeros)
@@ -186,34 +188,76 @@ def ruta_crear(request):
             'pasajeros' : pasajeros,
             'vehiculos' : vehiculos,
             'choferes' : choferes,
-            'texto_de_prueba' : 'Veniam ut veniam aliqua non nisi occaecat nostrud ipsum incididunt adipisicing magna consectetur laborum.',
         }
         return render(request, 'rutas/ruta_crear.html', datos)
-    
+
+# Paso 1 de creación de viaje - Seleccionar pasajeros
+@login_required
 def ruta_crear_seleccionar_pasajeros(request):
     if request.method == 'POST':
-        form = FormularioViajeSeleccionarPasajeros(request.POST)
-        if form.is_valid():
-            opciones_elegidas = request.POST.getlist('choices')
-            print(form)
+        # Obtener y validar los pasajeros seleccionados
+        opciones_elegidas = request.POST.getlist('choices')
+        print(opciones_elegidas)
+        
+        # Validar que los IDs recibidos son validos
+        ids_validos = set(str(p.id_pasajero) for p in Pasajero.objects.all())
+        opciones_validadas = [id for id in opciones_elegidas if id in ids_validos]
+
+        # TEMPORAL
+        if not opciones_validadas:
+            # Si no hay selecciones válidas, mostrar mensaje y volver al formulario
+            messages.warning(request, "Debe seleccionar al menos un pasajero válido.")
+            return redirect('ruta_crear_seleccionar1_pasajeros')
+        # Guardar IDs validados en la session para usarlos sin tener que almacenarlos en la base de datos para el siguiente paso
+        request.session['pasajeros_seleccionados'] = opciones_validadas
+        request.session['pasajeros_timestamp'] = int(time.time())
+
+        return redirect('ruta_crear_seleccionar2_choferes')
 
     if request.method == 'GET':
+        # Form
         form = FormularioViajeSeleccionarPasajeros()
-        print(form)
+
         pasajeros = Pasajero.objects.all().order_by('empresa_trabajo','apellido','nombre')
+        # Empresas
         empresas = set(pasajeros.values_list('empresa_trabajo', flat=True).order_by('empresa_trabajo'))
-        empresas = set(map(str.upper, empresas))
+        empresas = list(set(map(str.upper, empresas)))
         
-        print(empresas)
+        # Pasajeros
+        pasajero_info = []
+        for pasajero in pasajeros:
+            pasajero_info.append({
+                'id': str(pasajero.id_pasajero),
+                'nombre': pasajero.nombre,
+                'apellido': pasajero.apellido,
+                'empresa': pasajero.empresa_trabajo.upper(),
+            })
+        
         datos = {
             'form': form,
-            'empresas' : empresas,
-            'pasajeros' : pasajeros,
-            'texto_de_prueba' : 'Veniam ut veniam aliqua non nisi occaecat nostrud ipsum incididunt adipisicing magna consectetur laborum.',
+            'empresas': empresas,
+            'pasajero_info': pasajero_info
         }
-        return render(request, 'rutas/ruta_crear_seleccionar_pasajeros.html', datos)
+        return render(request, 'rutas/ruta_crear_seleccionar1_pasajeros.html', datos)
 
+# Paso 2 de creación de viaje - Seleccionar choferes disponibles
+@login_required
+def ruta_crear_seleccionar_choferes(request):
 
+    # TEMPORAL
+    # Verificar que haya pasajeros seleccionados en la sesión
+    if 'pasajeros_seleccionados' not in request.session:
+        messages.error(request, "Debe seleccionar pasajeros primero")
+        return redirect('ruta_crear_seleccionar1_pasajeros')
+    
+    # Verificar antiguedad
+    timestamp = request.session.get('pasajeros_timestamp', 0)
+    if int(time.time()) - timestamp > 1800:  # 30 minutos
+        messages.warning(request, "Su sesión ha expirado. Por favor seleccione pasajeros nuevamente.")
+        return redirect('ruta_crear_seleccionar1_pasajeros')
+        
+    # Continuar con el flujo normal
+    return render(request, 'rutas/ruta_crear_seleccionar2_choferes.html')
 
 # TEST FUNCIONAMIENTO API
 @login_required()

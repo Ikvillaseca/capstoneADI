@@ -224,7 +224,7 @@ class VehiculoModificarForm(forms.ModelForm):
         return cleaned_data
     
 class FormularioViajeSeleccionarPasajeros(forms.Form):
-        choices = forms.ModelMultipleChoiceField(
+    choices = forms.ModelMultipleChoiceField(
         queryset = Pasajero.objects.all().order_by('empresa_trabajo','apellido','nombre'),
-        widget  = forms.CheckboxSelectMultiple,
+        widget  = forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
     )
