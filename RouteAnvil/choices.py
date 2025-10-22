@@ -8,11 +8,13 @@ estado = (
 
 # Tipos licencia para choferes
 tipo_licencia = (
-    ("A", "Licencia Clase A"),
+    ("A1", "Licencia Clase A1"),
+    ("A2", "Licencia Clase A2"),
+    ("A3", "Licencia Clase A3"),
+    ("A4", "Licencia Clase A4"),
+    ("A5", "Licencia Clase A5"),
     ("B", "Licencia Clase B"),
-    ("C", "Licencia Clase C"),
-    ("D", "Licencia Clase D"),
-    ("E", "Licencia Clase E"),
+
 )
 
 

@@ -19,7 +19,7 @@ class Chofer(models.Model):
     rut = models.CharField(max_length=12, unique=True, verbose_name="RUT")
     nombre = models.CharField(max_length=45, verbose_name="Nombre")
     apellido = models.CharField(max_length=45, verbose_name="Apellido")
-    tipo_licencia = models.CharField(max_length=1, choices=tipo_licencia, verbose_name="Tipo de Licencia") 
+    tipo_licencia = models.CharField(max_length=2, choices=tipo_licencia, verbose_name="Tipo de Licencia") 
     direccion = models.CharField(max_length=45, verbose_name="Direccion")
     fecha_ultimo_control = models.DateField(verbose_name="Fecha Ultimo Control")
     fecha_proximo_control = models.DateField(verbose_name="Fecha Proximo Control")
