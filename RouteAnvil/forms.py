@@ -155,10 +155,12 @@ class FormularioPasajeroModificar(forms.ModelForm):
 class VehiculoForm(forms.ModelForm):
     class Meta:
         model = Vehiculo
-        fields = ['patente', 'marca', 'capacidad', 'estado', 'revision_tecnica', 'proxima_revision']
+        fields = ['patente', 'marca', 'modelo', 'anio', 'capacidad', 'estado', 'revision_tecnica', 'proxima_revision']
         widgets = {
             'patente': forms.TextInput(attrs={'class': 'form-control'}),
             'marca': forms.TextInput(attrs={'class': 'form-control'}),
+            'modelo': forms.TextInput(attrs={'class': 'form-control'}),
+            'anio': forms.NumberInput(attrs={'class': 'form-control'}),
             'capacidad': forms.NumberInput(attrs={'class': 'form-control'}),
             'estado': forms.Select(choices=estado, attrs={'class': 'form-select'}),
             'revision_tecnica': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'DD-MM-AAAA'}),
@@ -196,6 +198,8 @@ class VehiculoModificarForm(forms.ModelForm):
         fields = ['marca', 'capacidad', 'estado', 'revision_tecnica', 'proxima_revision']
         widgets = {
             'marca': forms.TextInput(attrs={'class': 'form-control'}),
+            'modelo': forms.TextInput(attrs={'class': 'form-control'}),
+            'anio': forms.NumberInput(attrs={'class': 'form-control'}),
             'capacidad': forms.NumberInput(attrs={'class': 'form-control'}),
             'estado': forms.Select(choices=estado, attrs={'class': 'form-select'}),
             'revision_tecnica': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'DD-MM-AAAA'}),
