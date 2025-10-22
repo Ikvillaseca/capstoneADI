@@ -81,6 +81,21 @@ footer {
     margin-top: auto;
 }
 
+/* --- Estilos para proceso de ruta --- */
+.pasajero-item:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.pasajero-label:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.empresa-filter {
+    cursor: pointer;
+}
+
 /* --- Estilos para navbar --- */
 .email-navbar {
     color: white;    

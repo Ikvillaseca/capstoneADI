@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from .choices import estado, tipo_licencia, parada
 
@@ -5,7 +6,7 @@ from .choices import estado, tipo_licencia, parada
 
 #Tabla de destinos posibles
 class Ubicacion(models.Model):
-    id_ubicacion = models.AutoField(primary_key=True, verbose_name="ID Ubicacion")
+    id_ubicacion = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Ubicacion")
     tipo_parada = models.CharField(max_length=1, choices=parada, verbose_name="Tipo de Parada")
     nombre = models.CharField(max_length=45, verbose_name="Nombre del Lugar")
     direccion = models.CharField(max_length=100, verbose_name="Direccion del Lugar")
@@ -14,7 +15,7 @@ class Ubicacion(models.Model):
 
 #Tabla Choferes 
 class Chofer(models.Model):
-    id_chofer = models.AutoField(primary_key=True, verbose_name="ID Chofer")
+    id_chofer = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Chofer")
     rut = models.CharField(max_length=12, unique=True, verbose_name="RUT")
     nombre = models.CharField(max_length=45, verbose_name="Nombre")
     apellido = models.CharField(max_length=45, verbose_name="Apellido")
@@ -28,7 +29,7 @@ class Chofer(models.Model):
 
 #Tabla Vehiculos
 class Vehiculo(models.Model):
-    id_vehiculo = models.AutoField(primary_key=True, verbose_name="ID Vehiculo")
+    id_vehiculo = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Vehiculo")
     patente = models.CharField(max_length=7, unique=True, verbose_name="Patente") 
     marca = models.CharField(max_length=45, verbose_name="Marca")
     modelo = models.CharField(max_length=45, verbose_name="Modelo")
@@ -39,11 +40,11 @@ class Vehiculo(models.Model):
     proxima_revision = models.DateField(verbose_name="Proxima Revision")
 
     def __str__(self):
-        return self.patente
+        return f"{self.patente}"
 
 #Tabla Pasajeros
 class Pasajero(models.Model):
-    id_pasajero = models.AutoField(primary_key=True, verbose_name="ID Pasajero")
+    id_pasajero = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Pasajero")
     rut = models.CharField(max_length=12, unique=True, verbose_name="RUT")  
     nombre = models.CharField(max_length=45, verbose_name="Nombre")
     apellido = models.CharField(max_length=45, verbose_name="Apellido")
@@ -55,7 +56,7 @@ class Pasajero(models.Model):
 
 #Tabla Viajes 
 class Viaje(models.Model):
-    id_viaje = models.AutoField(primary_key=True, verbose_name="ID Viaje")
+    id_viaje = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Viaje")
     fecha = models.DateField(verbose_name="Fecha del Viaje")
     hora_Salida = models.TimeField(verbose_name="Hora de Salida")
     hora_Llegada = models.TimeField(verbose_name="Hora de Llegada")
@@ -71,7 +72,7 @@ class Viaje(models.Model):
 
 #Tabla Reservas
 class Pasajero_Viaje(models.Model):
-    id_reserva = models.AutoField(primary_key=True, verbose_name="ID Reserva")
+    id_reserva = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Reserva")
     id_pasajero = models.ForeignKey(Pasajero, on_delete=models.CASCADE, verbose_name="Pasajero")
     id_viaje = models.ForeignKey(Viaje, on_delete=models.CASCADE, verbose_name="Viaje")
 

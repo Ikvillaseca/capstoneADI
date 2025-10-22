@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Crear ruta - Seleccionar Pasajeros{% endblock titulo %}
+
+{% block contenido %}
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fa-solid fa-route"></i> Crear Ruta
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                {% comment %}TEMPORAL, ES PARA MOSTRAR ERRORES USANDO LOS MENSAJES DE DJANGO{% endcomment %}
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                        {{ message }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                        <div class="mb-4">
+                            <h3>Choferes</h3>
+                        </div>
+                    <!-- Botones -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'ruta_crear_seleccionar1_pasajeros' %}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Siguiente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

@@ -1,5 +1,4 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from RouteAnvil import views
 
 urlpatterns = [
@@ -9,16 +8,16 @@ urlpatterns = [
     # URLs para choferes
     path('choferes/', views.chofer_lista, name='chofer_lista'),
     path('chofer/crear/', views.chofer_crear, name='chofer_crear'),
-    path('chofer/detalle/<int:id>/', views.chofer_detalle, name='chofer_detalle'),
-    path('chofer/modificar/<int:id>/', views.chofer_modificar, name='chofer_modificar'),
-    path('chofer/eliminar/<int:id>/', views.chofer_eliminar, name='chofer_eliminar'),
+    path('chofer/detalle/<uuid:id_chofer>/', views.chofer_detalle, name='chofer_detalle'),
+    path('chofer/modificar/<uuid:id_chofer>/', views.chofer_modificar, name='chofer_modificar'),
+    path('chofer/eliminar/<uuid:id_chofer>/', views.chofer_eliminar, name='chofer_eliminar'),
     
     # URLs para pasajeros
     path('pasajeros/', views.pasajeros_lista, name='pasajeros_lista'),
     path('pasajero/crear/', views.pasajero_crear, name='pasajero_crear'),
-    path('pasajero/detalles/<int:id>/', views.pasajero_detalles, name='pasajero_detalles'),
-    path('pasajero/modificar/<int:id>/', views.pasajero_modificar, name='pasajero_modificar'),
-    path('pasajero/eliminar/<int:id>/', views.pasajero_eliminar, name='pasajero_eliminar'),
+    path('pasajero/detalles/<uuid:id_pasajero>/', views.pasajero_detalles, name='pasajero_detalles'),
+    path('pasajero/modificar/<uuid:id_pasajero>/', views.pasajero_modificar, name='pasajero_modificar'),
+    path('pasajero/eliminar/<uuid:id_pasajero>/', views.pasajero_eliminar, name='pasajero_eliminar'),
     
     # URLs para vehículos
     path('vehiculos/', views.vehiculo_lista, name='vehiculo_lista'),
@@ -29,5 +28,8 @@ urlpatterns = [
     
     # URLs para rutas
     path('rutas/', views.ruta_home, name='rutas'),
+    path('ruta/crear/', views.ruta_crear, name='ruta_crear'),
+    path('ruta/crear/pasajeros/', views.ruta_crear_seleccionar_pasajeros, name='ruta_crear_seleccionar1_pasajeros'),
+    path('ruta/crear/choferes/', views.ruta_crear_seleccionar_choferes, name='ruta_crear_seleccionar2_choferes'),
     path('ruta/testeo-api/', views.testeo_api, name='testeo_api'),
 ]
