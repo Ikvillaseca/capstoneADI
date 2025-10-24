@@ -237,21 +237,28 @@ def ruta_crear_seleccionar_pasajeros(request):
 @login_required
 def ruta_crear_seleccionar_choferes(request, id_grupo_pasajeros):
     if request.method == 'POST':
+        choferes_elegidos = request.POST.getlist('choices')
+        print(choferes_elegidos)
         print("ok")
         return redirect('ruta_crear_seleccionar2_choferes', id_grupo_pasajeros = id_grupo_pasajeros)
     
 
     if request.method == 'GET':
         try:
-            print("ok")
+            # Obtener los datos de los pasajeros del grupo
             grupo_pasajeros = Grupo_Pasajeros.objects.get(pk=id_grupo_pasajeros)
-            print(grupo_pasajeros.pasajero.all()) #Para saber cuales pasajeros estan asignados a este grupo
             lista_pasajeros = grupo_pasajeros.pasajero.all()
             cantidad_pasajeros = len(lista_pasajeros)
 
+            # Obtener los datos del chofer junto al vehiculo asignado - 
+            chofer_vehiculo = Chofer.objects.select_related("id_vehiculo")
+            chofer_con_vehiculo = chofer_vehiculo.exclude(id_vehiculo__exact=None)
+            chofer_sin_vehiculo = chofer_vehiculo.filter(id_vehiculo__exact=None)
             datos = {
-                'lista_pasajeros' : lista_pasajeros,
-                'cantidad_pasajeros' : cantidad_pasajeros
+                "lista_pasajeros": lista_pasajeros,
+                "cantidad_pasajeros": cantidad_pasajeros,
+                "chofer_con_vehiculo": chofer_con_vehiculo,
+                "chofer_sin_vehiculo": chofer_sin_vehiculo,
             }
             return render(request, 'rutas/ruta_crear_seleccionar2_choferes.html', datos)
         except Exception as e: 

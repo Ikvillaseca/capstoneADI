@@ -1,40 +1,62 @@
 {% extends "base.html" %}
 {% load static %}
-{% block titulo %}Crear ruta - Seleccionar Pasajeros{% endblock titulo %}
+{% block titulo %}Crear ruta - Seleccionar Choferes{% endblock titulo %}
 
 {% block contenido %}
-<div class="row justify-content-center mb-5">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow">
-            <div class="card-header bg-dark text-white text-center">
-                <h3 class="mb-0">
-                    <i class="fa-solid fa-route"></i> Crear Ruta
-                </h3>
-            </div>
-            <div class="card-body p-4">
-                <h1>Nº de Pasajeros: {{ cantidad_pasajeros }}</h1>
-                <h1>Pasajeros</h1>
-                {% for pasajero in lista_pasajeros %}
-                {{ pasajero.nombre }}
-                {% endfor %}
 
-                <form method="post">
-                    {% csrf_token %}
-                        <div class="mb-4">
-                            <h3>Choferes</h3>
-                        </div>
-                    <!-- Botones -->
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'ruta_crear_seleccionar1_pasajeros' %}" class="btn btn-secondary me-md-2">
-                            <i class="fas fa-arrow-left"></i> Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-save"></i> Siguiente
-                        </button>
-                    </div>
-                </form>
-            </div>
+<div class="card shadow">
+    <div class="card-header bg-dark text-white text-center">
+        <h3 class="mb-0">
+            <i class="fa-solid fa-route"></i> Crear Ruta - Seleccionar Choferes
+        </h3>
+    </div>
+    <div class="card-body p-4">
+        <h1>Nº de Pasajeros: {{ cantidad_pasajeros }}</h1>
+        <h1>Pasajeros: </h1>
+        <div>
+            <ul>
+                {% for pasajero in lista_pasajeros %}
+                    <li>
+                        {{ pasajero.nombre }}
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
+
+        <form method="post">
+            {% csrf_token %}
+                <div class="mb-4">
+                    <h3>Choferes</h3>
+
+                    {% for chofer in chofer_con_vehiculo %}
+                    <div class="form-check mb-2">
+                        <input type="checkbox" name="choices" value="{{ chofer.id_chofer }}" id="chofer_{{ forloop.counter }}" class="form-check-input">
+                        <label class="form-check-label pasajero-label" for="chofer_{{ forloop.counter }}">
+                            {{ chofer.nombre }} {{ chofer.apellido }} - {{ chofer.id_vehiculo.marca }} {{ chofer.id_vehiculo.modelo }} {{ chofer.id_vehiculo.anio }} <small class="text-muted">(Capacidad : {{ chofer.id_vehiculo.capacidad }} pasajeros)</small>
+                        </label>
+                    </div>
+                    {% endfor %}
+                    <h4>Choferes no disponibles</h4>
+                    <div>
+                        <ul>
+                            {% for chofer in chofer_sin_vehiculo %}
+                                <li>{{ chofer.nombre }} {{ chofer.apellido }} - Sin vehiculo asignado</li> 
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+            <!-- Botones -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{% url 'ruta_crear_seleccionar1_pasajeros' %}" class="btn btn-secondary me-md-2">
+                    <i class="fas fa-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Siguiente
+                </button>
+            </div>
+        </form>
     </div>
 </div>
+
 {% endblock contenido %}
