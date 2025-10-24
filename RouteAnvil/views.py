@@ -1,11 +1,9 @@
 import requests
 import json
-import time
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Chofer, Pasajero, Vehiculo
+from .models import Chofer, Pasajero, Vehiculo, Grupo_Pasajeros
 from .forms import (VehiculoForm, VehiculoModificarForm, FormularioChofer, 
                    FormularioChoferModificar, FormularioPasajero, FormularioPasajeroModificar, FormularioViajeSeleccionarPasajeros)
 
@@ -195,24 +193,19 @@ def ruta_crear(request):
 @login_required
 def ruta_crear_seleccionar_pasajeros(request):
     if request.method == 'POST':
-        # Obtener y validar los pasajeros seleccionados
+        # Obtener los pasajeros seleccionados
         opciones_elegidas = request.POST.getlist('choices')
-        print(opciones_elegidas)
         
         # Validar que los IDs recibidos son validos
         ids_validos = set(str(p.id_pasajero) for p in Pasajero.objects.all())
         opciones_validadas = [id for id in opciones_elegidas if id in ids_validos]
 
-        # TEMPORAL
-        if not opciones_validadas:
-            # Si no hay selecciones válidas, mostrar mensaje y volver al formulario
-            messages.warning(request, "Debe seleccionar al menos un pasajero válido.")
-            return redirect('ruta_crear_seleccionar1_pasajeros')
-        # Guardar IDs validados en la session para usarlos sin tener que almacenarlos en la base de datos para el siguiente paso
-        request.session['pasajeros_seleccionados'] = opciones_validadas
-        request.session['pasajeros_timestamp'] = int(time.time())
+        #Crear grupo de pasajeros , luego agregar cada uno de los pasajeros al viaje
+        grupo = Grupo_Pasajeros.objects.create()
+        for id_pasajero in opciones_validadas:
+            grupo.pasajero.add(id_pasajero)
 
-        return redirect('ruta_crear_seleccionar2_choferes')
+        return redirect('ruta_crear_seleccionar2_choferes', id_grupo_pasajeros = grupo.id_grupo_pasajeros)
 
     if request.method == 'GET':
         # Form
@@ -242,22 +235,28 @@ def ruta_crear_seleccionar_pasajeros(request):
 
 # Paso 2 de creación de viaje - Seleccionar choferes disponibles
 @login_required
-def ruta_crear_seleccionar_choferes(request):
-
-    # TEMPORAL
-    # Verificar que haya pasajeros seleccionados en la sesión
-    if 'pasajeros_seleccionados' not in request.session:
-        messages.error(request, "Debe seleccionar pasajeros primero")
-        return redirect('ruta_crear_seleccionar1_pasajeros')
+def ruta_crear_seleccionar_choferes(request, id_grupo_pasajeros):
+    if request.method == 'POST':
+        print("ok")
+        return redirect('ruta_crear_seleccionar2_choferes', id_grupo_pasajeros = id_grupo_pasajeros)
     
-    # Verificar antiguedad
-    timestamp = request.session.get('pasajeros_timestamp', 0)
-    if int(time.time()) - timestamp > 1800:  # 30 minutos
-        messages.warning(request, "Su sesión ha expirado. Por favor seleccione pasajeros nuevamente.")
-        return redirect('ruta_crear_seleccionar1_pasajeros')
-        
-    # Continuar con el flujo normal
-    return render(request, 'rutas/ruta_crear_seleccionar2_choferes.html')
+
+    if request.method == 'GET':
+        try:
+            print("ok")
+            grupo_pasajeros = Grupo_Pasajeros.objects.get(pk=id_grupo_pasajeros)
+            print(grupo_pasajeros.pasajero.all()) #Para saber cuales pasajeros estan asignados a este grupo
+            lista_pasajeros = grupo_pasajeros.pasajero.all()
+            cantidad_pasajeros = len(lista_pasajeros)
+
+            datos = {
+                'lista_pasajeros' : lista_pasajeros,
+                'cantidad_pasajeros' : cantidad_pasajeros
+            }
+            return render(request, 'rutas/ruta_crear_seleccionar2_choferes.html', datos)
+        except Exception as e: 
+            print(e)
+
 
 # TEST FUNCIONAMIENTO API
 @login_required()

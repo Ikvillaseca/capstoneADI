@@ -57,7 +57,7 @@ class Pasajero(models.Model):
 #Tabla Viajes 
 class Viaje(models.Model):
     id_viaje = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Viaje")
-    fecha = models.DateField(verbose_name="Fecha del Viaje")
+    fecha_creacion = models.DateField(verbose_name="Fecha de creacion del Viaje", auto_now_add=True)
     hora_Salida = models.TimeField(verbose_name="Hora de Salida")
     hora_Llegada = models.TimeField(verbose_name="Hora de Llegada")
     id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Vehiculo")    
@@ -70,7 +70,8 @@ class Viaje(models.Model):
         vehiculo_str = self.id_vehiculo.patente if self.id_vehiculo else "Sin Vehículo"
         return f"Viaje {self.id_viaje} - {self.origen} → {self.destino} ({vehiculo_str})"
 
-#Tabla Reservas
+
+# Tabla Reservas
 class Pasajero_Viaje(models.Model):
     id_reserva = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Reserva")
     id_pasajero = models.ForeignKey(Pasajero, on_delete=models.CASCADE, verbose_name="Pasajero")
@@ -78,3 +79,14 @@ class Pasajero_Viaje(models.Model):
 
     def __str__(self):
         return f"Reserva {self.id_reserva} - Pasajero {self.id_pasajero} en Viaje {self.id_viaje}"
+
+# Tabla grupo de pasajeros
+# Creada en el primer paso cuando se seleccionan pasajeros (Simplifica la consulta de pasajeros que van en la creación del viaje, y evita la repeticion de muchos datos)
+class Grupo_Pasajeros(models.Model):
+    id_grupo_pasajeros = models.AutoField(primary_key=True, verbose_name="ID Reserva")
+    pasajero = models.ManyToManyField(Pasajero, verbose_name=("Pasajeros"))
+
+    def __str__(self):
+        return f"Grupo {self.id_grupo_pasajeros}"
+
+

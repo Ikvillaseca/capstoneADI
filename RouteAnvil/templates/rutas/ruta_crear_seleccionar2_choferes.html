@@ -12,17 +12,11 @@
                 </h3>
             </div>
             <div class="card-body p-4">
-                {% comment %}TEMPORAL, ES PARA MOSTRAR ERRORES USANDO LOS MENSAJES DE DJANGO{% endcomment %}
-                {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-                        {{ message }}
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
+                <h1>Nº de Pasajeros: {{ cantidad_pasajeros }}</h1>
+                <h1>Pasajeros</h1>
+                {% for pasajero in lista_pasajeros %}
+                {{ pasajero.nombre }}
+                {% endfor %}
 
                 <form method="post">
                     {% csrf_token %}
