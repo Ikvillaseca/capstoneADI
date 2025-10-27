@@ -1,12 +1,13 @@
 from django import forms
+from django.db.models import Q
 from .models import Chofer, Pasajero, Vehiculo
 from .choices import estado, tipo_licencia
 from .validadores import (
-    validar_rut, validar_texto, validar_telefono, 
-    validar_empresa, validar_direccion, validar_fechas_control_medico,
-    validar_patente, validar_capacidad, validar_fechas_revision_tecnica
-)  # Importar los validadores
-import re
+    validar_rut, validar_texto, validar_telefono, validar_direccion,
+    validar_empresa, validar_patente, validar_capacidad, 
+    validar_fechas_control_medico, validar_fechas_revision_tecnica,
+    validar_vehiculo_unico_chofer
+)
 
 #Formulario para poder crear un chofer
 class FormularioChofer(forms.ModelForm):
@@ -27,12 +28,23 @@ class FormularioChofer(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Hacer el vehículo opcional
         self.fields['id_vehiculo'].required = False
         self.fields['id_vehiculo'].empty_label = "Sin vehículo asignado"
-        
-        #Solo mostrar vehículos disponibles
-        self.fields['id_vehiculo'].queryset = Vehiculo.objects.filter(estado='A')
+                
+        if self.instance.pk and self.instance.id_vehiculo:
+            self.fields['id_vehiculo'].queryset = Vehiculo.objects.filter(
+                Q(estado='A') & (Q(chofer__isnull=True) | Q(pk=self.instance.id_vehiculo.pk))
+            )
+        else:
+            self.fields['id_vehiculo'].queryset = Vehiculo.objects.filter(
+                estado='A', chofer__isnull=True
+            )
+
+    def clean_id_vehiculo(self):
+        vehiculo = self.cleaned_data.get('id_vehiculo')
+        if vehiculo:
+            return validar_vehiculo_unico_chofer(vehiculo, self.instance)
+        return vehiculo
 
     def clean_rut(self):
         return validar_rut(self.cleaned_data['rut'], Chofer, self.instance)
@@ -77,12 +89,24 @@ class FormularioChoferModificar(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
         self.fields['id_vehiculo'].required = False
         self.fields['id_vehiculo'].empty_label = "Sin vehículo asignado"
-        
-        self.fields['id_vehiculo'].queryset = Vehiculo.objects.filter(estado='A')
+                
+        if self.instance.pk and self.instance.id_vehiculo:
+            self.fields['id_vehiculo'].queryset = Vehiculo.objects.filter(
+                Q(estado='A') & (Q(chofer__isnull=True) | Q(pk=self.instance.id_vehiculo.pk))
+            )
+        else:
+            self.fields['id_vehiculo'].queryset = Vehiculo.objects.filter(
+                estado='A', chofer__isnull=True
+            )
     
+    def clean_id_vehiculo(self):
+        vehiculo = self.cleaned_data.get('id_vehiculo')
+        if vehiculo:
+            return validar_vehiculo_unico_chofer(vehiculo, self.instance)
+        return vehiculo
+
     def clean_nombre(self):
         return validar_texto(self.cleaned_data['nombre'])
 

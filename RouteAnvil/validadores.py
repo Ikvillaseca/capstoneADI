@@ -138,3 +138,18 @@ def validar_fechas_revision_tecnica(revision_tecnica, proxima_revision):
         if proxima_revision <= revision_tecnica:
             raise ValidationError("La fecha de la proxima revision debe ser posterior a la de la revision tecnica.")
     return True
+
+def validar_vehiculo_unico_chofer(vehiculo, chofer_instance=None):
+    if vehiculo:
+        from .models import Chofer
+        # Buscar si hay otro chofer con el mismo vehículo
+        choferes_con_vehiculo = Chofer.objects.filter(id_vehiculo=vehiculo)
+        
+        if chofer_instance and chofer_instance.pk:
+            choferes_con_vehiculo = choferes_con_vehiculo.exclude(pk=chofer_instance.pk)
+        
+        if choferes_con_vehiculo.exists():
+            chofer_actual = choferes_con_vehiculo.first()
+            raise ValidationError(f'El vehículo {vehiculo.patente} ya está asignado al chofer {chofer_actual.nombre} {chofer_actual.apellido}.')
+    
+    return vehiculo

@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.core.exceptions import ValidationError
 from .choices import estado, tipo_licencia, parada
 
 # Create your models here.
@@ -24,8 +25,32 @@ class Chofer(models.Model):
     fecha_ultimo_control = models.DateField(verbose_name="Fecha Ultimo Control")
     fecha_proximo_control = models.DateField(verbose_name="Fecha Proximo Control")
     id_vehiculo = models.ForeignKey('Vehiculo', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Vehiculo Asignado")
+    
+    def clean(self):
+        # Validación para evitar vehículos duplicados
+        super().clean()
+        if self.id_vehiculo:
+            # Verificar si otro chofer ya tiene este vehículo asignado
+            otros_choferes = Chofer.objects.filter(id_vehiculo=self.id_vehiculo)
+            if self.pk:
+                otros_choferes = otros_choferes.exclude(pk=self.pk)
+            
+            if otros_choferes.exists():
+                chofer_actual = otros_choferes.first()
+                raise ValidationError({
+                    'id_vehiculo': f'El vehículo {self.id_vehiculo.patente} ya está asignado a {chofer_actual.nombre} {chofer_actual.apellido}.'
+                })
+    
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
+    
+    class Meta:
+        verbose_name = "Chofer"
+        verbose_name_plural = "Choferes"
 
 #Tabla Vehiculos
 class Vehiculo(models.Model):
