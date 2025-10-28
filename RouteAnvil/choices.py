@@ -27,3 +27,11 @@ parada = (
     ("P", "Paradero"),
     ("O", "Otro"),
 )
+
+estado_creacion_viaje = (
+    ("0", "Estado NULO"),
+    ("1", "Seleccionando Pasajeros"),
+    ("2", "Seleccionando Choferes"),
+    ("3", "Confirmando Viaje"),
+    ("A", "Viajes Creados"),
+)

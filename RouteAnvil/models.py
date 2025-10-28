@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from django.core.exceptions import ValidationError
-from .choices import estado, tipo_licencia, parada
+from .choices import estado, tipo_licencia, parada, estado_creacion_viaje
 
 # Create your models here.
 
@@ -110,6 +110,8 @@ class Pasajero_Viaje(models.Model):
 class Grupo_Pasajeros(models.Model):
     id_grupo_pasajeros = models.AutoField(primary_key=True, verbose_name="ID Reserva")
     pasajero = models.ManyToManyField(Pasajero, verbose_name=("Pasajeros"))
+    chofer = models.ManyToManyField(Chofer, verbose_name=("Choferes"), blank=True)
+    estado_creacion_viaje = models.CharField(max_length=1, choices=estado_creacion_viaje, default='0', verbose_name="Estado de creacion")
 
     def __str__(self):
         return f"Grupo {self.id_grupo_pasajeros}"
