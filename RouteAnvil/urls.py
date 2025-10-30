@@ -31,5 +31,6 @@ urlpatterns = [
     path('ruta/crear/', views.ruta_crear, name='ruta_crear'),
     path('ruta/crear/pasajeros/', views.ruta_crear_seleccionar_pasajeros, name='ruta_crear_seleccionar1_pasajeros'),
     path('ruta/crear/choferes/<int:id_grupo_pasajeros>/', views.ruta_crear_seleccionar_choferes, name='ruta_crear_seleccionar2_choferes'),
+    path('ruta/crear/confirmacion/<int:id_grupo_pasajeros>/', views.ruta_crear_seleccionar_confirmar, name='ruta_crear_seleccionar_confirmar'),
     path('ruta/testeo-api/', views.testeo_api, name='testeo_api'),
 ]
