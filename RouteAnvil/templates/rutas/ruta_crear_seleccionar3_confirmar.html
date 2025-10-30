@@ -21,10 +21,38 @@
             {% endfor %}
         </div>
         {% endif %}
+        <h1>Confirmacion</h1>
+        <h3>Choferes: </h3>
+        <ul>
+            {% for chofer in lista_choferes_vehiculo %}
+            <li>
+                {{ chofer.nombre }} {{ chofer.apellido }} - {{ chofer.id_vehiculo.marca }} {{ chofer.id_vehiculo.modelo }} {{ chofer.id_vehiculo.anio }} <small class="text-muted">(Capacidad : {{ chofer.id_vehiculo.capacidad }} pasajeros)</small>
+            </li>
+            {% endfor %}
+        </ul>
+        <h3>Nº de Pasajeros: {{ cantidad_pasajeros }}</h3>
+        <h3>Pasajeros: </h3>
+
+        <ul>
+            {% for pasajero in lista_pasajeros %}
+            <li>
+                {{ pasajero.nombre }}
+            </li>
+            {% endfor %}
+        </ul>
+
+        <h3>Paraderos: </h3>
+        <ul>
+            {% for paradero in lista_paraderos %}
+            <li>
+                {{ paradero }}
+            </li>
+            {% endfor %}
+        </ul>
+
         <form method="post">
             {% csrf_token %}
                 <div class="mb-4">
-                    <h3>Confirmacion</h3>
 
                 </div>
             <!-- Botones -->

@@ -281,29 +281,23 @@ def ruta_crear_seleccionar_choferes(request, id_grupo_pasajeros):
     ### === Seleccion de choferes completa === ###
     if request.method == 'POST':
         # Verificar que el grupo creado esta en la fase de seleccion de choferes - Asi evitar que se acceda por la URL
-        if grupo.estado_creacion_viaje == "2":
-            # Obtener los choferes seleccionados
-            choferes_elegidos = request.POST.getlist('choices')
+        # Obtener los choferes seleccionados
+        choferes_elegidos = request.POST.getlist('choices')
 
-            # Validar que los IDs recibidos son validos
-            ids_validos = set(str(c.id_chofer) for c in Chofer.objects.all())
-            choferes_validados = [id for id in choferes_elegidos if id in ids_validos]
+        # Validar que los IDs recibidos son validos
+        ids_validos = set(str(c.id_chofer) for c in Chofer.objects.all())
+        choferes_validados = [id for id in choferes_elegidos if id in ids_validos]
 
-            #Obtener el grupo para asingar los choferes
-            #Agregar los choferes al grupo para poder hacer los calculos en el siguiente paso
-            for id_chofer in choferes_validados:
-                grupo.chofer.add(id_chofer)
+        #Obtener el grupo para asingar los choferes
+        #Agregar los choferes al grupo para poder hacer los calculos en el siguiente paso
+        for id_chofer in choferes_validados:
+            grupo.chofer.add(id_chofer)
 
-            #Cambiar estado a confirmacion de choferes
-            grupo.estado_creacion_viaje = "3"
-            grupo.save()
+        #Cambiar estado a confirmacion de choferes
+        grupo.estado_creacion_viaje = "3"
+        grupo.save()
 
-            return redirect('ruta_crear_seleccionar_confirmar', id_grupo_pasajeros = id_grupo_pasajeros)
-        if grupo.estado_creacion_viaje == "1":
-            messages.warning(request, "Complete la selección de pasajeros primero.")
-            return redirect('ruta_crear_seleccionar1_pasajeros', id_grupo_pasajeros = id_grupo_pasajeros)
-        else:
-            return redirect('ruta_crear')
+        return redirect('ruta_crear_seleccionar_confirmar', id_grupo_pasajeros = id_grupo_pasajeros)
         
 # Paso 3 de creación de viaje - Confirmar seleccion
 @login_required
@@ -314,8 +308,21 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
     if request.method == 'GET':
         ### === Formulario de seleccion de pasajeros === ###
         # Obtener los datos de los pasajeros del grupo
-        print(f"Estado del grupo: {grupo.estado_creacion_viaje}")
+        lista_pasajeros = grupo.pasajero.all()
+        cantidad_pasajeros = len(lista_pasajeros)
+
+        lista_paraderos = [ '0','1','2','3','4','5' ]
+
+        lista_choferes_vehiculo = grupo.chofer.all().select_related("id_vehiculo")
+        
+        for chofer in lista_choferes_vehiculo:
+            print(chofer.id_vehiculo.capacidad)
+
         datos = {
+            "lista_pasajeros": lista_pasajeros,
+            "cantidad_pasajeros": cantidad_pasajeros,
+            "lista_paraderos": lista_paraderos,
+            "lista_choferes_vehiculo": lista_choferes_vehiculo,
             "id_grupo_pasajeros": id_grupo_pasajeros
         }
 
