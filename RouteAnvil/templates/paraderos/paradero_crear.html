@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Crear Pasajero{% endblock titulo %}
+
+{% block contenido %}
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-user-plus"></i> Registrar Pasajero
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">
+                            <i class="fas fa-id-card"></i> Información Personal
+                        </h5>
+                        <dl class="row">
+                            <dt class="col-sm-4 text-muted">RUT:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.rut }}
+                                <small class="form-text text-muted d-block">Formato: xxxxxxxx-x</small>
+                                {% if form.rut.errors %}
+                                    <div class="text-danger small mt-1">{{ form.rut.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Nombre:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.nombre }}
+                                {% if form.nombre.errors %}
+                                    <div class="text-danger small mt-1">{{ form.nombre.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Apellido:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.apellido }}
+                                {% if form.apellido.errors %}
+                                    <div class="text-danger small mt-1">{{ form.apellido.errors }}</div>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">
+                            <i class="fas fa-phone"></i> Información de Contacto
+                        </h5>
+                        <dl class="row">
+                            <dt class="col-sm-4 text-muted">Teléfono:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.telefono }}
+                                {% if form.telefono.errors %}
+                                    <div class="text-danger small mt-1">{{ form.telefono.errors }}</div>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Empresa de Trabajo:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.empresa_trabajo }}
+                                {% if form.empresa_trabajo.errors %}
+                                    <div class="text-danger small mt-1">{{ form.empresa_trabajo.errors }}</div>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'pasajeros_lista' %}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Guardar Pasajero
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}
+

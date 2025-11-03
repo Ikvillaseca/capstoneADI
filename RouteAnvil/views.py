@@ -173,6 +173,54 @@ def vehiculo_eliminar(request, patente):
         return redirect('vehiculo_lista')
     return redirect('vehiculo_lista')
 
+
+
+# ============ VISTAS PARADEROS ============
+
+#READ
+def paraderos_lista(request):
+    pasajeros = Pasajero.objects.all()
+    return render(request, 'pasajeros/pasajero_lista.html', {'pasajeros': pasajeros})
+
+#CREATE
+def paradero_crear(request):
+    if request.method == 'POST':
+        form = FormularioPasajero(request.POST)
+        if form.is_valid():
+            pasajero = form.save()
+            return redirect('pasajero_detalles', id_pasajero=pasajero.id_pasajero)
+    else:
+        form = FormularioPasajero()
+    return render(request, 'pasajeros/pasajero_crear.html', {'form': form})
+
+def paradero_detalles(request, id_pasajero):
+    pasajero = get_object_or_404(Pasajero, id_pasajero=id_pasajero)
+    return render(request, 'pasajeros/pasajero_detalles.html', {'pasajero': pasajero})
+
+#UPDATE
+def paradero_modificar(request, id_pasajero):
+    pasajero = get_object_or_404(Pasajero, id_pasajero=id_pasajero)
+    if request.method == 'POST':
+        form = FormularioPasajeroModificar(request.POST, instance=pasajero)  # Usar nuevo formulario
+        if form.is_valid():
+            form.save()
+            return redirect('pasajero_detalles', id_pasajero=pasajero.id_pasajero)
+    else:
+        form = FormularioPasajeroModificar(instance=pasajero)  # Usar nuevo formulario
+    return render(request, 'pasajeros/pasajero_modificar.html', {'form': form, 'pasajero': pasajero})
+
+#DELETE 
+def paradero_eliminar(request, id_pasajero):
+    pasajero = get_object_or_404(Pasajero, id_pasajero=id_pasajero)
+    if request.method == 'POST':
+        pasajero.delete()
+        return redirect('pasajeros_lista')
+    return redirect('pasajeros_lista')
+
+
+
+
+
 # ============ VISTAS RUTAS/API ============
 
 def ruta_home(request):
@@ -318,6 +366,21 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
         for chofer in lista_choferes_vehiculo:
             print(chofer.id_vehiculo.capacidad)
 
+        # El plan es agrupar pasajeros por paraderos, y luego intentar agrupar los paraderos mas cercanos
+        # Luego de eso intentar asignar los pasajeros a los vehiculos tomando en consideracion la capacidad
+        # Probablemente caiga en un problema matematico de optimizacion.
+        # O a lo mejor tenga que hacer algo como clustering???
+        # por ejemplo, que hacer cuando tengo capacidades de vehiculos como 11 y 12
+        # y 8 pasajeros para un lado A, 4 para otro lado B
+        # A y B son cercanos y lo ideal seria asignarlos al vehiculo de 12.
+        # Pero por ejemplo puede ocurrir que ahora sean 8 y 6
+        # En ese caso debo asignar el grupo B al vehiculo de 11
+        # Seria buena idea intentar primero hacer viajes con un chofer y considerar, luego la implementacion de varios al mismo tiempo y asignar los viajes.
+        # A este punto para que funcione todo, se deben tener Pasajeros con paraderos asignados, Choferes con vehiculo asignado, y ahora seleccionar el paradero de destino u origen???
+
+        # Esta es probablemente la parte mas compleja de todo el proyecto
+
+        
         datos = {
             "lista_pasajeros": lista_pasajeros,
             "cantidad_pasajeros": cantidad_pasajeros,

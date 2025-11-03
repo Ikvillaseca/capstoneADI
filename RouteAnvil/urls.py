@@ -25,6 +25,15 @@ urlpatterns = [
     path('vehiculo/detalle/<str:patente>/', views.vehiculo_detalle, name='vehiculo_detalle'),
     path('vehiculo/modificar/<str:patente>/', views.vehiculo_modificar, name='vehiculo_modificar'),
     path('vehiculo/eliminar/<str:patente>/', views.vehiculo_eliminar, name='vehiculo_eliminar'),
+
+    # URLs para paraderos
+    path('paraderos/', views.paraderos_lista, name='paraderos_lista'),
+    path('paradero/crear/', views.paradero_crear, name='paradero_crear'),
+    path('paradero/detalles/<uuid:id_paradero>/', views.paradero_detalles, name='paradero_detalles'),
+    path('paradero/modificar/<uuid:id_paradero>/', views.paradero_modificar, name='paradero_modificar'),
+    path('paradero/eliminar/<uuid:id_paradero>/', views.paradero_eliminar, name='paradero_eliminar'),
+
+
     
     # URLs para rutas
     path('rutas/', views.ruta_home, name='rutas'),
