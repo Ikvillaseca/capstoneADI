@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .decorators import validar_estado_grupo_requerido
-from .models import Chofer, Pasajero, Vehiculo, Grupo_Pasajeros
+from .models import Chofer, Pasajero, Vehiculo, Parada, Grupo_Pasajeros
 from .forms import (
     VehiculoForm,
     VehiculoModificarForm,
@@ -13,6 +13,8 @@ from .forms import (
     FormularioChoferModificar,
     FormularioPasajero,
     FormularioPasajeroModificar,
+    FormularioParadero,
+    FormularioParaderoModificar
 )
 
 
@@ -179,43 +181,43 @@ def vehiculo_eliminar(request, patente):
 
 #READ
 def paraderos_lista(request):
-    pasajeros = Pasajero.objects.all()
-    return render(request, 'pasajeros/pasajero_lista.html', {'pasajeros': pasajeros})
+    paraderos = Parada.objects.all()
+    return render(request, 'paraderos/paradero_lista.html', {'paraderos': paraderos})
 
 #CREATE
 def paradero_crear(request):
     if request.method == 'POST':
-        form = FormularioPasajero(request.POST)
+        form = FormularioParadero(request.POST)
         if form.is_valid():
-            pasajero = form.save()
-            return redirect('pasajero_detalles', id_pasajero=pasajero.id_pasajero)
+            paradero = form.save()
+            return redirect('paradero_detalles', id_ubicacion=paradero.id_ubicacion)
     else:
-        form = FormularioPasajero()
-    return render(request, 'pasajeros/pasajero_crear.html', {'form': form})
+        form = FormularioParadero()
+    return render(request, 'paraderos/paradero_crear.html', {'form': form})
 
-def paradero_detalles(request, id_pasajero):
-    pasajero = get_object_or_404(Pasajero, id_pasajero=id_pasajero)
-    return render(request, 'pasajeros/pasajero_detalles.html', {'pasajero': pasajero})
+def paradero_detalles(request, id_ubicacion):
+    paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)
+    return render(request, 'paraderos/paradero_detalles.html', {'paradero': paradero})
 
 #UPDATE
-def paradero_modificar(request, id_pasajero):
-    pasajero = get_object_or_404(Pasajero, id_pasajero=id_pasajero)
+def paradero_modificar(request, id_ubicacion):
+    paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)
     if request.method == 'POST':
-        form = FormularioPasajeroModificar(request.POST, instance=pasajero)  # Usar nuevo formulario
+        form = FormularioParaderoModificar(request.POST, instance=paradero)  # Usar nuevo formulario
         if form.is_valid():
             form.save()
-            return redirect('pasajero_detalles', id_pasajero=pasajero.id_pasajero)
+            return redirect('paradero_detalles', id_ubicacion=paradero.id_ubicacion)
     else:
-        form = FormularioPasajeroModificar(instance=pasajero)  # Usar nuevo formulario
-    return render(request, 'pasajeros/pasajero_modificar.html', {'form': form, 'pasajero': pasajero})
+        form = FormularioParaderoModificar(instance=paradero)  # Usar nuevo formulario
+    return render(request, 'paraderos/paradero_modificar.html', {'form': form, 'paradero': paradero})
 
 #DELETE 
-def paradero_eliminar(request, id_pasajero):
-    pasajero = get_object_or_404(Pasajero, id_pasajero=id_pasajero)
+def paradero_eliminar(request, id_ubicacion):
+    paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)
     if request.method == 'POST':
-        pasajero.delete()
-        return redirect('pasajeros_lista')
-    return redirect('pasajeros_lista')
+        paradero.delete()
+        return redirect('paraderos_lista')
+    return redirect('paraderos_lista')
 
 
 

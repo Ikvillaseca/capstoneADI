@@ -33,8 +33,6 @@ urlpatterns = [
     path('paradero/modificar/<uuid:id_paradero>/', views.paradero_modificar, name='paradero_modificar'),
     path('paradero/eliminar/<uuid:id_paradero>/', views.paradero_eliminar, name='paradero_eliminar'),
 
-
-    
     # URLs para rutas
     path('rutas/', views.ruta_home, name='rutas'),
     path('ruta/crear/', views.ruta_crear, name='ruta_crear'),

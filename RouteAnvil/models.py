@@ -6,16 +6,16 @@ from .choices import estado, tipo_licencia, parada, estado_creacion_viaje
 # Create your models here.
 
 #Tabla de destinos posibles
-class Ubicacion(models.Model):
+class Parada(models.Model):
     id_ubicacion = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Ubicación")
-    tipo_parada = models.CharField(max_length=1, choices=parada, verbose_name="Tipo de Parada")
     nombre = models.CharField(max_length=45, verbose_name="Nombre del Lugar")
+    tipo_parada = models.CharField(max_length=1, choices=parada, verbose_name="Tipo de Parada")
     direccion = models.CharField(max_length=100, verbose_name="Dirección del Lugar")
     latitud = models.DecimalField(max_digits=9, decimal_places=6, verbose_name="Latitud")
     longitud = models.DecimalField(max_digits=9, decimal_places=6, verbose_name="Longitud")
 
     def __str__(self):
-        return f"{self.nombre} - {self.direccion}: {self.direccion}"
+        return f"{self.nombre} - {self.tipo_parada}: {self.direccion}"
 
 #Tabla Choferes 
 class Chofer(models.Model):
@@ -90,9 +90,8 @@ class Viaje(models.Model):
     hora_Llegada = models.TimeField(verbose_name="Hora de Llegada")
     id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Vehiculo")    
     id_chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE, verbose_name="Chofer")
-    
-    origen = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, verbose_name="Origen", related_name='viajes_origen')
-    destino = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, verbose_name="Destino", related_name='viajes_destino')
+    origen = models.ForeignKey(Parada, on_delete=models.CASCADE, verbose_name="Origen", related_name='viajes_origen')
+    destino = models.ForeignKey(Parada, on_delete=models.CASCADE, verbose_name="Destino", related_name='viajes_destino')
 
     def __str__(self):
         vehiculo_str = self.id_vehiculo.patente if self.id_vehiculo else "Sin Vehículo"
