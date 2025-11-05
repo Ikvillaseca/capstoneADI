@@ -1,5 +1,6 @@
 import requests
 import json
+from .viajes import asignar_viajes
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib import messages
@@ -193,7 +194,11 @@ def paradero_crear(request):
             return redirect('paradero_detalles', id_ubicacion=paradero.id_ubicacion)
     else:
         form = FormularioParadero()
-    return render(request, 'paraderos/paradero_crear.html', {'form': form})
+        datos = {
+            'form': form,
+            'GOOGLE_MAPS_API_EMBED': settings.GOOGLE_MAPS_API_EMBED  
+        }
+    return render(request, 'paraderos/paradero_crear.html', datos)
 
 def paradero_detalles(request, id_ubicacion):
     paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)
@@ -381,6 +386,7 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
         # A este punto para que funcione todo, se deben tener Pasajeros con paraderos asignados, Choferes con vehiculo asignado, y ahora seleccionar el paradero de destino u origen???
 
         # Esta es probablemente la parte mas compleja de todo el proyecto
+        asignar_viajes()
 
         
         datos = {
@@ -396,7 +402,7 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
 
     ### === Viaje completo y confirmado === ###
     if request.method == 'POST':
-        pass
+        # guardar viajes creados
         return redirect('ruta_crear')
 
     

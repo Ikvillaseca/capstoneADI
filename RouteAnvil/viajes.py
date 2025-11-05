@@ -4,3 +4,6 @@ def calcular_distancia():
 
 def agrupar_pasajeros():
     pass
+
+def asignar_viajes():
+    print("asignando")
