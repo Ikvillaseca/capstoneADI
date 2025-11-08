@@ -257,10 +257,13 @@ class FormularioParadero(forms.ModelForm):
         model = Parada
         fields = ['nombre', 'tipo_parada', 'direccion']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese nombre (opcional)'}),
             'tipo_parada': forms.Select(choices=parada, attrs={'class': 'form-select'}),
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['nombre'].required = False
 
 # Formulario para modificar paraderos 
 class FormularioParaderoModificar(forms.ModelForm):

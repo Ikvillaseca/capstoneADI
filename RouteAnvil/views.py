@@ -1,6 +1,6 @@
 import requests
 import json
-from .viajes import asignar_viajes
+from .viajes_direcciones import asignar_viajes, geocoding_desde_direccion
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib import messages
@@ -190,15 +190,35 @@ def paradero_crear(request):
     if request.method == 'POST':
         form = FormularioParadero(request.POST)
         if form.is_valid():
-            paradero = form.save()
-            return redirect('paradero_detalles', id_ubicacion=paradero.id_ubicacion)
-    else:
-        form = FormularioParadero()
+            #Obtener direccion y calcular los datos que necesito usando la API de geocoding
+            nombre = form.cleaned_data['direccion']
+            direccion = form.cleaned_data['direccion']
+            tipo_parada = form.cleaned_data['direccion']
+
+            #Obtener los datos desde api geocoding
+            lat, lon, cleaned_direccion, tipo_deducido = geocoding_desde_direccion(direccion)
+            if form.cleaned_data['tipo_parada'] == 'X':
+                tipo_parada = tipo_deducido
+
+            #Crear objeto a partir de los datos obtenidos
+            parada = Parada.objects.create(
+                nombre=nombre,
+                tipo_parada=tipo_parada,
+                direccion=cleaned_direccion,
+                latitud=lat,
+                longitud=lon,
+            )
+
+            print(parada)
+
+            return redirect('ruta_crear')
+    if request.method == 'GET':
+        form = FormularioParadero(initial={'tipo_parada': 'X'})
         datos = {
             'form': form,
             'GOOGLE_MAPS_API_EMBED': settings.GOOGLE_MAPS_API_EMBED  
         }
-    return render(request, 'paraderos/paradero_crear.html', datos)
+        return render(request, 'paraderos/paradero_crear.html', datos)
 
 def paradero_detalles(request, id_ubicacion):
     paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)
@@ -402,7 +422,9 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
 
     ### === Viaje completo y confirmado === ###
     if request.method == 'POST':
-        # guardar viajes creados
+       
+
+        obtener_coordenadas_desde_direccion()
         return redirect('ruta_crear')
 
     

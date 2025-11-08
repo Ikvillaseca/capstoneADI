@@ -29,9 +29,9 @@ urlpatterns = [
     # URLs para paraderos
     path('paraderos/', views.paraderos_lista, name='paraderos_lista'),
     path('paradero/crear/', views.paradero_crear, name='paradero_crear'),
-    path('paradero/detalles/<uuid:id_paradero>/', views.paradero_detalles, name='paradero_detalles'),
-    path('paradero/modificar/<uuid:id_paradero>/', views.paradero_modificar, name='paradero_modificar'),
-    path('paradero/eliminar/<uuid:id_paradero>/', views.paradero_eliminar, name='paradero_eliminar'),
+    path('paradero/detalles/<uuid:id_ubicacion>/', views.paradero_detalles, name='paradero_detalles'),
+    path('paradero/modificar/<uuid:id_ubicacion>/', views.paradero_modificar, name='paradero_modificar'),
+    path('paradero/eliminar/<uuid:id_ubicacion>/', views.paradero_eliminar, name='paradero_eliminar'),
 
     # URLs para rutas
     path('rutas/', views.ruta_home, name='rutas'),

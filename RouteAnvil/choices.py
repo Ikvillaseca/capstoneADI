@@ -20,6 +20,7 @@ tipo_licencia = (
 
 # Destinos de viajes
 parada = (
+    ("X", "Autocompletar"),
     ("M", "Metro"),
     ("E", "Empresa"),
     ("H", "Hotel"),
