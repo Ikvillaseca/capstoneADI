@@ -25,44 +25,56 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto nav-underline">
+                    <!-- Inicio -->
                     <li class="nav-item">
                         {% url 'index' as url_esperada %}
                         <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'index' %}">
                             <i class="fas fa-home"></i> Inicio
                         </a>
                     </li>
-                    <li class="nav-item">
-                        {% url 'chofer_lista' as url_esperada %}
-                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'chofer_lista' %}">
-                            <i class="fas fa-users"></i> Choferes
+                    
+                    <!-- Nuevo Menu desplegable para las funciones -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownGestion" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-cogs"></i> Gestión
                         </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownGestion">
+                            <li>
+                                {% url 'chofer_lista' as url_esperada %}
+                                <a class="dropdown-item {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'chofer_lista' %}">
+                                    <i class="fas fa-users"></i> Choferes
+                                </a>
+                            </li>
+                            <li>
+                                {% url 'pasajeros_lista' as url_esperada %}
+                                <a class="dropdown-item {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'pasajeros_lista' %}">
+                                    <i class="fas fa-user-friends"></i> Pasajeros
+                                </a>
+                            </li>
+                            <li>
+                                {% url 'vehiculo_lista' as url_esperada %}
+                                <a class="dropdown-item {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'vehiculo_lista' %}">
+                                    <i class="fas fa-car"></i> Vehículos
+                                </a>
+                            </li>
+                            <li>
+                                {% url 'paraderos_lista' as url_esperada %}
+                                <a class="dropdown-item {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'paraderos_lista' %}">
+                                    <i class="fa-solid fa-map-location"></i> Paraderos
+                                </a>
+                            </li>
+                            <li>
+                                {% url 'rutas' as url_esperada %}
+                                <a class="dropdown-item {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'rutas' %}">
+                                    <i class="fa-solid fa-route"></i> Rutas
+                                </a>
+                            </li>
+                        </ul>
                     </li>
+                    
                     <li class="nav-item">
-                        {% url 'pasajeros_lista' as url_esperada %}
-                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'pasajeros_lista' %}">
-                            <i class="fas fa-user-friends"></i> Pasajeros
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        {% url 'vehiculo_lista' as url_esperada %}
-                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'vehiculo_lista' %}">
-                            <i class="fas fa-car"></i> Vehículos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        {% url 'paraderos_lista' as url_esperada %}
-                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'paraderos_lista' %}">
-                            <i class="fa-solid fa-map-location"></i> Paraderos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        {% url 'rutas' as url_esperada %}
-                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'rutas' %}">
-                            <i class="fa-solid fa-route"></i> Rutas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'vista_itinerario_chofer' %}">
+                        {% url 'vista_itinerario_chofer' as url_esperada %}
+                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'vista_itinerario_chofer' %}">
                             <i class="fas fa-calendar-alt"></i> Itinerario Chofer
                         </a>
                     </li>
