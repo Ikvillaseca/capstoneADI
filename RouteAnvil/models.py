@@ -1,18 +1,21 @@
 import uuid
 from django.db import models
 from django.core.exceptions import ValidationError
-from .choices import estado, tipo_licencia, parada
+from .choices import estado, tipo_licencia, parada, estado_creacion_viaje
 
 # Create your models here.
 
 #Tabla de destinos posibles
-class Ubicacion(models.Model):
-    id_ubicacion = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Ubicacion")
-    tipo_parada = models.CharField(max_length=1, choices=parada, verbose_name="Tipo de Parada")
+class Parada(models.Model):
+    id_ubicacion = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Ubicación")
     nombre = models.CharField(max_length=45, verbose_name="Nombre del Lugar")
-    direccion = models.CharField(max_length=100, verbose_name="Direccion del Lugar")
+    tipo_parada = models.CharField(max_length=1, choices=parada, verbose_name="Tipo de Parada")
+    direccion = models.CharField(max_length=100, verbose_name="Dirección del Lugar")
+    latitud = models.DecimalField(max_digits=9, decimal_places=6, verbose_name="Latitud")
+    longitud = models.DecimalField(max_digits=9, decimal_places=6, verbose_name="Longitud")
+
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} - {self.tipo_parada}: {self.direccion}"
 
 #Tabla Choferes 
 class Chofer(models.Model):
@@ -87,9 +90,8 @@ class Viaje(models.Model):
     hora_Llegada = models.TimeField(verbose_name="Hora de Llegada")
     id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Vehiculo")    
     id_chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE, verbose_name="Chofer")
-    
-    origen = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, verbose_name="Origen", related_name='viajes_origen')
-    destino = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, verbose_name="Destino", related_name='viajes_destino')
+    origen = models.ForeignKey(Parada, on_delete=models.CASCADE, verbose_name="Origen", related_name='viajes_origen')
+    destino = models.ForeignKey(Parada, on_delete=models.CASCADE, verbose_name="Destino", related_name='viajes_destino')
 
     def __str__(self):
         vehiculo_str = self.id_vehiculo.patente if self.id_vehiculo else "Sin Vehículo"
@@ -110,6 +112,8 @@ class Pasajero_Viaje(models.Model):
 class Grupo_Pasajeros(models.Model):
     id_grupo_pasajeros = models.AutoField(primary_key=True, verbose_name="ID Reserva")
     pasajero = models.ManyToManyField(Pasajero, verbose_name=("Pasajeros"))
+    chofer = models.ManyToManyField(Chofer, verbose_name=("Choferes"), blank=True)
+    estado_creacion_viaje = models.CharField(max_length=1, choices=estado_creacion_viaje, default='0', verbose_name="Estado de creacion")
 
     def __str__(self):
         return f"Grupo {self.id_grupo_pasajeros}"

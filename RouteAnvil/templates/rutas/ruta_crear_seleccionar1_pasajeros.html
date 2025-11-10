@@ -12,18 +12,16 @@
         </h3>
     </div>
     <div class="card-body p-4">
-        {% comment %}TEMPORAL, ES PARA MOSTRAR ERRORES USANDO LOS MENSAJES DE DJANGO{% endcomment %}
         {% if messages %}
-        <ul class="messages">
+        <div class="messages">
             {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-                {{ message }}
-            </li>
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
         {% endif %}
-
         <form method="post">
             {% csrf_token %}
             <div class="mb-4">

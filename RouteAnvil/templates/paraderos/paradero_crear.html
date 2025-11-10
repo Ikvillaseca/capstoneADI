@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Crear Paradero{% endblock titulo %}
+
+{% block contenido %}
+<script type="text/javascript" src="{% static "js/routeanvil.viaje-paraderos-crear.js" %}"></script>
+
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fa-solid fa-map-location"></i> Crear Paradero
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">
+                            <i class="fa-solid fa-magnifying-glass-location"></i> Información de la ubicación
+                        </h5>
+                        <dl class="row">
+                            <dt class="col-sm-4 text-muted">Nombre:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.nombre }}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Tipo Paradero:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.tipo_parada }}
+                            </dd>
+                            
+                            <dt class="col-sm-4 text-muted">Dirección:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.direccion }}
+                            </dd>
+                        </dl>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-primary btn-sm" id="updateMapBtn">
+                                <i class="fas fa-sync-alt"></i> Actualizar Mapa
+                            </button>
+                        </div>
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <iframe
+                        id="mapIframe"
+                        width="600"
+                        height="400"
+                        frameborder="0" style="border:0 "
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src="https://www.google.com/maps/embed/v1/place?key={{ GOOGLE_MAPS_API_EMBED }}&q=DUOC+UC+Maipu,Chile"
+                        allowfullscreen>
+                    </iframe>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'paraderos_lista' %}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Guardar Paradero
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>inicializar_mapa("{{GOOGLE_MAPS_API_EMBED}}")</script>
+{% endblock contenido %}
+

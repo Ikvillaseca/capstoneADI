@@ -26,11 +26,19 @@ urlpatterns = [
     path('vehiculo/detalle/<str:patente>/', views.vehiculo_detalle, name='vehiculo_detalle'),
     path('vehiculo/modificar/<str:patente>/', views.vehiculo_modificar, name='vehiculo_modificar'),
     path('vehiculo/eliminar/<str:patente>/', views.vehiculo_eliminar, name='vehiculo_eliminar'),
-    
+
+    # URLs para paraderos
+    path('paraderos/', views.paraderos_lista, name='paraderos_lista'),
+    path('paradero/crear/', views.paradero_crear, name='paradero_crear'),
+    path('paradero/detalles/<uuid:id_ubicacion>/', views.paradero_detalles, name='paradero_detalles'),
+    path('paradero/modificar/<uuid:id_ubicacion>/', views.paradero_modificar, name='paradero_modificar'),
+    path('paradero/eliminar/<uuid:id_ubicacion>/', views.paradero_eliminar, name='paradero_eliminar'),
+
     # URLs para rutas
     path('rutas/', views.ruta_home, name='rutas'),
     path('ruta/crear/', views.ruta_crear, name='ruta_crear'),
     path('ruta/crear/pasajeros/', views.ruta_crear_seleccionar_pasajeros, name='ruta_crear_seleccionar1_pasajeros'),
     path('ruta/crear/choferes/<int:id_grupo_pasajeros>/', views.ruta_crear_seleccionar_choferes, name='ruta_crear_seleccionar2_choferes'),
+    path('ruta/crear/confirmacion/<int:id_grupo_pasajeros>/', views.ruta_crear_seleccionar_confirmar, name='ruta_crear_seleccionar_confirmar'),
     path('ruta/testeo-api/', views.testeo_api, name='testeo_api'),
 ]

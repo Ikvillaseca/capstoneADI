@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import Q
-from .models import Chofer, Pasajero, Vehiculo
-from .choices import estado, tipo_licencia
+from .models import Chofer, Pasajero, Vehiculo, Parada
+from .choices import estado, tipo_licencia, parada
 from .validadores import (
     validar_rut, validar_texto, validar_telefono, validar_direccion,
     validar_empresa, validar_patente, validar_capacidad, 
@@ -250,9 +250,31 @@ class VehiculoModificarForm(forms.ModelForm):
         proxima_revision = cleaned_data.get('proxima_revision')
         validar_fechas_revision_tecnica(revision, proxima_revision)
         return cleaned_data
+
+#Formulario para poder crear un paradero
+class FormularioParadero(forms.ModelForm):
+    class Meta:
+        model = Parada
+        fields = ['nombre', 'tipo_parada', 'direccion']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese nombre (opcional)'}),
+            'tipo_parada': forms.Select(choices=parada, attrs={'class': 'form-select'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['nombre'].required = False
+
+# Formulario para modificar paraderos 
+class FormularioParaderoModificar(forms.ModelForm):
+    class Meta:
+        model = Parada
+        fields = ['nombre', 'tipo_parada', 'direccion', 'latitud', 'longitud']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo_parada': forms.Select(choices=parada, attrs={'class': 'form-select'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'latitud': forms.NumberInput(attrs={'class': 'form-control'}),
+            'longitud': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
     
-class FormularioViajeSeleccionarPasajeros(forms.Form):
-    choices = forms.ModelMultipleChoiceField(
-        queryset = Pasajero.objects.all().order_by('empresa_trabajo','apellido','nombre'),
-        widget  = forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
-    )

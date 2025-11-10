@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Detalles del paradero{% endblock titulo %}
+
+{% block contenido %}
+
+<div class="row justify-content-center">
+    <div class="container">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fa-solid fa-map-location-dot"></i> Detalles del paradero
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <!-- Información Personal -->
+                <div class="mb-4">
+                    <h5 class="text-secondary mb-3 border-bottom pb-2">
+                        <i class="fa-solid fa-magnifying-glass-location"></i> Información General
+                    </h5>
+                    <dl class="row">
+                        <dt class="col-sm-4 text-muted">ID:</dt>
+                        <dd class="col-sm-8"><strong>{{ paradero.id_ubicacion }}</strong></dd>
+                        
+                        <dt class="col-sm-4 text-muted">Nombre:</dt>
+                        <dd class="col-sm-8">{{ paradero.nombre }}</dd>
+
+                        <dt class="col-sm-4 text-muted">Tipo:</dt>
+                        <dd class="col-sm-8">{{ paradero.get_tipo_parada_display }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Direccion completa:</dt>
+                        <dd class="col-sm-8">{{ paradero.direccion }}</dd>
+                    </dl>
+                </div>
+
+                <!-- Información de Contacto -->
+                <div class="mb-4">
+                    <h5 class="text-secondary mb-3 border-bottom pb-2">
+                       <i class="fa-solid fa-location-crosshairs"></i> Información de ubicación
+                    </h5>
+                    <dl class="row">
+                        <dt class="col-sm-4 text-muted">Latitud:</dt>
+                        <dd class="col-sm-8">{{ paradero.latitud }}</dd>
+                        
+                        <dt class="col-sm-4 text-muted">Longitud:</dt>
+                        <dd class="col-sm-8">{{ paradero.longitud }}</dd>
+                    </dl>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                    <a href="{% url 'paraderos_lista' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la Lista
+                    </a>
+                    <a href="{% url 'paradero_modificar' paradero.id_ubicacion %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Modificar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock contenido %}
