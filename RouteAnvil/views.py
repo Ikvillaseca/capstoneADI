@@ -489,3 +489,9 @@ def testeo_api(request):
             'error': 'Error de conexión',
             'error_body': str(e)
         })
+
+
+
+# Vista para mostrar el itinerario del chofer
+def vista_itinerario_chofer(request):
+    return render(request, 'vista_chofer/vista_itinerario.html')
