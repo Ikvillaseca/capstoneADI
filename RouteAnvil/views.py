@@ -208,10 +208,8 @@ def paradero_crear(request):
                 latitud=lat,
                 longitud=lon,
             )
+            return redirect('paradero_detalles', id_ubicacion=parada.id_ubicacion)
 
-            print(parada)
-
-            return redirect('ruta_crear')
     if request.method == 'GET':
         form = FormularioParadero(initial={'tipo_parada': 'X'})
         datos = {
@@ -228,12 +226,12 @@ def paradero_detalles(request, id_ubicacion):
 def paradero_modificar(request, id_ubicacion):
     paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)
     if request.method == 'POST':
-        form = FormularioParaderoModificar(request.POST, instance=paradero)  # Usar nuevo formulario
+        form = FormularioParaderoModificar(request.POST, instance=paradero)
         if form.is_valid():
             form.save()
             return redirect('paradero_detalles', id_ubicacion=paradero.id_ubicacion)
     else:
-        form = FormularioParaderoModificar(instance=paradero)  # Usar nuevo formulario
+        form = FormularioParaderoModificar(instance=paradero)
     return render(request, 'paraderos/paradero_modificar.html', {'form': form, 'paradero': paradero})
 
 #DELETE 
@@ -336,8 +334,6 @@ def ruta_crear_seleccionar_choferes(request, id_grupo_pasajeros):
     if request.method == 'GET':
         ### === Formulario de seleccion de pasajeros === ###
         # Obtener los datos de los pasajeros del grupo
-        print(grupo.estado_creacion_viaje)
-        print(f"Estado del grupo: {grupo.estado_creacion_viaje}")
         lista_pasajeros = grupo.pasajero.all()
         cantidad_pasajeros = len(lista_pasajeros)
 
@@ -386,12 +382,12 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
         lista_pasajeros = grupo.pasajero.all()
         cantidad_pasajeros = len(lista_pasajeros)
 
-        lista_paraderos = [ '0','1','2','3','4','5' ]
+        lista_paraderos = Parada.objects.all()
 
         lista_choferes_vehiculo = grupo.chofer.all().select_related("id_vehiculo")
         
-        for chofer in lista_choferes_vehiculo:
-            print(chofer.id_vehiculo.capacidad)
+        #for chofer in lista_choferes_vehiculo:
+        #    print(chofer.id_vehiculo.capacidad)
 
         # El plan es agrupar pasajeros por paraderos, y luego intentar agrupar los paraderos mas cercanos
         # Luego de eso intentar asignar los pasajeros a los vehiculos tomando en consideracion la capacidad
@@ -424,7 +420,6 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
     if request.method == 'POST':
        
 
-        obtener_coordenadas_desde_direccion()
         return redirect('ruta_crear')
 
     
