@@ -96,12 +96,10 @@ footer {
     cursor: pointer;
 }
 
-/* --- Estilos para navbar --- */
 .email-navbar {
     color: white;    
 }
 
-/* --- Estilos para el dropdown del navbar --- */
 .dropdown-menu {
     border-radius: 8px;
     border: none;
@@ -115,9 +113,8 @@ footer {
 }
 
 .dropdown-item:hover {
-    background-color: #f8f9fa;
-    color: #495057;
-    transform: translateX(5px);
+    background-color: #ccdcff;
+    color: #2c2f31;
 }
 
 .dropdown-item.active {
@@ -130,8 +127,34 @@ footer {
     margin-right: 8px;
 }
 
-/* --- Efecto hover en el botón dropdown --- */
-.nav-link.dropdown-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
+@media (min-width: 992px) {
+    .navbar .dropdown:hover > .dropdown-menu {
+        display: block;
+        margin-top: 0;
+    }
+    
+    .navbar .dropdown-menu {
+        margin-top: 0;
+        transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+        opacity: 0;
+        visibility: hidden;
+    }
+    
+    .navbar .dropdown:hover > .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .navbar .dropdown-menu:hover {
+        display: block;
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@media (max-width: 991px) {
+    .navbar .dropdown-menu {
+        position: static !important;
+        transform: none !important;
+    }
 }

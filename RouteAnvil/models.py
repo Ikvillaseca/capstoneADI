@@ -78,9 +78,18 @@ class Pasajero(models.Model):
     apellido = models.CharField(max_length=45, verbose_name="Apellido")
     telefono = models.CharField(max_length=15, verbose_name="Telefono")
     empresa_trabajo = models.CharField(max_length=45, verbose_name="Empresa de Trabajo")
-
+    paradero_deseado = models.ForeignKey(Parada, on_delete=models.SET_NULL, null=True, blank=True, related_name='paradero_deseado',verbose_name="Paradero deseado")
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
+    
+    @property
+    def nombre_completo(self):
+        return f"{self.nombre} {self.apellido}"
+    
+    def get_paradero_deseado_display(self):
+        if self.paradero_deseado:
+            return str(self.paradero_deseado.nombre)
+        return "Sin paradero asignado"
 
 #Tabla Viajes 
 class Viaje(models.Model):

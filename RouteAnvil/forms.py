@@ -127,14 +127,26 @@ class FormularioChoferModificar(forms.ModelForm):
 class FormularioPasajero(forms.ModelForm):
     class Meta:
         model = Pasajero
-        fields = ['rut', 'nombre', 'apellido', 'telefono', 'empresa_trabajo']
+        fields = ['rut', 'nombre', 'apellido', 'telefono', 'empresa_trabajo', 'paradero_deseado']
         widgets = {
             'rut': forms.TextInput(attrs={'class': 'form-control'}),
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'apellido': forms.TextInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'empresa_trabajo': forms.TextInput(attrs={'class': 'form-control'}),
+            'paradero_deseado': forms.Select(attrs={'class': 'form-select'}),  
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['paradero_deseado'].required = False
+        self.fields['paradero_deseado'].empty_label = "Sin paradero asignado"
+        self.fields['paradero_deseado'].queryset = Parada.objects.all().order_by('nombre')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        paradero_deseado = cleaned_data.get('paradero_deseado')
+        return cleaned_data
+    
         
     def clean_rut(self):
         return validar_rut(self.cleaned_data['rut'], Pasajero, self.instance)
@@ -155,13 +167,25 @@ class FormularioPasajero(forms.ModelForm):
 class FormularioPasajeroModificar(forms.ModelForm):
     class Meta:
         model = Pasajero
-        fields = ['nombre', 'apellido', 'telefono', 'empresa_trabajo']  # Sin RUT
+        fields = ['nombre', 'apellido', 'telefono', 'empresa_trabajo', 'paradero_deseado'] # Sin RUT
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'apellido': forms.TextInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'empresa_trabajo': forms.TextInput(attrs={'class': 'form-control'}),
+            'paradero_deseado': forms.Select(attrs={'class': 'form-select'}),  
+
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['paradero_deseado'].required = False
+        self.fields['paradero_deseado'].empty_label = "Sin paradero asignado"
+        self.fields['paradero_deseado'].queryset = Parada.objects.all().order_by('nombre')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        paradero_deseado = cleaned_data.get('paradero_deseado')
+        return cleaned_data
     
     def clean_nombre(self):
         return validar_texto(self.cleaned_data['nombre'])

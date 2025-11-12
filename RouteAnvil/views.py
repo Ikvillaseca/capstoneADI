@@ -416,9 +416,7 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
         # A este punto para que funcione todo, se deben tener Pasajeros con paraderos asignados, Choferes con vehiculo asignado, y ahora seleccionar el paradero de destino u origen???
 
         # Esta es probablemente la parte mas compleja de todo el proyecto
-        asignar_viajes()
 
-        
         datos = {
             "lista_pasajeros": lista_pasajeros,
             "cantidad_pasajeros": cantidad_pasajeros,
@@ -430,10 +428,12 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
 
         return render(request, 'rutas/ruta_crear_seleccionar3_confirmar.html', datos)
 
-    ### === Viaje completo y confirmado === ###
+    ### === Creacion de Viaje completo y confirmado === ###
     if request.method == 'POST':
        
+        asignar_viajes(grupo)
 
+        
         return redirect('ruta_crear')
 
     
