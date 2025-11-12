@@ -235,10 +235,7 @@ def paradero_modificar(request, id_ubicacion):
         form = FormularioParaderoModificar(request.POST, instance=paradero)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Paradero modificado exitosamente.')
             return redirect('paradero_detalles', id_ubicacion=paradero.id_ubicacion)
-        else:
-            messages.error(request, 'Error al modificar el paradero. Revisa los datos.')
     else:
         form = FormularioParaderoModificar(instance=paradero)
     
