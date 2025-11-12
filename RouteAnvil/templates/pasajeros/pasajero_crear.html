@@ -70,6 +70,22 @@
                         </dl>
                     </div>
 
+                    <div class="mb-4">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">
+                            <i class="fa-solid fa-map-location-dot"></i> Información adicional
+                        </h5>
+                        <dl class="row">
+                            <dt class="col-sm-4 text-muted">Paradero deseado (Recogida/destino):</dt>
+                            <dd class="col-sm-8">
+                                {{ form.paradero_deseado }}
+                                {% if form.paradero_deseado.errors %}
+                                    <div class="text-danger small mt-1">{{ form.paradero_deseado.errors }}</div>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+                    
+
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger" role="alert">
                             {{ form.non_field_errors }}

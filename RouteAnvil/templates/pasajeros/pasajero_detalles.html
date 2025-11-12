@@ -47,6 +47,25 @@
                     </dl>
                 </div>
 
+                <div class="mb-4">
+                    <h5 class="text-secondary mb-3 border-bottom pb-2">
+                        <i class="fas fa-phone"></i> Información adicional
+                    </h5>
+                    <dl class="row">              
+                        <dt class="col-sm-4 text-muted">Paradero Deseado:</dt>
+                        <dd class="col-sm-8">
+                            {{ pasajero.get_paradero_deseado_display }}
+                            {% if pasajero.paradero_deseado %}
+                                <br>
+                                <small class="text-muted">
+                                    <i class="fas fa-location-dot"></i> {{ pasajero.paradero_deseado.direccion }}
+                                </small>
+                            {% endif %}
+                        </dd>          
+       
+                    </dl>
+                </div>
+
                 <!-- Botones de Acción -->
                 <div class="d-grid gap-2 d-md-flex justify-content-md-between">
                     <a href="{% url 'pasajeros_lista' %}" class="btn btn-secondary">

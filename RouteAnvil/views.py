@@ -414,10 +414,10 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
 
         return render(request, 'rutas/ruta_crear_seleccionar3_confirmar.html', datos)
 
-    ### === Viaje completo y confirmado === ###
+    ### === Creacion de Viaje completo y confirmado === ###
     if request.method == 'POST':
        
-        asignar_viajes()
+        asignar_viajes(grupo)
 
         
         return redirect('ruta_crear')
