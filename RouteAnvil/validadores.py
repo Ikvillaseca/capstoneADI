@@ -153,3 +153,23 @@ def validar_vehiculo_unico_chofer(vehiculo, chofer_instance=None):
             raise ValidationError(f'El vehículo {vehiculo.patente} ya está asignado al chofer {chofer_actual.nombre} {chofer_actual.apellido}.')
     
     return vehiculo
+
+def validar_nombre_paradero(nombre):
+    if not nombre:
+        raise ValidationError("El nombre es obligatorio.")
+    
+    nombre = nombre.strip()
+    
+    if len(nombre) < 3:
+        raise ValidationError("El nombre debe tener al menos 3 caracteres.")
+    if len(nombre) > 45:
+        raise ValidationError("El nombre no puede tener más de 45 caracteres.")
+    
+    patron = r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\-\.\,]+$'
+    if not re.match(patron, nombre):
+        raise ValidationError("Solo se permiten letras, números, espacios, guiones, puntos y comas.")
+    
+    return nombre.title()
+
+
+

@@ -3,10 +3,10 @@ from django.db.models import Q
 from .models import Chofer, Pasajero, Vehiculo, Parada
 from .choices import estado, tipo_licencia, parada
 from .validadores import (
-    validar_rut, validar_texto, validar_telefono, validar_direccion,
+    validar_rut, validar_telefono, validar_direccion,
     validar_empresa, validar_patente, validar_capacidad, 
     validar_fechas_control_medico, validar_fechas_revision_tecnica,
-    validar_vehiculo_unico_chofer
+    validar_vehiculo_unico_chofer, validar_nombre_paradero, validar_texto  
 )
 
 #Formulario para poder crear un chofer
@@ -168,7 +168,7 @@ class FormularioPasajeroModificar(forms.ModelForm):
 
     def clean_apellido(self):
         return validar_texto(self.cleaned_data['apellido'])
-    
+
     def clean_telefono(self):
         return validar_telefono(self.cleaned_data['telefono'])
     
@@ -255,26 +255,85 @@ class VehiculoModificarForm(forms.ModelForm):
 class FormularioParadero(forms.ModelForm):
     class Meta:
         model = Parada
-        fields = ['nombre', 'tipo_parada', 'direccion']
+        fields = ['tipo_parada', 'nombre', 'direccion']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese nombre (opcional)'}),
             'tipo_parada': forms.Select(choices=parada, attrs={'class': 'form-select'}),
-            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'nombre': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'placeholder': 'Ej: Terminal Central, Plaza de Armas, etc.'
+            }),
+            'direccion': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'placeholder': 'Ej: Av. Libertador 1234, Santiago'
+            })
         }
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['nombre'].required = False
+
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        return validar_nombre_paradero(nombre)
+    
+    def clean_direccion(self):
+        direccion = self.cleaned_data.get('direccion')
+        if direccion:
+            return validar_direccion(direccion)
+        raise forms.ValidationError("La dirección es obligatoria.")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        direccion = cleaned_data.get('direccion')
+        
+        if direccion:
+            paraderos_existentes = Parada.objects.filter(
+                direccion__iexact=direccion.strip()
+            )
+            
+            if self.instance and self.instance.pk:
+                paraderos_existentes = paraderos_existentes.exclude(pk=self.instance.pk)
+            
+            if paraderos_existentes.exists():
+                paradero_existente = paraderos_existentes.first()
+                raise forms.ValidationError(
+                    f"Ya existe un paradero en esta dirección: '{paradero_existente.nombre}' "
+                    f"(Tipo: {paradero_existente.get_tipo_parada_display()})"
+                )
+        
+        return cleaned_data
 
 # Formulario para modificar paraderos 
 class FormularioParaderoModificar(forms.ModelForm):
     class Meta:
         model = Parada
-        fields = ['nombre', 'tipo_parada', 'direccion', 'latitud', 'longitud']
+        fields = ['tipo_parada', 'nombre', 'direccion']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'tipo_parada': forms.Select(choices=parada, attrs={'class': 'form-select'}),
-            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
-            'latitud': forms.NumberInput(attrs={'class': 'form-control'}),
-            'longitud': forms.NumberInput(attrs={'class': 'form-control'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control'})
         }
+
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        return validar_nombre_paradero(nombre)
     
+    def clean_direccion(self):
+        direccion = self.cleaned_data.get('direccion')
+        if direccion:
+            # Validar formato de dirección
+            direccion_validada = validar_direccion(direccion)
+            
+            paraderos_existentes = Parada.objects.filter(
+                direccion__iexact=direccion_validada.strip()
+            )
+            
+            # Excluir el paradero actual que estamos modificando
+            if self.instance and self.instance.pk:
+                paraderos_existentes = paraderos_existentes.exclude(pk=self.instance.pk)
+            
+            if paraderos_existentes.exists():
+                paradero_existente = paraderos_existentes.first()
+                raise forms.ValidationError(
+                    f"Ya existe un paradero en esta dirección: '{paradero_existente.nombre}' "
+                    f"(Tipo: {paradero_existente.get_tipo_parada_display()})"
+                )
+            
+            return direccion_validada
+        raise forms.ValidationError("La dirección es obligatoria.")
