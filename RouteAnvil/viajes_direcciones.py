@@ -100,6 +100,7 @@ def geocoding_desde_direccion(direccion):
 # Esta es probablemente la parte mas compleja de todo el proyecto
 
 def calcular_distancias_haversine(lat1, lon1, lat2, lon2):
+    # PROBABLEMENTE BORRAR, IDEA SIN CONCRETAR
     print("=== Calculando distancias ===")
     # Redondeo radio tierra en KM.
     R = 6371.2
@@ -142,8 +143,12 @@ def agrupar_pasajeros_mismo_paradero(grupo):
     return paraderos_deseados
 
 def obtener_detalles_vehiculos(grupo):
+    """
+    Obtiene los detalles de los vehiculos y simplifica las consultas
+    Retorna una lista de diccionarios de vehiculos
+    """
     lista_vehiculos_grupo = grupo.chofer.select_related('id_vehiculo').all()
-    #Necesito tener en cuenta siempre al chofer.id_chofer-datos_vehiculo
+    # Necesito tener en cuenta siempre al chofer.id_chofer-datos_vehiculo
     detalles_vehiculos = []
 
     for chofer in lista_vehiculos_grupo:
@@ -156,9 +161,48 @@ def obtener_detalles_vehiculos(grupo):
         detalles_vehiculos.append(diccionario_vehiculo)
     return detalles_vehiculos
 
-
+def agrupar_paraderos_cercanos(paraderos_con_pasajeros, num_clusters=None):
+    """
+    Agrupa paraderos cercanos usando KMeans
+    Retorna una lista de clusters con paraderos y pasajeros, agrupados
+    """
+    # Para evitar errores
+    if not paraderos_con_pasajeros:
+        return []
+    
+    # Extraer coordenadas de paraderos
+    coordenadas = []
+    paraderos_info = []
+    
+    for paradero_id, pasajeros in paraderos_con_pasajeros.items():
+        paradero = pasajeros[0].paradero_deseado
+        coordenadas.append([float(paradero.latitud), float(paradero.longitud)])
+        paraderos_info.append({
+            'paradero_id': paradero_id,
+            'paradero': paradero,
+            'pasajeros': pasajeros,
+            'cantidad': len(pasajeros)
+        })
+    
+    # Siempre le envio la cantidad de vehiculos, pero si no, 
+    # usar el numero de ubicaciones como clusteres
+    if num_clusters is None or num_clusters > len(coordenadas):
+        num_clusters = len(coordenadas)
+    
+    # Aplicar KMeans
+    coordenadas_array = np.array(coordenadas)
+    kmeans = KMeans(n_clusters=num_clusters, random_state=42, n_init=10)
+    clusters = kmeans.fit_predict(coordenadas_array)
+    
+    # Organizar por cluster
+    clusters_agrupados = defaultdict(list)
+    for idx, cluster_id in enumerate(clusters):
+        clusters_agrupados[cluster_id].append(paraderos_info[idx])
+    
+    return clusters_agrupados
 
 def asignar_viajes(grupo):
+    #Funcion principal que orquesta toda la asignacion de viajes
     print("===!=== INICIANDO ASIGNACION DE VIAJES ===!===")
     print(datetime.datetime.now())
     print(f"{grupo}")
@@ -166,11 +210,17 @@ def asignar_viajes(grupo):
 
     # Mandar el grupo a la funcion que los agrupa cuando tienen el mismo paradero, asi reduzco los calculos
     paraderos_deseados = agrupar_pasajeros_mismo_paradero(grupo)
-
+    print(f"Cantidad de paraderos distintos: {len(paraderos_deseados)}")
     # Obtengo un diccionario con id de paradero Y pasajeros que desean ese paradero
 
-    # Probablemente me gustaria saber la capacidad de los vehiculos
+    # Probablemente me gustaria saber la capacidad de los vehiculos, y facilitar las consultas
     detalles_vehiculos = obtener_detalles_vehiculos(grupo)
 
-    # Experimento con KMeans
+    # Experimento clustering con KMeans
+    num_clusters = len(detalles_vehiculos)
+    clusters = agrupar_paraderos_cercanos(paraderos_deseados, num_clusters)
+    print(f"Clusters creados: {len(clusters)}")
+    print(clusters)
 
+    
+    #Luego asignar vehiculos a los clusters, y si no me resulta subdividir los clusters?
