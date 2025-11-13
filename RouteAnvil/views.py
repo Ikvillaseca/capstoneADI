@@ -21,7 +21,14 @@ from .forms import (
 
 # Create your views here.
 def index(request):
-    return render(request, "index.html")
+    # Obtener estadísticas para mostrar en el dashboard
+    context = {
+        'total_pasajeros': Pasajero.objects.count(),
+        'total_choferes': Chofer.objects.count(),
+        'total_vehiculos': Vehiculo.objects.count(),
+        'total_paraderos': Parada.objects.count(),
+    }
+    return render(request, 'index.html', context)
 
 
 # ============ VISTAS CHOFERES ============

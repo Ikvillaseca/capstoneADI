@@ -1,12 +1,283 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block titulo %}RouteAnvil{% endblock titulo %}
+{% block titulo %}RouteAnvil - Sistema de Gestión de Transporte{% endblock titulo %}
 
 {% block contenido %}
 
-<h1>Bienvenido a la pagina de inicio</h1>
+<div id="transportCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="4000">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#transportCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#transportCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#transportCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        <button type="button" data-bs-target="#transportCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+    </div>
+    
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="carousel-design-container gradient-slide-1">
+                <div class="carousel-design-content">
+                    <i class="fas fa-route fa-5x text-white mb-4"></i>
+                    <h2 class="text-white fw-bold">Rutas Inteligentes</h2>
+                    <p class="text-white-50">Sistema optimizado de gestión de rutas</p>
+                </div>
+                <div class="carousel-decoration">
+                    <div class="floating-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    <div class="floating-icon delay-1"><i class="fas fa-road"></i></div>
+                    <div class="floating-icon delay-2"><i class="fas fa-location-dot"></i></div>
+                </div>
+            </div>
+        </div>
 
-<p>Cupidatat cillum aute culpa sit duis. Tempor anim nostrud exercitation ea commodo. Sit sunt ad ex laborum aliquip Lorem occaecat proident exercitation irure amet.</p>
+
+        <div class="carousel-item">
+            <div class="carousel-design-container gradient-slide-2">
+                <div class="carousel-design-content">
+                    <i class="fas fa-user-tie fa-5x text-white mb-4"></i>
+                    <h2 class="text-white fw-bold">Choferes Profesionales</h2>
+                    <p class="text-white-50">Conductores capacitados y certificados</p>
+                </div>
+                <div class="carousel-decoration">
+                    <div class="floating-icon"><i class="fas fa-id-card"></i></div>
+                    <div class="floating-icon delay-1"><i class="fas fa-medal"></i></div>
+                    <div class="floating-icon delay-2"><i class="fas fa-steering-wheel"></i></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="carousel-item">
+            <div class="carousel-design-container gradient-slide-3">
+                <div class="carousel-design-content">
+                    <i class="fas fa-bus fa-5x text-white mb-4"></i>
+                    <h2 class="text-white fw-bold">Flota Moderna</h2>
+                    <p class="text-white-50">Vehículos seguros y eficientes</p>
+                </div>
+                <div class="carousel-decoration">
+                    <div class="floating-icon"><i class="fas fa-wrench"></i></div>
+                    <div class="floating-icon delay-1"><i class="fas fa-gas-pump"></i></div>
+                    <div class="floating-icon delay-2"><i class="fas fa-shield-alt"></i></div>
+                </div>
+            </div>
+        </div>
+
+ 
+        <div class="carousel-item">
+            <div class="carousel-design-container gradient-slide-4">
+                <div class="carousel-design-content">
+                    <i class="fas fa-users fa-5x text-white mb-4"></i>
+                    <h2 class="text-white fw-bold">Gestión de Pasajeros</h2>
+                    <p class="text-white-50">Experiencia de usuario optimizada</p>
+                </div>
+                <div class="carousel-decoration">
+                    <div class="floating-icon"><i class="fas fa-ticket-alt"></i></div>
+                    <div class="floating-icon delay-1"><i class="fas fa-clock"></i></div>
+                    <div class="floating-icon delay-2"><i class="fas fa-star"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#transportCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#transportCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+    </button>
+</div>
+
+
+<!-- Sección de Estadísticas Rápidas -->
+<div class="bg-light py-5 mb-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-12 mb-4">
+                <h3 class="fw-bold text-primary">
+                    <i class="fas fa-tachometer-alt"></i> Panel de Control
+                </h3>
+                <p class="text-muted">Estadísticas en tiempo real del sistema</p>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div class="card border-0 bg-primary text-white stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-tie fa-2x mb-2"></i>
+                        <h4 class="fw-bold">{{ total_choferes|default:0 }}</h4>
+                        <small>Choferes Registrados</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 bg-success text-white stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-2x mb-2"></i>
+                        <h4 class="fw-bold">{{ total_pasajeros|default:0 }}</h4>
+                        <small>Pasajeros</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 bg-warning text-white stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-car fa-2x mb-2"></i>
+                        <h4 class="fw-bold">{{ total_vehiculos|default:0 }}</h4>
+                        <small>Vehículos</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 bg-info text-white stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-map-marker-alt fa-2x mb-2"></i>
+                        <h4 class="fw-bold">{{ total_paraderos|default:0 }}</h4>
+                        <small>Paraderos</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Características -->
+<div class="container mb-5">
+    <div class="row text-center mb-5">
+        <div class="col-12">
+            <h2 class="display-6 fw-bold text-primary mb-3">
+                Nuestro Sistema de Transporte
+            </h2>
+            <p class="lead text-muted">
+                Facilitamos la gestión completa de servicios de transporte con tecnología moderna
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Card Choferes -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 card-hover">
+                <div class="card-body text-center p-4">
+                    <div class="mb-4">
+                        <!-- ✅ LOGO CON CLASES CSS -->
+                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow mx-auto gradient-blue-purple" 
+                             style="width: 120px; height: 120px;">
+                            <i class="fas fa-user-tie fa-3x text-white"></i>
+                        </div>
+                    </div>
+                    <h4 class="text-primary fw-bold mb-3">
+                        <i class="fas fa-id-badge"></i> Choferes
+                    </h4>
+                    <p class="text-muted mb-4">
+                        Gestiona información completa de choferes, licencias, 
+                        controles médicas y asignación de vehículos.
+                    </p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'chofer_lista' %}" class="btn btn-primary">
+                            <i class="fas fa-users"></i> Ver Choferes
+                        </a>
+                        <a href="{% url 'chofer_crear' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-plus"></i> Registrar Chofer
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Vehículos -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 card-hover">
+                <div class="card-body text-center p-4">
+                    <div class="mb-4">
+                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow mx-auto gradient-green-teal" 
+                             style="width: 120px; height: 120px;">
+                            <i class="fas fa-bus fa-3x text-white"></i>
+                        </div>
+                    </div>
+                    <h4 class="text-success fw-bold mb-3">
+                        <i class="fas fa-car"></i> Gestión de Vehículos
+                    </h4>
+                    <p class="text-muted mb-4">
+                        Control completo de la flota vehicular, mantenimiento, 
+                        asignaciones y estado operativo de cada unidad.
+                    </p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'vehiculo_lista' %}" class="btn btn-success">
+                            <i class="fas fa-car"></i> Ver Vehículos
+                        </a>
+                        <a href="{% url 'vehiculo_crear' %}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-plus"></i> Nuevo Vehículo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Pasajeros -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 card-hover">
+                <div class="card-body text-center p-4">
+                    <div class="mb-4">
+                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow mx-auto gradient-yellow-orange" 
+                             style="width: 120px; height: 120px;">
+                            <i class="fas fa-users fa-3x text-white"></i>
+                        </div>
+                    </div>
+                    <h4 class="text-warning fw-bold mb-3">
+                        <i class="fas fa-user-friends"></i> Pasajeros
+                    </h4>
+                    <p class="text-muted mb-4">
+                        Registro y gestión de pasajeros, sus preferencias de destino 
+                        y asignación eficiente a rutas disponibles.
+                    </p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'pasajeros_lista' %}" class="btn btn-warning">
+                            <i class="fas fa-user-friends"></i> Ver Pasajeros
+                        </a>
+                        <a href="{% url 'pasajero_crear' %}" class="btn btn-outline-warning btn-sm">
+                            <i class="fas fa-plus"></i> Registrar Pasajero
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Paraderos -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 card-hover">
+                <div class="card-body text-center p-4">
+                    <div class="mb-4">
+                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow mx-auto gradient-gray" 
+                             style="width: 120px; height: 120px;">
+                            <i class="fas fa-map-marker-alt fa-3x text-white"></i>
+                        </div>
+                    </div>
+                    <h4 class="text-secondary fw-bold mb-3">
+                        <i class="fas fa-map-signs"></i> Gestión de Paraderos
+                    </h4>
+                    <p class="text-muted mb-4">
+                        Administra y controla todos los puntos de parada, ubicaciones 
+                        estratégicas y rutas de transporte del sistema.
+                    </p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'paraderos_lista' %}" class="btn btn-secondary">
+                            <i class="fas fa-map-marker-alt"></i> Ver Paraderos
+                        </a>
+                        <a href="{% url 'paradero_crear' %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-plus"></i> Nuevo Paradero
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock contenido %}
+
+{% block extra_js %}
+<script src="{% static 'js/animacion.js' %}"></script>
+
+{% endblock extra_js %}
 
