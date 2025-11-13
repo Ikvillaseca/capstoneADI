@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from collections import defaultdict
 from .decorators import validar_estado_grupo_requerido
 from .models import Chofer, Pasajero, Vehiculo, Parada, Grupo_Pasajeros
 from .forms import (
@@ -381,9 +382,6 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
         # Obtener los datos de los pasajeros del grupo
         lista_pasajeros = grupo.pasajero.all()
         cantidad_pasajeros = len(lista_pasajeros)
-
-        lista_paraderos = Parada.objects.all()
-
         lista_choferes_vehiculo = grupo.chofer.all().select_related("id_vehiculo")
         
         #for chofer in lista_choferes_vehiculo:
@@ -403,14 +401,29 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
 
         # Esta es probablemente la parte mas compleja de todo el proyecto
 
+        lista_pasajeros = grupo.pasajero.select_related('paradero_deseado').all()
+        cantidad_pasajeros = len(lista_pasajeros)
+        lista_choferes_vehiculo = grupo.chofer.all().select_related("id_vehiculo")
+
+        lista_paraderos = []
+        paraderos_contador = defaultdict(list)
+        for pasajero in lista_pasajeros:
+            if pasajero.paradero_deseado:
+                paradero_id = pasajero.paradero_deseado.id_ubicacion
+                paraderos_contador[paradero_id].append(pasajero)
+        # Mostrar conteo
+        for paradero_id, pasajeros in paraderos_contador.items():
+            paradero = pasajeros[0].paradero_deseado
+            string_paradero = (f"{len(pasajeros)} pasajeros => Paradero {paradero}")
+            lista_paraderos.append(string_paradero)
+        
         datos = {
             "lista_pasajeros": lista_pasajeros,
             "cantidad_pasajeros": cantidad_pasajeros,
-            "lista_paraderos": lista_paraderos,
             "lista_choferes_vehiculo": lista_choferes_vehiculo,
-            "id_grupo_pasajeros": id_grupo_pasajeros
+            "lista_paraderos": lista_paraderos,
+            "id_grupo_pasajeros": id_grupo_pasajeros,
         }
-
 
         return render(request, 'rutas/ruta_crear_seleccionar3_confirmar.html', datos)
 
@@ -418,8 +431,9 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
     if request.method == 'POST':
        
         asignar_viajes(grupo)
-
-        
+        return redirect('ruta_crear_seleccionar_confirmar', id_grupo_pasajeros = id_grupo_pasajeros)
+        ### SECCION DE DEBUG ###
+    
         return redirect('ruta_crear')
 
     
