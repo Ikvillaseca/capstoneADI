@@ -41,4 +41,6 @@ urlpatterns = [
     path('ruta/crear/choferes/<int:id_grupo_pasajeros>/', views.ruta_crear_seleccionar_choferes, name='ruta_crear_seleccionar2_choferes'),
     path('ruta/crear/confirmacion/<int:id_grupo_pasajeros>/', views.ruta_crear_seleccionar_confirmar, name='ruta_crear_seleccionar_confirmar'),
     path('ruta/testeo-api/', views.testeo_api, name='testeo_api'),
+    path('rutas/viajes-resumen/<int:id_grupo_pasajeros>/', views.viajes_resumen, name='viajes_resumen'),
+    path('rutas/viaje/<int:id_viaje>/', views.viaje_detalle, name='viaje_detalle'),
 ]

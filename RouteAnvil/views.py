@@ -5,8 +5,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from collections import defaultdict
 from .decorators import validar_estado_grupo_requerido
-from .models import Chofer, Pasajero, Vehiculo, Parada, Grupo_Pasajeros
+from .models import Chofer, Pasajero, Vehiculo, Parada, Grupo_Pasajeros, Viaje, Parada_Viaje, Pasajero_Viaje, Grupo_Pasajeros
+
 from .forms import (
     VehiculoForm,
     VehiculoModificarForm,
@@ -15,7 +17,8 @@ from .forms import (
     FormularioPasajero,
     FormularioPasajeroModificar,
     FormularioParadero,
-    FormularioParaderoModificar
+    FormularioParaderoModificar,
+    FormularioDestinoViaje
 )
 
 
@@ -392,55 +395,143 @@ def ruta_crear_seleccionar_choferes(request, id_grupo_pasajeros):
 @login_required
 @validar_estado_grupo_requerido("3")
 def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
-    # Obtiene el grupo desde el decorator
-    grupo = request.grupo_pasajeros 
-    if request.method == 'GET':
-        ### === Formulario de seleccion de pasajeros === ###
-        # Obtener los datos de los pasajeros del grupo
-        lista_pasajeros = grupo.pasajero.all()
+    grupo = request.grupo_pasajeros
+
+    if request.method == "GET":
+        form = FormularioDestinoViaje()
+        lista_pasajeros = grupo.pasajero.select_related("paradero_deseado").all()
         cantidad_pasajeros = len(lista_pasajeros)
-
-        lista_paraderos = Parada.objects.all()
-
         lista_choferes_vehiculo = grupo.chofer.all().select_related("id_vehiculo")
-        
-        #for chofer in lista_choferes_vehiculo:
-        #    print(chofer.id_vehiculo.capacidad)
 
-        # El plan es agrupar pasajeros por paraderos, y luego intentar agrupar los paraderos mas cercanos
-        # Luego de eso intentar asignar los pasajeros a los vehiculos tomando en consideracion la capacidad
-        # Probablemente caiga en un problema matematico de optimizacion.
-        # O a lo mejor tenga que hacer algo como clustering???
-        # por ejemplo, que hacer cuando tengo capacidades de vehiculos como 11 y 12
-        # y 8 pasajeros para un lado A, 4 para otro lado B
-        # A y B son cercanos y lo ideal seria asignarlos al vehiculo de 12.
-        # Pero por ejemplo puede ocurrir que ahora sean 8 y 6
-        # En ese caso debo asignar el grupo B al vehiculo de 11
-        # Seria buena idea intentar primero hacer viajes con un chofer y considerar, luego la implementacion de varios al mismo tiempo y asignar los viajes.
-        # A este punto para que funcione todo, se deben tener Pasajeros con paraderos asignados, Choferes con vehiculo asignado, y ahora seleccionar el paradero de destino u origen???
+        paraderos_contador = defaultdict(list)
+        for pasajero in lista_pasajeros:
+            if pasajero.paradero_deseado:
+                paradero_id = pasajero.paradero_deseado.id_ubicacion
+                paraderos_contador[paradero_id].append(pasajero)
 
-        # Esta es probablemente la parte mas compleja de todo el proyecto
+        lista_paraderos = []
+        for paradero_id, pasajeros in paraderos_contador.items():
+            paradero = pasajeros[0].paradero_deseado
+            string_paradero = f"{len(pasajeros)} pasajeros => {paradero.nombre}"
+            lista_paraderos.append(string_paradero)
 
         datos = {
+            "form": form,
             "lista_pasajeros": lista_pasajeros,
             "cantidad_pasajeros": cantidad_pasajeros,
-            "lista_paraderos": lista_paraderos,
             "lista_choferes_vehiculo": lista_choferes_vehiculo,
-            "id_grupo_pasajeros": id_grupo_pasajeros
+            "lista_paraderos": lista_paraderos,
+            "id_grupo_pasajeros": id_grupo_pasajeros,
         }
-
-
         return render(request, 'rutas/ruta_crear_seleccionar3_confirmar.html', datos)
 
-    ### === Creacion de Viaje completo y confirmado === ###
-    if request.method == 'POST':
-       
-        asignar_viajes(grupo)
+    if request.method == "POST":
+        form = FormularioDestinoViaje(request.POST)
 
+        if form.is_valid():
+            try:
+                # Obtener los datos del form
+                punto_encuentro = form.get_punto_encuentro()
+                tipo_viaje = form.cleaned_data["tipo_viaje"]
+
+                # Hacer el trabajo pesado
+                ids_viajes = asignar_viajes(grupo, punto_encuentro, tipo_viaje)
+
+                # Actualizar el estado del grupo para que solo me sirva visualizar, ya no modificar
+                grupo.estado_creacion_viaje = "A"
+                grupo.save()
+
+                messages.success(request, f"Se crearon {len(ids_viajes)} viajes de {tipo_viaje} exitosamente")
+
+                # Redirigir a página de resumen de viajes
+                return redirect("viajes_resumen", id_grupo_pasajeros=id_grupo_pasajeros)
+            except Exception as e:
+                messages.error(request, f"Error al crear viajes: {str(e)}")
+        else:
+            messages.error(request, "Corrija los errores en el formulario")
+
+        # Recargar datos
+        lista_pasajeros = grupo.pasajero.select_related('paradero_deseado').all()
+        cantidad_pasajeros = len(lista_pasajeros)
+        lista_choferes_vehiculo = grupo.chofer.all().select_related("id_vehiculo")
         
-        return redirect('ruta_crear')
-
+        paraderos_contador = defaultdict(list)
+        for pasajero in lista_pasajeros:
+            if pasajero.paradero_deseado:
+                paradero_id = pasajero.paradero_deseado.id_ubicacion
+                paraderos_contador[paradero_id].append(pasajero)
+        
+        lista_paraderos = []
+        for paradero_id, pasajeros in paraderos_contador.items():
+            paradero = pasajeros[0].paradero_deseado
+            lista_paraderos.append(f"{len(pasajeros)} pasajeros => {paradero.nombre}")
+        
+        datos = {
+            "form": form,
+            "lista_pasajeros": lista_pasajeros,
+            "cantidad_pasajeros": cantidad_pasajeros,
+            "lista_choferes_vehiculo": lista_choferes_vehiculo,
+            "lista_paraderos": lista_paraderos,
+            "id_grupo_pasajeros": id_grupo_pasajeros,
+        }
+        return render(request, 'rutas/ruta_crear_seleccionar3_confirmar.html', datos)
     
+
+# Nueva vista para mostrar resumen de viajes
+@login_required
+def viajes_resumen(request, id_grupo_pasajeros):
+    # Obtener el grupo desde la request
+    grupo = get_object_or_404(Grupo_Pasajeros, id_grupo_pasajeros=id_grupo_pasajeros)
+    
+    # Filtrar los viajes creados a partir del grupo de creacion
+    viajes = Viaje.objects.filter(id_grupo=grupo).select_related('id_vehiculo', 'id_chofer', 'punto_encuentro').prefetch_related(
+        'paradas_viaje__id_parada', 'pasajero_viaje_set__id_pasajero'
+    ).order_by('-fecha_creacion')  # Más recientes primero
+    
+    # Preparar datos detallados
+    viajes_detallados = []
+    for viaje in viajes:
+        paradas = viaje.paradas_viaje.all().order_by('orden')
+        pasajeros = viaje.pasajero_viaje_set.all().select_related('id_pasajero')
+        
+        viajes_detallados.append({
+            'viaje': viaje,
+            'paradas': paradas,
+            'pasajeros': pasajeros,
+            'cantidad_pasajeros': pasajeros.count(),
+            'cantidad_paradas': paradas.count(),
+        })
+    
+    datos = {
+        'grupo': grupo,
+        'viajes_detallados': viajes_detallados,
+        'total_viajes': len(viajes_detallados),
+    }
+    
+    return render(request, 'rutas/viajes_resumen.html', datos)
+
+# OK
+# Vista detalle individual de viaje
+@login_required
+def viaje_detalle(request, id_viaje):
+    # Obtener el viaje desde la request
+    viaje = get_object_or_404(Viaje.objects.select_related("id_vehiculo", "id_chofer", "punto_encuentro"), id_viaje=id_viaje)
+
+    # Ordenar paraderos - obtener ubicacion
+    paradas = viaje.paradas_viaje.all().order_by("orden").select_related("id_parada")
+
+    # Obtener pasajero con su paradero deseado
+    pasajeros = viaje.pasajero_viaje_set.all().select_related(
+        "id_pasajero__paradero_deseado"
+    )
+
+    datos = {
+        "viaje": viaje,
+        "paradas": paradas,
+        "pasajeros": pasajeros,
+    }
+    return render(request, "rutas/viaje_detalle.html", datos)
+
 
 # TEST FUNCIONAMIENTO API
 @login_required()
