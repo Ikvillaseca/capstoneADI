@@ -24,7 +24,14 @@ from .forms import (
 
 # Create your views here.
 def index(request):
-    return render(request, "index.html")
+    # Obtener estadísticas para mostrar en el dashboard
+    context = {
+        'total_pasajeros': Pasajero.objects.count(),
+        'total_choferes': Chofer.objects.count(),
+        'total_vehiculos': Vehiculo.objects.count(),
+        'total_paraderos': Parada.objects.count(),
+    }
+    return render(request, 'index.html', context)
 
 
 # ============ VISTAS CHOFERES ============
@@ -193,17 +200,17 @@ def paradero_crear(request):
     if request.method == 'POST':
         form = FormularioParadero(request.POST)
         if form.is_valid():
-            #Obtener direccion y calcular los datos que necesito usando la API de geocoding
-            nombre = form.cleaned_data['direccion']
+            # Obtener direccion y calcular los datos que necesito usando la API de geocoding
+            nombre = form.cleaned_data['nombre']  
             direccion = form.cleaned_data['direccion']
-            tipo_parada = form.cleaned_data['direccion']
+            tipo_parada = form.cleaned_data['tipo_parada'] 
 
-            #Obtener los datos desde api geocoding
+            # Obtener los datos desde api geocoding
             lat, lon, cleaned_direccion, tipo_deducido = geocoding_desde_direccion(direccion)
             if form.cleaned_data['tipo_parada'] == 'X':
                 tipo_parada = tipo_deducido
 
-            #Crear objeto a partir de los datos obtenidos
+            # Crear objeto a partir de los datos obtenidos
             parada = Parada.objects.create(
                 nombre=nombre,
                 tipo_parada=tipo_parada,
@@ -212,22 +219,28 @@ def paradero_crear(request):
                 longitud=lon,
             )
             return redirect('paradero_detalles', id_ubicacion=parada.id_ubicacion)
-
-    if request.method == 'GET':
+        
+    else:
         form = FormularioParadero(initial={'tipo_parada': 'X'})
-        datos = {
-            'form': form,
-            'GOOGLE_MAPS_API_EMBED': settings.GOOGLE_MAPS_API_EMBED  
-        }
-        return render(request, 'paraderos/paradero_crear.html', datos)
+    
+    datos = {
+        'form': form,
+        'GOOGLE_MAPS_API_EMBED': settings.GOOGLE_MAPS_API_EMBED  
+    }
+    return render(request, 'paraderos/paradero_crear.html', datos)
 
 def paradero_detalles(request, id_ubicacion):
     paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)
-    return render(request, 'paraderos/paradero_detalles.html', {'paradero': paradero})
+    datos = {
+        'paradero': paradero,
+        'GOOGLE_MAPS_API_EMBED': settings.GOOGLE_MAPS_API_EMBED
+    }
+    return render(request, 'paraderos/paradero_detalles.html', datos)
 
 #UPDATE
 def paradero_modificar(request, id_ubicacion):
     paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)
+    
     if request.method == 'POST':
         form = FormularioParaderoModificar(request.POST, instance=paradero)
         if form.is_valid():
@@ -235,8 +248,13 @@ def paradero_modificar(request, id_ubicacion):
             return redirect('paradero_detalles', id_ubicacion=paradero.id_ubicacion)
     else:
         form = FormularioParaderoModificar(instance=paradero)
-    return render(request, 'paraderos/paradero_modificar.html', {'form': form, 'paradero': paradero})
-
+    
+    datos = {
+        'form': form, 
+        'paradero': paradero,
+        'GOOGLE_MAPS_API_EMBED': settings.GOOGLE_MAPS_API_EMBED
+    }
+    return render(request, 'paraderos/paradero_modificar.html', datos)
 #DELETE 
 def paradero_eliminar(request, id_ubicacion):
     paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block titulo %}Modificar paradero{% endblock titulo %}
+{% block titulo %}Modificar Paradero{% endblock titulo %}
 
 {% block contenido %}
 <div class="row justify-content-center mb-5">
@@ -8,7 +8,7 @@
         <div class="card shadow">
             <div class="card-header bg-dark text-white text-center">
                 <h3 class="mb-0">
-                    <i class="fas fa-user-edit"></i> Modificar paradero
+                    <i class="fas fa-map-marker-alt"></i> Modificar Paradero
                 </h3>
             </div>
             <div class="card-body p-4">
@@ -17,11 +17,19 @@
                     
                     <div class="mb-4">
                         <h5 class="text-secondary mb-3 border-bottom pb-2">
-                            <i class="fas fa-id-card"></i> Información General
+                            <i class="fas fa-info-circle"></i> Información del Paradero
                         </h5>
                         <dl class="row">
                             <dt class="col-sm-4 text-muted">ID:</dt>
-                            <dd class="col-sm-8"><strong>{{ paradero.id_ubicacion }}</strong></dd>
+                            <dd class="col-sm-8"><strong>{{ paradero.id_parada }}</strong></dd>
+                            
+                            <dt class="col-sm-4 text-muted">Tipo de Parada:</dt>
+                            <dd class="col-sm-8">
+                                {{ form.tipo_parada }}
+                                {% if form.tipo_parada.errors %}
+                                    <div class="text-danger small mt-1">{{ form.tipo_parada.errors }}</div>
+                                {% endif %}
+                            </dd>
                             
                             <dt class="col-sm-4 text-muted">Nombre:</dt>
                             <dd class="col-sm-8">
@@ -31,43 +39,11 @@
                                 {% endif %}
                             </dd>
                             
-                            <dt class="col-sm-4 text-muted">Tipo Paradero:</dt>
-                            <dd class="col-sm-8">
-                                {{ form.tipo_parada }}
-                                {% if form.tipo_parada.errors %}
-                                    <div class="text-danger small mt-1">{{ form.tipo_parada.errors }}</div>
-                                {% endif %}
-                            </dd>
-                            
-                            <dt class="col-sm-4 text-muted">Tipo Paradero:</dt>
+                            <dt class="col-sm-4 text-muted">Dirección:</dt>
                             <dd class="col-sm-8">
                                 {{ form.direccion }}
                                 {% if form.direccion.errors %}
                                     <div class="text-danger small mt-1">{{ form.direccion.errors }}</div>
-                                {% endif %}
-                            </dd>
-
-                        </dl>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <h5 class="text-secondary mb-3 border-bottom pb-2">
-                            <i class="fas fa-phone"></i> Información de Ubicación
-                        </h5>
-                        <dl class="row">
-                            <dt class="col-sm-4 text-muted">Latitud:</dt>
-                            <dd class="col-sm-8">
-                                {{ form.latitud }}
-                                {% if form.latitud.errors %}
-                                    <div class="text-danger small mt-1">{{ form.latitud.errors }}</div>
-                                {% endif %}
-                            </dd>
-                            
-                            <dt class="col-sm-4 text-muted">Longitud:</dt>
-                            <dd class="col-sm-8">
-                                {{ form.longitud }}
-                                {% if form.longitud.errors %}
-                                    <div class="text-danger small mt-1">{{ form.longitud.errors }}</div>
                                 {% endif %}
                             </dd>
                         </dl>
@@ -80,7 +56,7 @@
                     {% endif %}
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-between">
-                        <a href="{% url 'paradero_detalles' paradero.id_ubicacion %}" class="btn btn-secondary">
+                        <a href="{% url 'paraderos_lista' %}" class="btn btn-secondary">
                             <i class="fas fa-times"></i> Cancelar
                         </a>
                         <button type="submit" class="btn btn-warning">
