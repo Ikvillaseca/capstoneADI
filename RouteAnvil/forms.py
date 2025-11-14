@@ -8,6 +8,8 @@ from .validadores import (
     validar_fechas_control_medico, validar_fechas_revision_tecnica,
     validar_vehiculo_unico_chofer
 )
+from .viajes_direcciones import geocoding_desde_direccion
+
 
 #Formulario para poder crear un chofer
 class FormularioChofer(forms.ModelForm):
@@ -301,4 +303,92 @@ class FormularioParaderoModificar(forms.ModelForm):
             'latitud': forms.NumberInput(attrs={'class': 'form-control'}),
             'longitud': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
+# Formulario para seleccionar destino en creación de viajes
+class FormularioDestinoViaje(forms.Form):
+    tipo_viaje = forms.ChoiceField(
+        choices=[
+            ('IDA', 'Viaje de Ida - Recoger pasajeros en paraderos y llevarlos a empresa'),
+            ('VUELTA', 'Viaje de Vuelta - Recoger pasajeros en empresa y llevarlos a paraderos')
+        ],
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
+        initial='IDA',
+        label='Tipo de viaje'
+    )
     
+    tipo_seleccion = forms.ChoiceField(
+        choices=[
+            ('paradero', 'Seleccionar paradero/empresa existente'),
+            ('direccion', 'Ingresar dirección personalizada')
+        ],
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
+        initial='paradero',
+        label='Tipo de selección'
+    )
+    
+    paradero_existente = forms.ModelChoiceField(
+        queryset=Parada.objects.all().order_by('nombre'),
+        required=False,
+        empty_label="Seleccione un paradero o empresa",
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label='Paradero/Empresa'
+    )
+    
+    direccion_personalizada = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ej: Av. Libertador Bernardo O\'Higgins 1058, Santiago'
+        }),
+        label='Dirección'
+    )
+    
+    nombre_temporal = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ej: Oficina Central'
+        }),
+        label='Nombre del lugar (opcional)'
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        tipo = cleaned_data.get('tipo_seleccion')
+        paradero = cleaned_data.get('paradero_existente')
+        direccion = cleaned_data.get('direccion_personalizada')
+        
+        if tipo == 'paradero' and not paradero:
+            raise forms.ValidationError('Debe seleccionar un paradero o empresa')
+        
+        if tipo == 'direccion' and not direccion:
+            raise forms.ValidationError('Debe ingresar una dirección')
+        
+        return cleaned_data
+    
+    def get_punto_encuentro(self):
+        """Retorna el punto de encuentro (origen o destino según tipo)"""
+        
+        tipo = self.cleaned_data.get('tipo_seleccion')
+        
+        if tipo == 'paradero':
+            return self.cleaned_data.get('paradero_existente')
+        
+        # Crear paradero desde dirección
+        direccion = self.cleaned_data.get('direccion_personalizada')
+        nombre = self.cleaned_data.get('nombre_temporal') or 'Punto de Encuentro'
+        
+        lat, lon, direccion_formateada, tipo_parada = geocoding_desde_direccion(direccion)
+        
+        if lat and lon:
+            destino = Parada(
+                nombre=nombre,
+                direccion=direccion_formateada,
+                latitud=lat,
+                longitud=lon,
+                tipo_parada=tipo_parada
+            )
+            destino.save()
+            return destino
+        else:
+            raise forms.ValidationError('No se pudo geocodificar la dirección')

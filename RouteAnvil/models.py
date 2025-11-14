@@ -90,22 +90,55 @@ class Pasajero(models.Model):
         if self.paradero_deseado:
             return str(self.paradero_deseado.nombre)
         return "Sin paradero asignado"
+    
+# Creada en el primer paso cuando se seleccionan pasajeros (Simplifica la consulta de pasajeros que van en la creación del viaje, y evita la repeticion de muchos datos)
+class Grupo_Pasajeros(models.Model):
+    id_grupo_pasajeros = models.AutoField(primary_key=True, verbose_name="ID Reserva")
+    pasajero = models.ManyToManyField(Pasajero, verbose_name=("Pasajeros"))
+    chofer = models.ManyToManyField(Chofer, verbose_name=("Choferes"), blank=True)
+    estado_creacion_viaje = models.CharField(max_length=1, choices=estado_creacion_viaje, default='0', verbose_name="Estado de creacion")
+
+    def __str__(self):
+        return f"Grupo {self.id_grupo_pasajeros}"
 
 #Tabla Viajes 
 class Viaje(models.Model):
-    id_viaje = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Viaje")
-    fecha_creacion = models.DateField(verbose_name="Fecha de creacion del Viaje", auto_now_add=True)
-    hora_Salida = models.TimeField(verbose_name="Hora de Salida")
-    hora_Llegada = models.TimeField(verbose_name="Hora de Llegada")
-    id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Vehiculo")    
-    id_chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE, verbose_name="Chofer")
-    origen = models.ForeignKey(Parada, on_delete=models.CASCADE, verbose_name="Origen", related_name='viajes_origen')
-    destino = models.ForeignKey(Parada, on_delete=models.CASCADE, verbose_name="Destino", related_name='viajes_destino')
-
+    TIPO_VIAJE_CHOICES = [
+        ('IDA', 'Ida - Recoger pasajeros'),
+        ('VUELTA', 'Vuelta - Dejar pasajeros'),
+    ]
+    
+    id_viaje = models.AutoField(primary_key=True)
+    tipo_viaje = models.CharField(max_length=10, choices=TIPO_VIAJE_CHOICES, default='IDA')
+    hora_Salida = models.TimeField()
+    hora_Llegada = models.TimeField()
+    id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
+    id_chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE)
+    punto_encuentro = models.ForeignKey(Parada, on_delete=models.CASCADE, related_name='viajes_punto_encuentro')
+    id_grupo = models.ForeignKey(Grupo_Pasajeros, on_delete=models.CASCADE, related_name='viajes', null=True, blank=True)  # NUEVO
+    fecha_creacion = models.DateTimeField(auto_now_add=True)  # NUEVO - para ordenar por recientes
+    # punto_encuentro puede ser origen (si tipo=VUELTA) o destino (si tipo=IDA)
+    
     def __str__(self):
         vehiculo_str = self.id_vehiculo.patente if self.id_vehiculo else "Sin Vehículo"
-        return f"Viaje {self.id_viaje} - {self.origen} → {self.destino} ({vehiculo_str})"
+        return f"Viaje {self.id_viaje} - {self.id_viaje} ({vehiculo_str})"
 
+
+class Parada_Viaje(models.Model):
+    id_parada_viaje = models.AutoField(primary_key=True)
+    id_viaje = models.ForeignKey(Viaje, on_delete=models.CASCADE, related_name='paradas_viaje')
+    id_parada = models.ForeignKey(Parada, on_delete=models.CASCADE)
+    orden = models.IntegerField()
+    pasajeros_suben = models.IntegerField(default=0)
+    pasajeros_bajan = models.IntegerField(default=0)
+    hora_estimada_llegada = models.TimeField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['orden']
+        unique_together = ['id_viaje', 'orden']
+    
+    def __str__(self):
+        return f"Parada {self.orden} - Viaje {self.id_viaje.id_viaje}"
 
 # Tabla Reservas
 class Pasajero_Viaje(models.Model):
@@ -116,15 +149,5 @@ class Pasajero_Viaje(models.Model):
     def __str__(self):
         return f"Reserva {self.id_reserva} - Pasajero {self.id_pasajero} en Viaje {self.id_viaje}"
 
-# Tabla grupo de pasajeros
-# Creada en el primer paso cuando se seleccionan pasajeros (Simplifica la consulta de pasajeros que van en la creación del viaje, y evita la repeticion de muchos datos)
-class Grupo_Pasajeros(models.Model):
-    id_grupo_pasajeros = models.AutoField(primary_key=True, verbose_name="ID Reserva")
-    pasajero = models.ManyToManyField(Pasajero, verbose_name=("Pasajeros"))
-    chofer = models.ManyToManyField(Chofer, verbose_name=("Choferes"), blank=True)
-    estado_creacion_viaje = models.CharField(max_length=1, choices=estado_creacion_viaje, default='0', verbose_name="Estado de creacion")
-
-    def __str__(self):
-        return f"Grupo {self.id_grupo_pasajeros}"
 
 

@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-route"></i> Detalle del Viaje #{{ viaje.id_viaje }}
+        </h2>
+        <a href="javascript:history.back()" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <!-- Información principal -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header {% if viaje.tipo_viaje == 'IDA' %}bg-success{% else %}bg-info{% endif %} text-white">
+                    <h5><i class="fas fa-info-circle"></i> Información del Viaje</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Tipo:</strong> 
+                        <span class="badge {% if viaje.tipo_viaje == 'IDA' %}bg-success{% else %}bg-info{% endif %}">
+                            {{ viaje.get_tipo_viaje_display }}
+                        </span>
+                    </p>
+                    <p><strong>Hora Salida:</strong> {{ viaje.hora_Salida|time:"H:i" }}</p>
+                    <p><strong>Hora Llegada:</strong> {{ viaje.hora_Llegada|time:"H:i" }}</p>
+                    <p><strong>Punto Encuentro:</strong> {{ viaje.punto_encuentro.nombre }}</p>
+                    <p class="mb-0"><strong>Dirección:</strong> {{ viaje.punto_encuentro.direccion }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-user-tie"></i> Chofer y Vehículo</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Chofer:</strong> {{ viaje.id_chofer.nombre }} {{ viaje.id_chofer.apellido }}</p>
+                    <p><strong>RUT:</strong> {{ viaje.id_chofer.rut }}</p>
+                    <p><strong>Vehículo:</strong> {{ viaje.id_vehiculo.marca }} - {{ viaje.id_vehiculo.patente }}</p>
+                    <p class="mb-0"><strong>Capacidad:</strong> {{ pasajeros.count }}/{{ viaje.id_vehiculo.capacidad }} pasajeros</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Itinerario de paradas -->
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5><i class="fas fa-map-marked-alt"></i> Itinerario de Paradas ({{ paradas.count }})</h5>
+        </div>
+        <div class="card-body">
+            <div class="timeline">
+                {% for parada in paradas %}
+                <div class="timeline-item mb-3">
+                    <div class="d-flex">
+                        <div class="timeline-marker">
+                            <span class="badge bg-primary rounded-circle" style="width: 30px; height: 30px; line-height: 20px;">
+                                {{ parada.orden }}
+                            </span>
+                        </div>
+                        <div class="timeline-content ms-3 w-100">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ parada.id_parada.nombre }}</h6>
+                                    <p class="card-text text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt"></i> {{ parada.id_parada.direccion }}
+                                    </p>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <i class="fas fa-clock text-primary"></i> 
+                                            <strong>{{ parada.hora_estimada_llegada|time:"H:i" }}</strong>
+                                        </div>
+                                        {% if parada.pasajeros_suben > 0 %}
+                                        <div class="col-md-4">
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-arrow-up"></i> Suben: {{ parada.pasajeros_suben }}
+                                            </span>
+                                        </div>
+                                        {% endif %}
+                                        {% if parada.pasajeros_bajan > 0 %}
+                                        <div class="col-md-4">
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-arrow-down"></i> Bajan: {{ parada.pasajeros_bajan }}
+                                            </span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de pasajeros -->
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h5><i class="fas fa-users"></i> Pasajeros Asignados ({{ pasajeros.count }})</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre</th>
+                            <th>RUT</th>
+                            <th>Paradero</th>
+                            <th>Teléfono</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pasajero_viaje in pasajeros %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ pasajero_viaje.id_pasajero.nombre }} {{ pasajero_viaje.id_pasajero.apellido }}</td>
+                            <td>{{ pasajero_viaje.id_pasajero.rut }}</td>
+                            <td>
+                                {% if pasajero_viaje.id_pasajero.paradero_deseado %}
+                                {{ pasajero_viaje.id_pasajero.paradero_deseado.nombre }}
+                                {% else %}
+                                <span class="text-muted">No asignado</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ pasajero_viaje.id_pasajero.telefono|default:"No registrado" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 20px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #dee2e6;
+}
+
+.timeline-marker {
+    position: relative;
+    z-index: 1;
+}
+
+.timeline-content {
+    flex: 1;
+}
+</style>
+{% endblock contenido %}

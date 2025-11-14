@@ -7,7 +7,7 @@ from sklearn.cluster import KMeans
 import numpy as np
 from collections import defaultdict
 import datetime
-from .models import Vehiculo
+from .models import Viaje, Pasajero_Viaje, Parada_Viaje, Chofer, Vehiculo
 
 TIPO_PRIORIDAD = [
     "airport",
@@ -201,26 +201,342 @@ def agrupar_paraderos_cercanos(paraderos_con_pasajeros, num_clusters=None):
     
     return clusters_agrupados
 
-def asignar_viajes(grupo):
-    #Funcion principal que orquesta toda la asignacion de viajes
+def asignar_vehiculos_a_clusters(clusters, vehiculos):
+    """
+    Asigna vehículos a clusters basándose en capacidad
+    Retorna: lista de asignaciones {vehiculo, cluster, pasajeros}
+    """
+    asignaciones = []
+    vehiculos_disponibles = sorted(vehiculos, key=lambda v: v['capacidad'], reverse=True)
+    
+    # Ordenar clusters por cantidad de pasajeros (descendente)
+    clusters_ordenados = sorted(
+        clusters.items(),
+        key=lambda x: sum(p['cantidad'] for p in x[1]),
+        reverse=True
+    )
+    
+    for cluster_id, paraderos_cluster in clusters_ordenados:
+        total_pasajeros = sum(p['cantidad'] for p in paraderos_cluster)
+        pasajeros_lista = []
+        
+        # Recolectar todos los pasajeros del cluster
+        for paradero_info in paraderos_cluster:
+            pasajeros_lista.extend(paradero_info['pasajeros'])
+        
+        # Buscar vehículo con capacidad suficiente
+        vehiculo_asignado = None
+        for idx, vehiculo in enumerate(vehiculos_disponibles):
+            if vehiculo['capacidad'] >= total_pasajeros:
+                vehiculo_asignado = vehiculo
+                vehiculos_disponibles.pop(idx)
+                break
+        
+        # Si no hay vehículo con capacidad suficiente, dividir cluster
+        if not vehiculo_asignado and vehiculos_disponibles:
+            # Tomar el vehículo más grande disponible
+            vehiculo_asignado = vehiculos_disponibles.pop(0)
+            capacidad = vehiculo_asignado['capacidad']
+            
+            # Asignar pasajeros hasta llenar capacidad
+            pasajeros_asignados = pasajeros_lista[:capacidad]
+            pasajeros_restantes = pasajeros_lista[capacidad:]
+            
+            asignaciones.append({
+                'vehiculo': vehiculo_asignado,
+                'cluster_id': cluster_id,
+                'paraderos': paraderos_cluster,
+                'pasajeros': pasajeros_asignados,
+                'capacidad_usada': len(pasajeros_asignados)
+            })
+            
+            # Crear nueva asignación para pasajeros restantes
+            if pasajeros_restantes and vehiculos_disponibles:
+                vehiculo_extra = vehiculos_disponibles.pop(0)
+                asignaciones.append({
+                    'vehiculo': vehiculo_extra,
+                    'cluster_id': f"{cluster_id}_overflow",
+                    'paraderos': paraderos_cluster,
+                    'pasajeros': pasajeros_restantes,
+                    'capacidad_usada': len(pasajeros_restantes)
+                })
+        else:
+            if vehiculo_asignado:
+                asignaciones.append({
+                    'vehiculo': vehiculo_asignado,
+                    'cluster_id': cluster_id,
+                    'paraderos': paraderos_cluster,
+                    'pasajeros': pasajeros_lista,
+                    'capacidad_usada': len(pasajeros_lista)
+                })
+    
+    return asignaciones
+
+
+def calcular_ruta_optima(paraderos_cluster, origen, destino):
+    """
+    Calcula la ruta óptima para visitar todos los paraderos
+    Retorna: lista ordenada de paraderos con información de pasajeros
+    """
+    if not paraderos_cluster:
+        return []
+    
+    # Extraer coordenadas
+    coordenadas = []
+    paraderos_info = []
+    
+    for paradero_info in paraderos_cluster:
+        paradero = paradero_info['paradero']
+        coordenadas.append([float(paradero.latitud), float(paradero.longitud)])
+        paraderos_info.append(paradero_info)
+    
+    # Si solo hay un paradero, retornar directamente
+    if len(coordenadas) == 1:
+        return [paraderos_info[0]]
+    
+    # Algoritmo del vecino más cercano (Nearest Neighbor)
+    coord_origen = [float(origen.latitud), float(origen.longitud)]
+    ruta_ordenada = []
+    indices_visitados = set()
+    coord_actual = coord_origen
+    
+    while len(indices_visitados) < len(coordenadas):
+        distancia_min = float('inf')
+        idx_mas_cercano = None
+        
+        for idx, coord in enumerate(coordenadas):
+            if idx in indices_visitados:
+                continue
+            
+            distancia = calcular_distancias_haversine(
+                coord_actual[0], coord_actual[1],
+                coord[0], coord[1]
+            )
+            
+            if distancia < distancia_min:
+                distancia_min = distancia
+                idx_mas_cercano = idx
+        
+        if idx_mas_cercano is not None:
+            indices_visitados.add(idx_mas_cercano)
+            ruta_ordenada.append(paraderos_info[idx_mas_cercano])
+            coord_actual = coordenadas[idx_mas_cercano]
+    
+    return ruta_ordenada
+
+def estimar_tiempo_viaje(distancia_km, velocidad_promedio=30):
+    """
+    Estima el tiempo de viaje en minutos
+    distancia_km: distancia en kilómetros
+    velocidad_promedio: km/h (default 30 para ciudad)
+    """
+    tiempo_horas = distancia_km / velocidad_promedio
+    tiempo_minutos = tiempo_horas * 60
+    # Agregar 3 minutos por parada (tiempo de subida/bajada)
+    return int(tiempo_minutos) + 3
+
+def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje='IDA', hora_salida_base=None, grupo=None):
+    """
+    Crea objetos Viaje con sus paradas ordenadas
+    tipo_viaje: 'IDA' (recoger) o 'VUELTA' (dejar)
+    grupo: Grupo_Pasajeros al que pertenece este viaje
+    #Punto encuentro: Destino si es IDA, Origen si es VUELTA
+
+    """
+    # Definir un campo para definir la hora de inicio del viaje (Probablemente tambien el dia)
+    if hora_salida_base is None:
+        hora_salida_base = datetime.time(7, 0)
+    
+    viajes_creados = []
+    
+    # Crear viaje por asignacion
+    for asignacion in asignaciones:
+        #Obtener los datos necesarios para crear los viajes
+        vehiculo = asignacion['vehiculo']
+        pasajeros = asignacion['pasajeros']
+        paraderos_cluster = asignacion['paraderos']
+        chofer = Chofer.objects.get(id_chofer=vehiculo['id_chofer'])
+        
+        # Determinar primer paradero del recorrido
+        primer_paradero = pasajeros[0].paradero_deseado
+        
+        # Calcular ruta óptima
+        if tipo_viaje == 'IDA':
+            ruta_ordenada = calcular_ruta_optima(paraderos_cluster, primer_paradero, punto_encuentro)
+            origen_viaje = primer_paradero
+            destino_viaje = punto_encuentro
+        else:
+            ruta_ordenada = calcular_ruta_optima(paraderos_cluster, punto_encuentro, primer_paradero)
+            origen_viaje = punto_encuentro
+            destino_viaje = primer_paradero
+        
+        # Calcular distancia total
+        distancia_total = 0
+        if tipo_viaje == 'IDA':
+            coord_actual = [float(primer_paradero.latitud), float(primer_paradero.longitud)]
+        else:
+            coord_actual = [float(punto_encuentro.latitud), float(punto_encuentro.longitud)]
+        
+        for paradero_info in ruta_ordenada:
+            paradero = paradero_info['paradero']
+            coord_paradero = [float(paradero.latitud), float(paradero.longitud)]
+            distancia = calcular_distancias_haversine(
+                coord_actual[0], coord_actual[1],
+                coord_paradero[0], coord_paradero[1]
+            )
+            distancia_total += distancia
+            coord_actual = coord_paradero
+        
+        if tipo_viaje == 'IDA':
+            distancia_total += calcular_distancias_haversine(coord_actual[0], coord_actual[1],
+                float(punto_encuentro.latitud), float(punto_encuentro.longitud))
+        
+        tiempo_total_minutos = estimar_tiempo_viaje(distancia_total)
+        hora_llegada = (datetime.datetime.combine(datetime.date.today(), hora_salida_base) + 
+                       datetime.timedelta(minutes=tiempo_total_minutos)).time()
+        
+        # Crear viaje CON REFERENCIA AL GRUPO
+        viaje = Viaje.objects.create(
+            tipo_viaje=tipo_viaje,
+            hora_Salida=hora_salida_base,
+            hora_Llegada=hora_llegada,
+            id_vehiculo_id=vehiculo['id_vehiculo'],
+            id_chofer=chofer,
+            punto_encuentro=punto_encuentro,
+            id_grupo=grupo  # AGREGAR GRUPO
+        )
+                
+        hora_actual = hora_salida_base
+        coord_anterior = [float(origen_viaje.latitud), float(origen_viaje.longitud)]
+        
+        #Viaje de IDA (primero los paraderos luego el final definido)
+        if tipo_viaje == 'IDA':
+            for orden, paradero_info in enumerate(ruta_ordenada, start=1):
+                paradero = paradero_info['paradero']
+                cantidad_pasajeros = paradero_info['cantidad']
+                
+                coord_paradero = [float(paradero.latitud), float(paradero.longitud)]
+                distancia_tramo = calcular_distancias_haversine(
+                    coord_anterior[0], coord_anterior[1],
+                    coord_paradero[0], coord_paradero[1]
+                )
+                
+                tiempo_tramo = estimar_tiempo_viaje(distancia_tramo)
+                hora_actual = (datetime.datetime.combine(datetime.date.today(), hora_actual) + 
+                              datetime.timedelta(minutes=tiempo_tramo)).time()
+                
+                Parada_Viaje.objects.create(
+                    id_viaje=viaje,
+                    id_parada=paradero,
+                    orden=orden,
+                    pasajeros_suben=cantidad_pasajeros,
+                    pasajeros_bajan=0,
+                    hora_estimada_llegada=hora_actual
+                )
+                
+                coord_anterior = coord_paradero
+            
+            distancia_final = calcular_distancias_haversine(
+                coord_anterior[0], coord_anterior[1],
+                float(punto_encuentro.latitud), float(punto_encuentro.longitud)
+            )
+            tiempo_final = estimar_tiempo_viaje(distancia_final)
+            hora_actual = (datetime.datetime.combine(datetime.date.today(), hora_actual) + 
+                          datetime.timedelta(minutes=tiempo_final)).time()
+            
+            Parada_Viaje.objects.create(
+                id_viaje=viaje,
+                id_parada=punto_encuentro,
+                orden=len(ruta_ordenada) + 1,
+                pasajeros_suben=0,
+                pasajeros_bajan=len(pasajeros),
+                hora_estimada_llegada=hora_actual
+            )
+        
+        #Viaje de VUELTA (Origen definido, luego se dejan pasajeros en los paraderos)
+        else:
+            Parada_Viaje.objects.create(
+                id_viaje=viaje,
+                id_parada=punto_encuentro,
+                orden=1,
+                pasajeros_suben=len(pasajeros),
+                pasajeros_bajan=0,
+                hora_estimada_llegada=hora_salida_base
+            )
+            
+            for orden, paradero_info in enumerate(ruta_ordenada, start=2):
+                paradero = paradero_info['paradero']
+                cantidad_pasajeros = paradero_info['cantidad']
+                
+                coord_paradero = [float(paradero.latitud), float(paradero.longitud)]
+                distancia_tramo = calcular_distancias_haversine(
+                    coord_anterior[0], coord_anterior[1],
+                    coord_paradero[0], coord_paradero[1]
+                )
+                
+                tiempo_tramo = estimar_tiempo_viaje(distancia_tramo)
+                hora_actual = (datetime.datetime.combine(datetime.date.today(), hora_actual) + 
+                              datetime.timedelta(minutes=tiempo_tramo)).time()
+                
+                Parada_Viaje.objects.create(
+                    id_viaje=viaje,
+                    id_parada=paradero,
+                    orden=orden,
+                    pasajeros_suben=0,
+                    pasajeros_bajan=cantidad_pasajeros,
+                    hora_estimada_llegada=hora_actual
+                )
+                
+                coord_anterior = coord_paradero
+        
+        for pasajero in pasajeros:
+            Pasajero_Viaje.objects.create(
+                id_viaje=viaje,
+                id_pasajero=pasajero
+            )
+        
+        viajes_creados.append({
+            'viaje': viaje,
+            'tipo': tipo_viaje,
+            'pasajeros_count': len(pasajeros),
+            'capacidad_usada': asignacion['capacidad_usada'],
+            'paradas_count': len(ruta_ordenada) + 1,
+            'distancia_km': round(distancia_total, 2)
+        })
+        
+        print(f"=== Viaje {tipo_viaje} creado: {viaje.id_viaje} ===")
+        print(f"  Grupo: {grupo if grupo else 'Sin grupo'}")
+        print(f"  Chofer: {chofer.nombre} {chofer.apellido}")
+        print(f"  Pasajeros: {len(pasajeros)}/{vehiculo['capacidad']}")
+        print(f"  Paradas: {len(ruta_ordenada) + 1}")
+    
+    return viajes_creados
+
+def asignar_viajes(grupo, punto_encuentro, tipo_viaje='IDA', hora_salida=None):
+    """
+    Función principal que orquesta toda la asignación de viajes
+    """
     print("===!=== INICIANDO ASIGNACION DE VIAJES ===!===")
-    print(datetime.datetime.now())
-    print(f"{grupo}")
-    # Separar el problema en partes, primero necesito obtener los pasajeros del grupo
-
-    # Mandar el grupo a la funcion que los agrupa cuando tienen el mismo paradero, asi reduzco los calculos
+    print(f"Tipo de viaje: {tipo_viaje}")
+    print(f"Punto de encuentro: {punto_encuentro}")
+    
     paraderos_deseados = agrupar_pasajeros_mismo_paradero(grupo)
-    print(f"Cantidad de paraderos distintos: {len(paraderos_deseados)}")
-    # Obtengo un diccionario con id de paradero Y pasajeros que desean ese paradero
-
-    # Probablemente me gustaria saber la capacidad de los vehiculos, y facilitar las consultas
+    print(f"Paraderos únicos: {len(paraderos_deseados)}")
+    
     detalles_vehiculos = obtener_detalles_vehiculos(grupo)
-
-    # Experimento clustering con KMeans
+    print(f"Vehículos disponibles: {len(detalles_vehiculos)}")
+    
     num_clusters = len(detalles_vehiculos)
     clusters = agrupar_paraderos_cercanos(paraderos_deseados, num_clusters)
     print(f"Clusters creados: {len(clusters)}")
-    print(clusters)
-
     
-    #Luego asignar vehiculos a los clusters, y si no me resulta subdividir los clusters?
+    asignaciones = asignar_vehiculos_a_clusters(clusters, detalles_vehiculos)
+    print(f"Asignaciones realizadas: {len(asignaciones)}")
+    
+    viajes = crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje, hora_salida, grupo)  # PASAR GRUPO
+    
+    print(f"✓ Total viajes creados: {len(viajes)}")
+    print("===!=== ASIGNACION COMPLETADA ===!===")
+    
+    ids_viajes = [v['viaje'].id_viaje for v in viajes]
+    return ids_viajes
