@@ -1,0 +1,410 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.5 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36" version="28.2.5" pages="4">
+  <diagram name="Diagrama de Contexto" id="p0BlVYuSWzOhJJRa_iea">
+    <mxGraphModel dx="1412" dy="835" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" style="locked=1;" parent="0" />
+        <mxCell id="aGy-9l_lbxWav1IR-XE6-3" value="Capa workspace" style="" parent="0" />
+        <mxCell id="aGy-9l_lbxWav1IR-XE6-7" value="Utiliza el sitio para administrar&amp;nbsp;&lt;div&gt;choferes,transporte,pasajeros&amp;nbsp;&lt;div&gt;y luego crear rutas.&lt;/div&gt;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;shadow=0;flowAnimation=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="aGy-9l_lbxWav1IR-XE6-3" source="aGy-9l_lbxWav1IR-XE6-4" target="aGy-9l_lbxWav1IR-XE6-6" edge="1">
+          <mxGeometry x="0.0025" relative="1" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="-130" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aGy-9l_lbxWav1IR-XE6-4" value="Administrador del negocio&lt;div&gt;[Persona]&lt;/div&gt;" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0B0B0B;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.user;fillStyle=solid;" parent="aGy-9l_lbxWav1IR-XE6-3" vertex="1">
+          <mxGeometry x="176" y="30" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="9ksT8k6DDbnK8x_L2dHr-2" value="Utiliza el sistema para recibir&amp;nbsp;&lt;div&gt;información de sus rutas&amp;nbsp;&lt;div&gt;y notificar la finalización de estas&lt;/div&gt;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="aGy-9l_lbxWav1IR-XE6-3" source="aGy-9l_lbxWav1IR-XE6-5" target="aGy-9l_lbxWav1IR-XE6-6" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-130" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aGy-9l_lbxWav1IR-XE6-5" value="Chofer de Transporte de Personal&lt;br&gt;&lt;div&gt;[Persona]&lt;/div&gt;" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.user;" parent="aGy-9l_lbxWav1IR-XE6-3" vertex="1">
+          <mxGeometry x="176" y="600" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="aGy-9l_lbxWav1IR-XE6-11" value="Utiliza la api para poder crear las rutas,&lt;div&gt;&amp;nbsp;luego de planificar los destinos y origenes.&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="aGy-9l_lbxWav1IR-XE6-3" source="aGy-9l_lbxWav1IR-XE6-6" target="aGy-9l_lbxWav1IR-XE6-9" edge="1">
+          <mxGeometry x="0.0226" y="-20" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aGy-9l_lbxWav1IR-XE6-6" value="Sistema de administración de transporte, y planificacion de rutas RouteAnvil&lt;div&gt;&lt;br&gt;&lt;div&gt;[Sistema de Software]&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aGy-9l_lbxWav1IR-XE6-3" vertex="1">
+          <mxGeometry x="80" y="284" width="270" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="aGy-9l_lbxWav1IR-XE6-9" value="Api Google Maps Routes&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;[Sistema de Software]&lt;/div&gt;" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="aGy-9l_lbxWav1IR-XE6-3" vertex="1">
+          <mxGeometry x="570" y="304" width="170" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="Fh9-JyQ1qnlPyFp_xiRF" name="Diagrama de Contenedores">
+    <mxGraphModel dx="1661" dy="982" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" value="Capa Sistema" style="" parent="0" />
+        <mxCell id="OK2TZFdraZLwrzqdRd8m-8" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="39" y="170" width="1170" height="600" as="geometry" />
+        </mxCell>
+        <mxCell id="OK2TZFdraZLwrzqdRd8m-1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;verticalAlign=middle;labelPosition=center;verticalLabelPosition=middle;textDirection=ltr;labelBorderColor=none;spacingTop=11;spacingBottom=-1;" parent="OK2TZFdraZLwrzqdRd8m-8" vertex="1">
+          <mxGeometry width="1170" height="599.9999999999999" as="geometry" />
+        </mxCell>
+        <mxCell id="OK2TZFdraZLwrzqdRd8m-5" value="Sistema RouteAnvil&lt;div&gt;&lt;div&gt;[Sistema de Software]&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=bottom;whiteSpace=wrap;rounded=0;" parent="OK2TZFdraZLwrzqdRd8m-8" vertex="1">
+          <mxGeometry y="544.1860465116279" width="393.27599999999984" height="55.813953488372086" as="geometry" />
+        </mxCell>
+        <mxCell id="u8IBo9nq2YXYFR0R_JM1-19" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;" edge="1" parent="1" source="7wxgsntwqiTmPK1FOWe8-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="870" y="200" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="760" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7wxgsntwqiTmPK1FOWe8-1" value="Administrador del negocio&lt;div&gt;[Persona]&lt;/div&gt;" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.user;" parent="1" vertex="1">
+          <mxGeometry x="680" y="20" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="u8IBo9nq2YXYFR0R_JM1-17" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;elbow=vertical;" edge="1" parent="1" source="wtdokd-YWPyagG6eqPQp-1" target="_ti4THjaKY9hCCHp44bC-10">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="961.6782178217823" y="200" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="960" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-24" value="Interactua con" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="u8IBo9nq2YXYFR0R_JM1-17">
+          <mxGeometry x="0.5762" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wtdokd-YWPyagG6eqPQp-1" value="Chofer de Transporte de Personal&lt;br&gt;&lt;div&gt;[Persona]&lt;/div&gt;" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.user;direction=east;" parent="1" vertex="1">
+          <mxGeometry x="990" y="20" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-2" value="Capa contenedores" style="" parent="0" />
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="I2lwzNwPmK54_w6k87Tk-2" source="I2lwzNwPmK54_w6k87Tk-12" target="I2lwzNwPmK54_w6k87Tk-10" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-3" value="Provee&amp;nbsp;&lt;div&gt;logica de negocio&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="I2lwzNwPmK54_w6k87Tk-11">
+          <mxGeometry x="0.1746" y="3" relative="1" as="geometry">
+            <mxPoint x="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;" parent="I2lwzNwPmK54_w6k87Tk-2" source="I2lwzNwPmK54_w6k87Tk-18" target="I2lwzNwPmK54_w6k87Tk-12" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="700" y="510" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-1" value="Lee/Escribe&lt;div&gt;datos&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="I2lwzNwPmK54_w6k87Tk-13">
+          <mxGeometry x="-0.0005" y="-3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-25" value="" style="group" parent="I2lwzNwPmK54_w6k87Tk-2" vertex="1" connectable="0">
+          <mxGeometry x="420" y="502" width="260" height="124" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-12" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="I2lwzNwPmK54_w6k87Tk-25" vertex="1">
+          <mxGeometry width="260" height="124" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-21" value="&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&lt;div style=&quot;&quot;&gt;Aplicación Web&lt;/div&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;[Container: Django/Python 3.13.7]&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="I2lwzNwPmK54_w6k87Tk-25" vertex="1">
+          <mxGeometry x="30" y="10" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-22" value="Entrega toda la funcionalidad necesaria&#xa;para la administración de&#xa;la flota de transporte." style="text;whiteSpace=wrap;align=center;" parent="I2lwzNwPmK54_w6k87Tk-25" vertex="1">
+          <mxGeometry x="20" y="50" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-26" value="" style="group" parent="I2lwzNwPmK54_w6k87Tk-2" vertex="1" connectable="0">
+          <mxGeometry x="790" y="590" width="250" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-18" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="I2lwzNwPmK54_w6k87Tk-26" vertex="1">
+          <mxGeometry width="250" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-19" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Base de datos&lt;/font&gt;&lt;/b&gt;&lt;div&gt;[PostreSQL]&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="I2lwzNwPmK54_w6k87Tk-26" vertex="1">
+          <mxGeometry x="45" y="44" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-20" value="&lt;div&gt;Almacena la información de usuarios, vehiculos&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;choferes, pasajeros.&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="I2lwzNwPmK54_w6k87Tk-26" vertex="1">
+          <mxGeometry x="20" y="90" width="210" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-27" value="" style="group" parent="I2lwzNwPmK54_w6k87Tk-2" vertex="1" connectable="0">
+          <mxGeometry x="140" y="380" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-10" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="I2lwzNwPmK54_w6k87Tk-27" vertex="1">
+          <mxGeometry width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-23" value="&lt;div&gt;&lt;font style=&quot;&quot;&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 14px;&quot;&gt;&lt;b&gt;Servidor HTTP WSGI&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;font-size: 12px; font-weight: normal; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;[gunicorn]&lt;/span&gt;&lt;/div&gt;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="I2lwzNwPmK54_w6k87Tk-27" vertex="1">
+          <mxGeometry x="35" y="10" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="I2lwzNwPmK54_w6k87Tk-24" value="Servidor HTTP encargado de facilitar la distribución de las páginas web" style="text;whiteSpace=wrap;align=center;" parent="I2lwzNwPmK54_w6k87Tk-27" vertex="1">
+          <mxGeometry x="38.75" y="50" width="142.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="u8IBo9nq2YXYFR0R_JM1-1" value="Api Google Maps Routes&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;[Sistema de Software]&lt;/div&gt;" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="I2lwzNwPmK54_w6k87Tk-2">
+          <mxGeometry x="1270" y="470" width="192" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="u8IBo9nq2YXYFR0R_JM1-2" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;elbow=vertical;startArrow=classic;startFill=1;" edge="1" parent="I2lwzNwPmK54_w6k87Tk-2" source="I2lwzNwPmK54_w6k87Tk-12" target="u8IBo9nq2YXYFR0R_JM1-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;" edge="1" parent="I2lwzNwPmK54_w6k87Tk-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="364.85" y="254.41" as="sourcePoint" />
+            <mxPoint x="723.8995049504953" y="254.40999999999977" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-14" value="Provee las paginas web&amp;nbsp;&lt;div&gt;para ser visualizadas&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="_ti4THjaKY9hCCHp44bC-13">
+          <mxGeometry x="-0.1014" y="3" relative="1" as="geometry">
+            <mxPoint x="11" y="23" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-15" value="" style="group;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" connectable="0" parent="I2lwzNwPmK54_w6k87Tk-2">
+          <mxGeometry x="110" y="210" width="254.85148514851483" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-16" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="_ti4THjaKY9hCCHp44bC-15">
+          <mxGeometry width="254.8514851485148" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-17" value="&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Plataforma Heroku&lt;/span&gt;&lt;/div&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;[Heroku dyno eco]&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="_ti4THjaKY9hCCHp44bC-15">
+          <mxGeometry x="29.405940594059405" y="7.258064516129031" width="196.03960396039605" height="21.774193548387093" as="geometry" />
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-18" value="Hostea el sistema para poder mantener un sistema con alta disponibilidad" style="text;whiteSpace=wrap;align=center;" vertex="1" parent="_ti4THjaKY9hCCHp44bC-15">
+          <mxGeometry x="19.603960396039604" y="36.29032258064515" width="215.64356435643566" height="36.29032258064515" as="geometry" />
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=none;startFill=0;" edge="1" parent="I2lwzNwPmK54_w6k87Tk-2" target="_ti4THjaKY9hCCHp44bC-16">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="239.91089108910887" y="380" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-20" value="Distribuye las paginas web" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="_ti4THjaKY9hCCHp44bC-19">
+          <mxGeometry x="0.1163" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-21" value="" style="group" vertex="1" connectable="0" parent="I2lwzNwPmK54_w6k87Tk-2">
+          <mxGeometry x="720" y="200" width="303.5" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-10" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="_ti4THjaKY9hCCHp44bC-21">
+          <mxGeometry width="303.5000000000001" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-11" value="&lt;font style=&quot;&quot;&gt;&lt;div style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Interfaz Web&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 14px;&quot;&gt;[UI HTTP/js/bootstrap&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;]&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 14px;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;routenanvil.cl&lt;/span&gt;&lt;/div&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="_ti4THjaKY9hCCHp44bC-21">
+          <mxGeometry x="35.89" y="12.73" width="231.72" height="38.18" as="geometry" />
+        </mxCell>
+        <mxCell id="_ti4THjaKY9hCCHp44bC-12" value="Pagina web RouteAnvil, encargada de recibir las interacciones de los usuarios" style="text;whiteSpace=wrap;align=center;" vertex="1" parent="_ti4THjaKY9hCCHp44bC-21">
+          <mxGeometry x="33.480000000000004" y="63.64" width="236.54" height="63.64" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="Sz54HdXqJl3N7tWn5eLz" name="Diagrama de Componentes">
+    <mxGraphModel dx="3186" dy="2020" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#F1F1F1" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" value="Fondo Componentes" style="locked=1;" parent="0" />
+        <mxCell id="FS2TF0yrGDIEiZ0EMxcu-1" value="" style="group;align=center;verticalAlign=bottom;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="-260" width="1685" height="690" as="geometry" />
+        </mxCell>
+        <mxCell id="FS2TF0yrGDIEiZ0EMxcu-2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="FS2TF0yrGDIEiZ0EMxcu-1" vertex="1">
+          <mxGeometry width="1685" height="690.0000000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="FS2TF0yrGDIEiZ0EMxcu-3" value="&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&lt;div style=&quot;&quot;&gt;Aplicación Web&lt;/div&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;[Django/Python 3.13.7]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=bottom;whiteSpace=wrap;rounded=0;" parent="FS2TF0yrGDIEiZ0EMxcu-1" vertex="1">
+          <mxGeometry x="-0.007200854700843033" y="523.0735396687011" width="1296.1538461538462" height="166.93548387096774" as="geometry" />
+        </mxCell>
+        <mxCell id="fF7Uua4fHDivaz5cNomc-1" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="402.5" y="780" width="250" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="fF7Uua4fHDivaz5cNomc-2" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="fF7Uua4fHDivaz5cNomc-1" vertex="1">
+          <mxGeometry width="250" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="fF7Uua4fHDivaz5cNomc-3" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Base de datos&lt;/font&gt;&lt;/b&gt;&lt;div&gt;[PostreSQL]&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="fF7Uua4fHDivaz5cNomc-1" vertex="1">
+          <mxGeometry x="45" y="44" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="fF7Uua4fHDivaz5cNomc-4" value="&lt;div&gt;Almacena la información de usuarios, vehiculos&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;choferes, pasajeros.&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="fF7Uua4fHDivaz5cNomc-1" vertex="1">
+          <mxGeometry x="20" y="90" width="210" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="aRDSx_lPsL8zfdkYeySg-1" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="420" y="-140" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="aRDSx_lPsL8zfdkYeySg-2" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="aRDSx_lPsL8zfdkYeySg-1" vertex="1">
+          <mxGeometry width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="aRDSx_lPsL8zfdkYeySg-3" value="&lt;div&gt;&lt;font style=&quot;&quot;&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 14px;&quot;&gt;&lt;b&gt;Servidor HTTP WSGI&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;font-size: 12px; font-weight: normal; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;[gunicorn]&lt;/span&gt;&lt;/div&gt;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="aRDSx_lPsL8zfdkYeySg-1" vertex="1">
+          <mxGeometry x="35" y="10" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="aRDSx_lPsL8zfdkYeySg-4" value="Servidor HTTP encargado de facilitar la distribución de las páginas web" style="text;whiteSpace=wrap;align=center;" parent="aRDSx_lPsL8zfdkYeySg-1" vertex="1">
+          <mxGeometry x="38.75" y="50" width="142.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="mzorikK-9zQv1_r5LjqF-1" value="" style="group;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="402.5742574257426" y="-274" width="254.85148514851483" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="mzorikK-9zQv1_r5LjqF-2" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-1" vertex="1">
+          <mxGeometry width="254.8514851485148" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="mzorikK-9zQv1_r5LjqF-3" value="&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Plataforma Heroku&lt;/span&gt;&lt;/div&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;[Heroku dyno eco]&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="mzorikK-9zQv1_r5LjqF-1" vertex="1">
+          <mxGeometry x="29.405940594059405" y="7.258064516129031" width="196.03960396039605" height="21.774193548387093" as="geometry" />
+        </mxCell>
+        <mxCell id="mzorikK-9zQv1_r5LjqF-4" value="Hostea el sistema para poder mantener un sistema con alta disponibilidad" style="text;whiteSpace=wrap;align=center;" parent="mzorikK-9zQv1_r5LjqF-1" vertex="1">
+          <mxGeometry x="19.603960396039604" y="36.29032258064515" width="215.64356435643566" height="36.29032258064515" as="geometry" />
+        </mxCell>
+        <mxCell id="mzorikK-9zQv1_r5LjqF-5" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="378.25" y="-460" width="303.5" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="mzorikK-9zQv1_r5LjqF-6" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-5" vertex="1">
+          <mxGeometry width="303.5000000000001" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="mzorikK-9zQv1_r5LjqF-7" value="&lt;font style=&quot;&quot;&gt;&lt;div style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Interfaz Web&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 14px;&quot;&gt;[UI HTTP/js/bootstrap&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;]&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 14px;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;routenanvil.cl&lt;/span&gt;&lt;/div&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="mzorikK-9zQv1_r5LjqF-5" vertex="1">
+          <mxGeometry x="35.89" y="12.73" width="231.72" height="38.18" as="geometry" />
+        </mxCell>
+        <mxCell id="mzorikK-9zQv1_r5LjqF-8" value="Pagina web RouteAnvil, encargada de recibir las interacciones de los usuarios" style="text;whiteSpace=wrap;align=center;" parent="mzorikK-9zQv1_r5LjqF-5" vertex="1">
+          <mxGeometry x="33.480000000000004" y="63.64" width="236.54" height="63.64" as="geometry" />
+        </mxCell>
+        <mxCell id="tnZcVY9pRw8HqvS6e56f-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;elbow=vertical;" parent="1" source="mCYLmHQZxkFQydZiRM8Y-1" target="mzorikK-9zQv1_r5LjqF-6" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="880" y="-441" />
+              <mxPoint x="880" y="-370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tnZcVY9pRw8HqvS6e56f-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="mCYLmHQZxkFQydZiRM8Y-2" target="mzorikK-9zQv1_r5LjqF-6" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="880" y="-321" />
+              <mxPoint x="880" y="-370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tnZcVY9pRw8HqvS6e56f-9" value="Accede con&amp;nbsp;&lt;div&gt;sus credenciales&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="tnZcVY9pRw8HqvS6e56f-8" vertex="1" connectable="0">
+          <mxGeometry x="0.6653" relative="1" as="geometry">
+            <mxPoint x="35" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="aRDSx_lPsL8zfdkYeySg-2" target="mzorikK-9zQv1_r5LjqF-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="mzorikK-9zQv1_r5LjqF-2" target="mzorikK-9zQv1_r5LjqF-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="qFJR2offTyMBugFKVvPm-2" target="aRDSx_lPsL8zfdkYeySg-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mzorikK-9zQv1_r5LjqF-12" value="Capa de componentes" style="" parent="0" />
+        <mxCell id="qFJR2offTyMBugFKVvPm-2" value="Templates Django&lt;div&gt;[Componente]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Proveedor de vistas en base a plantillas .html&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="430" y="50" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="MlEVZ2MDCMFtACxgJlQw-2" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;elbow=vertical;" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-16" target="qFJR2offTyMBugFKVvPm-17" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-16" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-16" target="qFJR2offTyMBugFKVvPm-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qFJR2offTyMBugFKVvPm-16" value="Gestión de Pasajeros&lt;div&gt;[Componente CRUD]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Controlador de&amp;nbsp;&lt;/div&gt;&lt;div&gt;la lógica de negocio&lt;/div&gt;&lt;div&gt;(views de pasajeros)&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="100" y="330" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-7" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-17" target="fF7Uua4fHDivaz5cNomc-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="780" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="528" y="720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qFJR2offTyMBugFKVvPm-17" value="Aplicación RouteAnvil&lt;div&gt;&lt;div&gt;[Componente]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Aplicación Django&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="430" y="500" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="MlEVZ2MDCMFtACxgJlQw-4" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;elbow=vertical;" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-19" target="qFJR2offTyMBugFKVvPm-17" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-15" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-19" target="qFJR2offTyMBugFKVvPm-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qFJR2offTyMBugFKVvPm-19" value="Gestión de&amp;nbsp;Choferes&lt;div&gt;[Componente CRUD]&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Controlador de&amp;nbsp;&lt;/div&gt;&lt;div&gt;la lógica de negocio&lt;/div&gt;&lt;div&gt;(views de choferes)&lt;/div&gt;&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="320" y="330" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="MlEVZ2MDCMFtACxgJlQw-8" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;elbow=vertical;" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-20" target="qFJR2offTyMBugFKVvPm-17" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qFJR2offTyMBugFKVvPm-20" value="Gestión de Rutas&lt;div&gt;[Componente CRUD]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;Controlador de&amp;nbsp;&lt;/div&gt;&lt;div&gt;la lógica de negocio&lt;/div&gt;&lt;div&gt;(views de rutas)&lt;/div&gt;&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="890" y="330" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-21" target="MlEVZ2MDCMFtACxgJlQw-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qFJR2offTyMBugFKVvPm-21" value="Gestión de Usuarios&lt;div&gt;[Componente CRUD]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;Controlador de&amp;nbsp;&lt;/div&gt;&lt;div&gt;la lógica de autenticación&lt;/div&gt;&lt;div&gt;(views de usuarios)&lt;/div&gt;&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="-200" y="330" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="MlEVZ2MDCMFtACxgJlQw-5" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;elbow=vertical;" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-22" target="qFJR2offTyMBugFKVvPm-17" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-14" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-22" target="qFJR2offTyMBugFKVvPm-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qFJR2offTyMBugFKVvPm-22" value="Gestión de Vehículos&lt;div&gt;[Componente CRUD]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Controlador de&amp;nbsp;&lt;/div&gt;&lt;div&gt;la lógica de negocio&lt;/div&gt;&lt;div&gt;(views de vehículos)&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="540" y="330" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-23" target="qFJR2offTyMBugFKVvPm-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-23" target="qFJR2offTyMBugFKVvPm-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qFJR2offTyMBugFKVvPm-23" value="Sistema de inicio de sesión&lt;div&gt;[Componente]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Vista de autenticación permite el acceso a las plataformas de gestión.&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="-200" y="190" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-13" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-24" target="qFJR2offTyMBugFKVvPm-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="692" y="238" />
+              <mxPoint x="780" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-24" target="qFJR2offTyMBugFKVvPm-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qFJR2offTyMBugFKVvPm-24" value="Optimización de Rutas&lt;div&gt;[Componente]&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="890" y="180" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-5" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="MlEVZ2MDCMFtACxgJlQw-1" target="qFJR2offTyMBugFKVvPm-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MlEVZ2MDCMFtACxgJlQw-1" value="Api Google Maps Routes&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;[Sistema de Software]&lt;/div&gt;" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="890" y="-160" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-8" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;edgeStyle=elbowEdgeStyle;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="MlEVZ2MDCMFtACxgJlQw-7" target="fF7Uua4fHDivaz5cNomc-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="780" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="210" y="720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MlEVZ2MDCMFtACxgJlQw-7" value="Aplicación Users&lt;div&gt;[Componente]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Aplicacion Django&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="-200" y="510" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="mCYLmHQZxkFQydZiRM8Y-1" value="Administrador del negocio&lt;div&gt;[Persona]&lt;/div&gt;" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.user;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="920" y="-480" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="mCYLmHQZxkFQydZiRM8Y-2" value="Chofer de Transporte de Personal&lt;br&gt;&lt;div&gt;[Persona]&lt;/div&gt;" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.user;direction=east;" parent="mzorikK-9zQv1_r5LjqF-12" vertex="1">
+          <mxGeometry x="920" y="-360" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="49Akvu3daIUqjUYWbLd4-1" target="49Akvu3daIUqjUYWbLd4-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-1" value="Api CNE.cl&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;[Sistema de Software]&lt;/div&gt;" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="mzorikK-9zQv1_r5LjqF-12">
+          <mxGeometry x="1215" y="-160" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="49Akvu3daIUqjUYWbLd4-22" target="qFJR2offTyMBugFKVvPm-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-22" value="&lt;div&gt;Control de boletas de bencina&lt;/div&gt;&lt;div&gt;[Componente]&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" vertex="1" parent="mzorikK-9zQv1_r5LjqF-12">
+          <mxGeometry x="1190" y="70" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-34" value="&lt;div&gt;Sistema asistencia de contablidad&lt;/div&gt;&lt;div&gt;[Componente]&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" vertex="1" parent="mzorikK-9zQv1_r5LjqF-12">
+          <mxGeometry x="1180" y="330" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="49Akvu3daIUqjUYWbLd4-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="mzorikK-9zQv1_r5LjqF-12" source="qFJR2offTyMBugFKVvPm-24" target="49Akvu3daIUqjUYWbLd4-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="nm71JU_CzU-Ozbx6U1nE" name="Diagrama de Código">
+    <mxGraphModel dx="1412" dy="835" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
