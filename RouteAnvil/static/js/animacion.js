@@ -1,25 +1,21 @@
-
-document.addEventListener('DOMContentLoaded', function() {
-    
+document.addEventListener('DOMContentLoaded', function () {
     animateStatCards();
-    
     initParallaxEffect();
-    
 });
 
 
 function animateStatCards() {
     const statCards = document.querySelectorAll('.stat-card');
-    
-    if (statCards.length === 0) return; 
-    
+
+    if (statCards.length === 0) return;
+
     statCards.forEach((card, index) => {
         setTimeout(() => {
-        
+
             card.style.opacity = '0';
             card.style.transform = 'translateY(20px)';
             card.style.transition = 'all 0.5s ease';
-            
+
             setTimeout(() => {
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0)';
@@ -31,12 +27,12 @@ function animateStatCards() {
 
 function initParallaxEffect() {
     const heroSection = document.querySelector('.hero-section');
-    
-    if (!heroSection) return; 
-    
+
+    if (!heroSection) return;
+
     window.addEventListener('scroll', () => {
         const scrolled = window.pageYOffset;
-        const rate = scrolled * -0.5; 
+        const rate = scrolled * -0.5;
         heroSection.style.transform = `translateY(${rate}px)`;
     });
 }
@@ -44,12 +40,12 @@ function initParallaxEffect() {
 
 function animateCounters() {
     const counters = document.querySelectorAll('.stat-card h4');
-    
+
     counters.forEach(counter => {
         const target = parseInt(counter.textContent);
         let current = 0;
-        const increment = target / 50; 
-        
+        const increment = target / 50;
+
         const updateCounter = () => {
             if (current < target) {
                 current += increment;
@@ -59,7 +55,7 @@ function animateCounters() {
                 counter.textContent = target;
             }
         };
-        
+
         updateCounter();
     });
 }
@@ -73,7 +69,7 @@ function observeElements() {
             }
         });
     });
-    
+
     const serviceCards = document.querySelectorAll('.card-hover');
     serviceCards.forEach(card => observer.observe(card));
 }

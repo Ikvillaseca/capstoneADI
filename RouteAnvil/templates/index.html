@@ -49,7 +49,7 @@
         <div class="carousel-item">
             <div class="carousel-design-container gradient-slide-3">
                 <div class="carousel-design-content">
-                    <i class="fas fa-bus fa-5x text-white mb-4"></i>
+                    <i class="servicio-logo fas fa-bus fa-5x text-white mb-4"></i>
                     <h2 class="text-white fw-bold">Flota Moderna</h2>
                     <p class="text-white-50">Vehículos seguros y eficientes</p>
                 </div>
@@ -104,7 +104,7 @@
             <div class="col-6 col-md-3">
                 <div class="card border-0 bg-primary text-white stat-card">
                     <div class="card-body text-center">
-                        <i class="fas fa-user-tie fa-2x mb-2"></i>
+                        <i class="servicio-logo fas fa-user-tie fa-2x mb-2"></i>
                         <h4 class="fw-bold">{{ total_choferes|default:0 }}</h4>
                         <small>Choferes Registrados</small>
                     </div>
@@ -113,7 +113,7 @@
             <div class="col-6 col-md-3">
                 <div class="card border-0 bg-success text-white stat-card">
                     <div class="card-body text-center">
-                        <i class="fas fa-users fa-2x mb-2"></i>
+                        <i class="servicio-logo fas fa-users fa-2x mb-2"></i>
                         <h4 class="fw-bold">{{ total_pasajeros|default:0 }}</h4>
                         <small>Pasajeros</small>
                     </div>
@@ -122,7 +122,7 @@
             <div class="col-6 col-md-3">
                 <div class="card border-0 bg-warning text-white stat-card">
                     <div class="card-body text-center">
-                        <i class="fas fa-car fa-2x mb-2"></i>
+                        <i class="servicio-logo fas fa-car fa-2x mb-2"></i>
                         <h4 class="fw-bold">{{ total_vehiculos|default:0 }}</h4>
                         <small>Vehículos</small>
                     </div>
@@ -131,7 +131,7 @@
             <div class="col-6 col-md-3">
                 <div class="card border-0 bg-info text-white stat-card">
                     <div class="card-body text-center">
-                        <i class="fas fa-map-marker-alt fa-2x mb-2"></i>
+                        <i class="servicio-logo fas fa-map-marker-alt fa-2x mb-2"></i>
                         <h4 class="fw-bold">{{ total_paraderos|default:0 }}</h4>
                         <small>Paraderos</small>
                     </div>
@@ -156,13 +156,13 @@
 
     <div class="row g-4">
         <!-- Card Choferes -->
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100 shadow-sm border-0 card-hover">
                 <div class="card-body text-center p-4">
-                    <div class="mb-4">
-                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow mx-auto gradient-blue-purple" 
+                    <div class="mb-4 d-flex justify-content-center">
+                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow   gradient-blue-purple" 
                              style="width: 120px; height: 120px;">
-                            <i class="fas fa-user-tie fa-3x text-white"></i>
+                            <i class="servicio-logo fas fa-user-tie fa-3x text-white"></i>
                         </div>
                     </div>
                     <h4 class="text-primary fw-bold mb-3">
@@ -185,17 +185,17 @@
         </div>
 
         <!-- Card Vehículos -->
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100 shadow-sm border-0 card-hover">
                 <div class="card-body text-center p-4">
-                    <div class="mb-4">
-                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow mx-auto gradient-green-teal" 
+                    <div class="mb-4 d-flex justify-content-center">
+                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow   gradient-green-teal" 
                              style="width: 120px; height: 120px;">
-                            <i class="fas fa-bus fa-3x text-white"></i>
+                            <i class="servicio-logo fas fa-bus fa-3x text-white"></i>
                         </div>
                     </div>
                     <h4 class="text-success fw-bold mb-3">
-                        <i class="fas fa-car"></i> Gestión de Vehículos
+                        <i class="fas fa-car"></i> Vehículos
                     </h4>
                     <p class="text-muted mb-4">
                         Control completo de la flota vehicular, mantenimiento, 
@@ -214,13 +214,13 @@
         </div>
 
         <!-- Card Pasajeros -->
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100 shadow-sm border-0 card-hover">
                 <div class="card-body text-center p-4">
-                    <div class="mb-4">
-                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow mx-auto gradient-yellow-orange" 
+                    <div class="mb-4 d-flex justify-content-center">
+                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow   gradient-yellow-orange" 
                              style="width: 120px; height: 120px;">
-                            <i class="fas fa-users fa-3x text-white"></i>
+                            <i class="servicio-logo fas fa-users fa-3x text-white"></i>
                         </div>
                     </div>
                     <h4 class="text-warning fw-bold mb-3">
@@ -243,13 +243,13 @@
         </div>
 
         <!-- Card Paraderos -->
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100 shadow-sm border-0 card-hover">
                 <div class="card-body text-center p-4">
-                    <div class="mb-4">
-                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow mx-auto gradient-gray" 
+                    <div class="mb-4 d-flex justify-content-center">
+                        <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow gradient-gray" 
                              style="width: 120px; height: 120px;">
-                            <i class="fas fa-map-marker-alt fa-3x text-white"></i>
+                            <i class="servicio-logo fas fa-map-marker-alt fa-3x text-white"></i>
                         </div>
                     </div>
                     <h4 class="text-secondary fw-bold mb-3">

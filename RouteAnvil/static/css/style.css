@@ -180,12 +180,12 @@ footer {
 }
 
 /* Service Cards */
-.service-logo {
-    transition: all 0.3s ease;
+.servicio-logo {
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 .service-logo:hover {
-    transform: scale(1.1) rotate(5deg);
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25) !important;
     animation: pulse 1s ease-in-out;
 }
@@ -563,3 +563,4 @@ footer {
         font-size: 2rem;
     }
 }
+

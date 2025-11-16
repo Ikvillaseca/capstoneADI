@@ -13,10 +13,42 @@
     {% endfor %}
 </div>
 {% endif %}
-<a href="{% url 'testeo_api' %}">Testeo de API</a>
-<hr>
-<a href="{% url 'ruta_crear' %}">Crear Ruta</a>
-<hr>
-<a href="{% url 'ruta_crear_seleccionar1_pasajeros' %}">Crear Ruta - Paso 1 - Seleccionar Pasajeros</a>
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+        <div class="card h-100 shadow border-0">
+            <div class="card-body text-center p-4">
+                <div class="mb-4">
+                    <div class="service-logo d-flex justify-content-center align-items-center rounded-circle shadow mx-auto gradient-blue-purple" 
+                            style="width: 120px; height: 120px;">
+                        <i class="servicio-logo fa-solid fa-route fa-3x text-white"></i>
+                    </div>
+                </div>
+
+                <h4 class="text-primary fw-bold mb-3">
+                    <i class="fa-solid fa-route"></i> Rutas
+                </h4>
+                <p class="text-muted mb-4">
+                    Comienza el proceso de creación de rutas o visualiza rutas ya creadas.
+                </p>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'viajes_listado' %}" class="btn btn-outline-primary disabled">
+                        <i class="fas fa-users"></i> Ver rutas creadas
+                    </a>
+                    <a href="{% url 'ruta_crear_seleccionar1_pasajeros' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Iniciar proceso de creación de ruta
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-4 text-center">
+        <a href="{% url 'testeo_api' %}" class="btn btn-warning">
+            Estado de funcionamiento de API
+        </a>
+    </div>
+</div>
 
 {% endblock contenido %}

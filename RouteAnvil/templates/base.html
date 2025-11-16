@@ -25,41 +25,37 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto nav-underline">
+                {% with request.resolver_match.url_name as url_name %}
+
                     <!-- Inicio -->
                     <li class="nav-item">
-                        {% url 'index' as url_esperada %}
-                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'index' %}">
+                        <a class="nav-link {% if url_name == 'index' %}active{% endif %}" href="{% url 'index' %}">
                             <i class="fas fa-home"></i> Inicio
                         </a>
                     </li>
-                    
                     <!-- Nuevo Menu desplegable para las funciones -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownGestion" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle {% if url_name == 'chofer_lista' or url_name == 'pasajeros_lista' or url_name == 'vehiculo_lista' or url_name == 'paraderos_lista'%}active{% endif %}" href="#" id="navbarDropdownGestion" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-cogs"></i> Gestión
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownGestion">
                             <li>
-                                {% url 'chofer_lista' as url_esperada %}
-                                <a class="dropdown-item {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'chofer_lista' %}">
+                                <a class="dropdown-item {% if url_name == 'chofer_lista' %}active{% endif %}" href="{% url 'chofer_lista' %}">
                                     <i class="fas fa-users"></i> Choferes
                                 </a>
                             </li>
                             <li>
-                                {% url 'pasajeros_lista' as url_esperada %}
-                                <a class="dropdown-item {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'pasajeros_lista' %}">
+                                <a class="dropdown-item {% if url_name == 'pasajeros_lista' %}active{% endif %}" href="{% url 'pasajeros_lista' %}">
                                     <i class="fas fa-user-friends"></i> Pasajeros
                                 </a>
                             </li>
                             <li>
-                                {% url 'vehiculo_lista' as url_esperada %}
-                                <a class="dropdown-item {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'vehiculo_lista' %}">
+                                <a class="dropdown-item {% if url_name == 'vehiculo_lista' %}active{% endif %}" href="{% url 'vehiculo_lista' %}">
                                     <i class="fas fa-car"></i> Vehículos
                                 </a>
                             </li>
                             <li>
-                                {% url 'paraderos_lista' as url_esperada %}
-                                <a class="dropdown-item {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'paraderos_lista' %}">
+                                <a class="dropdown-item {% if url_name == 'paraderos_lista' %}active{% endif %}" href="{% url 'paraderos_lista' %}">
                                     <i class="fa-solid fa-map-location"></i> Paraderos
                                 </a>
                             </li>
@@ -68,15 +64,13 @@
                     </li>
 
                     <li>
-                        {% url 'rutas' as url_esperada %}
-                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'rutas' %}">
+                        <a class="nav-link {% if url_name == 'rutas' %}active{% endif %}" href="{% url 'rutas' %}">
                             <i class="fa-solid fa-route"></i> Rutas
                         </a>
                     </li>
                     
                     <li class="nav-item">
-                        {% url 'vista_itinerario_chofer' as url_esperada %}
-                        <a class="nav-link {% if request.get_full_path == url_esperada %}active{% endif %}" href="{% url 'vista_itinerario_chofer' %}">
+                        <a class="nav-link {% if url_name == 'vista_itinerario_chofer' %}active{% endif %}" href="{% url 'vista_itinerario_chofer' %}">
                             <i class="fas fa-calendar-alt"></i> Itinerario Chofer
                         </a>
                     </li>
@@ -106,6 +100,7 @@
                     </li>
                     {% endif %}
                 </ul>
+                {% endwith %}
             </div>
         </div>
     </nav>
