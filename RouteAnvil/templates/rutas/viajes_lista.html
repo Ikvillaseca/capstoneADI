@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-bus"></i> Resumen de Viajes Creados
+        </h2>
+        <a href="{% url 'rutas' %}" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Volver a Rutas
+        </a>
+    </div>
+
+    <!-- Información del grupo -->
+    <div class="card mb-4 border-primary">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-users"></i> {{ grupo }}
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>Total de Viajes:</strong> {{ total_viajes }}
+                </div>
+                <div class="col-md-4">
+                    <strong>Total Pasajeros:</strong> {{ grupo.pasajero.count }}
+                </div>
+                <div class="col-md-4">
+                    <strong>Choferes Asignados:</strong> {{ grupo.chofer.count }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if viajes_detallados %}
+    <!-- Lista de viajes -->
+    <div class="row">
+        {% for viaje_info in viajes_detallados %}
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header {% if viaje_info.viaje.tipo_viaje == 'IDA' %}bg-success{% else %}bg-info{% endif %} text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-route"></i> 
+                            Viaje #{{ viaje_info.viaje.id_viaje }}
+                            <span class="badge bg-light text-dark ms-2">
+                                {{ viaje_info.viaje.get_tipo_viaje_display }}
+                            </span>
+                        </h5>
+                        <a href="{% url 'viaje_detalle' viaje_info.viaje.id_viaje %}" 
+                           class="btn btn-sm btn-light">
+                            <i class="fas fa-eye"></i> Ver detalle
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Información del chofer y vehículo -->
+                    <div class="mb-3 p-2 bg-light rounded">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong><i class="fas fa-user"></i> Chofer:</strong><br>
+                                {{ viaje_info.viaje.id_chofer.nombre }} {{ viaje_info.viaje.id_chofer.apellido }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong><i class="fas fa-car"></i> Vehículo:</strong><br>
+                                {{ viaje_info.viaje.id_vehiculo.patente }} 
+                                ({{ viaje_info.viaje.id_vehiculo.capacidad }} pasajeros)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Horarios -->
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <i class="fas fa-clock text-success"></i> 
+                                <strong>Salida:</strong> {{ viaje_info.viaje.hora_Salida|time:"H:i" }}
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-clock text-danger"></i> 
+                                <strong>Llegada:</strong> {{ viaje_info.viaje.hora_Llegada|time:"H:i" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Punto de encuentro -->
+                    <div class="mb-3">
+                        <strong>
+                            <i class="fas fa-map-marker-alt text-primary"></i> 
+                            Punto de encuentro:
+                        </strong><br>
+                        {{ viaje_info.viaje.punto_encuentro.nombre }}
+                    </div>
+
+                    <!-- Estadísticas -->
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border rounded p-2">
+                                <i class="fas fa-users fa-2x text-primary"></i>
+                                <div class="mt-1">
+                                    <strong>{{ viaje_info.cantidad_pasajeros }}</strong>
+                                    <br><small>Pasajeros</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-2">
+                                <i class="fas fa-map-signs fa-2x text-success"></i>
+                                <div class="mt-1">
+                                    <strong>{{ viaje_info.cantidad_paradas }}</strong>
+                                    <br><small>Paradas</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-2">
+                                <i class="fas fa-percentage fa-2x text-warning"></i>
+                                <div class="mt-1">
+                                    <strong>{{ viaje_info.cantidad_pasajeros|divisibleby:viaje_info.viaje.id_vehiculo.capacidad|floatformat:0 }}%</strong>
+                                    <br><small>Ocupación</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Primeras 3 paradas -->
+                    <div class="mt-3">
+                        <strong>Paradas:</strong>
+                        <ol class="list-group list-group-numbered mt-2">
+                            {% for parada in viaje_info.paradas|slice:":3" %}
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">{{ parada.id_parada.nombre }}</div>
+                                    <small class="text-muted">
+                                        {{ parada.hora_estimada_llegada|time:"H:i" }}
+                                        {% if parada.pasajeros_suben > 0 %}
+                                        - <span class="text-success">↑ {{ parada.pasajeros_suben }}</span>
+                                        {% endif %}
+                                        {% if parada.pasajeros_bajan > 0 %}
+                                        - <span class="text-danger">↓ {{ parada.pasajeros_bajan }}</span>
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </li>
+                            {% endfor %}
+                            {% if viaje_info.cantidad_paradas > 3 %}
+                            <li class="list-group-item text-center">
+                                <small class="text-muted">
+                                    + {{ viaje_info.cantidad_paradas|add:"-3" }} paradas más
+                                </small>
+                            </li>
+                            {% endif %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-danger">
+        <i class="fas fa-info-circle"></i> No hay viajes creados
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+</style>
+{% endblock contenido %}

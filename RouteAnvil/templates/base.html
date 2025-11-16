@@ -68,12 +68,13 @@
                             <i class="fa-solid fa-route"></i> Rutas
                         </a>
                     </li>
-                    
+                    {% comment "" %}
                     <li class="nav-item">
-                        <a class="nav-link {% if url_name == 'vista_itinerario_chofer' %}active{% endif %}" href="{% url 'vista_itinerario_chofer' %}">
+                        <a class="nav-link {% if url_name == 'vista_itinerario_choferes' %}active{% endif %}" href="{% url 'vista_itinerario_choferes' %}">
                             <i class="fas fa-calendar-alt"></i> Itinerario Chofer
                         </a>
                     </li>
+                    {% endcomment %}
 
                 </ul>
                 <ul class="navbar-nav ms-auto">

@@ -476,6 +476,34 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
         }
         return render(request, 'rutas/ruta_crear_seleccionar3_confirmar.html', datos)
     
+@login_required
+def viajes_lista(request):
+    # Obtener el grupo desde la request
+    # Filtrar los viajes creados a partir del grupo de creacion
+    viajes = Viaje.objects.filter().select_related('id_vehiculo', 'id_chofer', 'punto_encuentro').prefetch_related(
+        'paradas_viaje__id_parada', 'pasajero_viaje_set__id_pasajero'
+    ).order_by('-fecha_creacion')  # Más recientes primero
+    
+    # Preparar datos detallados
+    viajes_detallados = []
+    for viaje in viajes:
+        paradas = viaje.paradas_viaje.all().order_by('orden')
+        pasajeros = viaje.pasajero_viaje_set.all().select_related('id_pasajero')
+        
+        viajes_detallados.append({
+            'viaje': viaje,
+            'paradas': paradas,
+            'pasajeros': pasajeros,
+            'cantidad_pasajeros': pasajeros.count(),
+            'cantidad_paradas': paradas.count(),
+        })
+    
+    datos = {
+        'viajes_detallados': viajes_detallados,
+        'total_viajes': len(viajes_detallados),
+    }
+    
+    return render(request, 'rutas/viajes_lista.html', datos)
 
 # Nueva vista para mostrar resumen de viajes
 @login_required
@@ -531,6 +559,39 @@ def viaje_detalle(request, id_viaje):
         "pasajeros": pasajeros,
     }
     return render(request, "rutas/viaje_detalle.html", datos)
+
+
+# Vista para mostrar el itinerario del chofer
+def vista_itinerario_chofer(request, id_chofer):
+    chofer = get_object_or_404(Chofer, id_chofer=id_chofer)
+
+    viajes_asignados = (
+        Viaje.objects.filter(id_chofer=id_chofer)
+        .select_related("id_vehiculo", "id_chofer", "punto_encuentro")
+        .prefetch_related("paradas_viaje__id_parada", "pasajero_viaje_set__id_pasajero")
+        .order_by("-fecha_creacion")
+    )  # Más recientes primero
+
+    # Preparar datos detallados
+    viajes_detallados = []
+    for viaje in viajes_asignados:
+        paradas = viaje.paradas_viaje.all().order_by('orden')
+        pasajeros = viaje.pasajero_viaje_set.all().select_related('id_pasajero')
+        
+        viajes_detallados.append({
+            'viaje': viaje,
+            'paradas': paradas,
+            'pasajeros': pasajeros,
+            'cantidad_pasajeros': pasajeros.count(),
+            'cantidad_paradas': paradas.count(),
+        })
+    
+    datos = {
+        "chofer" : chofer,
+        'viajes_detallados': viajes_detallados,
+    }
+   
+    return render(request, "vista_chofer/vista_chofer.html", datos)
 
 
 # TEST FUNCIONAMIENTO API
@@ -598,9 +659,3 @@ def testeo_api(request):
             'error': 'Error de conexión',
             'error_body': str(e)
         })
-
-
-
-# Vista para mostrar el itinerario del chofer
-def vista_itinerario_chofer(request):
-    return render(request, 'vista_chofer/vista_itinerario.html')

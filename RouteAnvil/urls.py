@@ -11,7 +11,6 @@ urlpatterns = [
     path('chofer/detalle/<uuid:id_chofer>/', views.chofer_detalle, name='chofer_detalle'),
     path('chofer/modificar/<uuid:id_chofer>/', views.chofer_modificar, name='chofer_modificar'),
     path('chofer/eliminar/<uuid:id_chofer>/', views.chofer_eliminar, name='chofer_eliminar'),
-    path('chofer/itinerario/', views.vista_itinerario_chofer, name='vista_itinerario_chofer'),
     
     # URLs para pasajeros
     path('pasajeros/', views.pasajeros_lista, name='pasajeros_lista'),
@@ -45,6 +44,8 @@ urlpatterns = [
     path('rutas/viajes-resumen/<int:id_grupo_pasajeros>/', views.viajes_resumen, name='viajes_resumen'),
     
     # URLs para viajes creados
-    path('rutas/viajes/', views.ruta_home, name='viajes_listado'),
+    path('rutas/viajes/', views.viajes_lista, name='viajes_listado'),
     path('rutas/viaje/<int:id_viaje>/', views.viaje_detalle, name='viaje_detalle'),
+    path('rutas/viaje/chofer/<uuid:id_chofer>/', views.vista_itinerario_chofer, name='vista_itinerario_chofer'),
+    
 ]
