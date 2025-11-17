@@ -93,7 +93,7 @@ class Command(BaseCommand):
        #Crear paraderos de prueba
         for dato_prueba in datos_prueba_paraderos:
             nombre, tipo_parada, direccion, latitud, longitud = dato_prueba
-            Parada.objects.get_or_create(
+            Parada.objects.create(
                 nombre=nombre,
                 tipo_parada=tipo_parada,
                 direccion=direccion,
@@ -106,7 +106,7 @@ class Command(BaseCommand):
         #Crear vehiculos de prueba
         for dato_prueba in datos_prueba_vehiculos:
             patente, marca, modelo, anio, capacidad, estado, revision_tecnica, proxima_revision = dato_prueba
-            Vehiculo.objects.get_or_create(
+            Vehiculo.objects.create(
                 patente=patente,
                 marca=marca,
                 modelo=modelo,
@@ -122,7 +122,7 @@ class Command(BaseCommand):
         #Crear choferes de prueba
         for dato_prueba in datos_prueba_choferes:
             rut, nombre, apellido, tipo_licencia, direccion, fecha_ultimo_control, fecha_proximo_control = dato_prueba
-            Chofer.objects.get_or_create(
+            Chofer.objects.create(
                 rut=rut,
                 nombre=nombre,
                 apellido=apellido,

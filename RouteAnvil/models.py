@@ -8,9 +8,9 @@ from .choices import estado, tipo_licencia, parada, estado_creacion_viaje
 #Tabla de destinos posibles
 class Parada(models.Model):
     id_ubicacion = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID Ubicación")
-    nombre = models.CharField(max_length=45, verbose_name="Nombre del Lugar")
+    nombre = models.CharField(max_length=90, verbose_name="Nombre del Lugar")
     tipo_parada = models.CharField(max_length=1, choices=parada, verbose_name="Tipo de Parada")
-    direccion = models.CharField(max_length=100, verbose_name="Dirección del Lugar")
+    direccion = models.CharField(max_length=200, verbose_name="Dirección del Lugar")
     latitud = models.DecimalField(max_digits=9, decimal_places=6, verbose_name="Latitud")
     longitud = models.DecimalField(max_digits=9, decimal_places=6, verbose_name="Longitud")
 
