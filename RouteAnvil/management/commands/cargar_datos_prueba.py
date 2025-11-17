@@ -19,13 +19,13 @@ class Command(BaseCommand):
 
         datos_prueba_paraderos = [
             # Formato: nombre, tipo, direccion, latitud, longitud
-            ["Plaza de maipu","Metro","Plaza de Maipú, Maipú, Región Metropolitana, Chile",-33.510520,-70.757230],
-            ["Metro Tobalaba","Metro","Tobalaba, 7510005 Providencia, Región Metropolitana, Chile",-33.418088,-70.601887],
-            ["metro las rejas","Metro","Las Rejas, Lo Prado, Estación Central, Región Metropolitana, Chile",-33.457457,-70.706325],
-            ["Puente Cal y Canto","Metro","Puente Cal y Canto, Santiago, Región Metropolitana",-33.432689,-70.652090],
-            ["Estación Central","Metro","Estación Central, 9160018 Santiago, Estación Central, Región Metropolitana",-33.451303,-70.678825],
-            ["Los Héroes","Metro","Los Héroes, Santiago, Región Metropolitana",-33.446055,-70.660183],
-            ["Plaza Egaña","Metro","Plaza Egaña, La Reina, Región Metropolitana",-33.453221,-70.570558],
+            ["Plaza de maipu","M","Plaza de Maipú, Maipú, Región Metropolitana, Chile",-33.510520,-70.757230],
+            ["Metro Tobalaba","M","Tobalaba, 7510005 Providencia, Región Metropolitana, Chile",-33.418088,-70.601887],
+            ["metro las rejas","M","Las Rejas, Lo Prado, Estación Central, Región Metropolitana, Chile",-33.457457,-70.706325],
+            ["Puente Cal y Canto","M","Puente Cal y Canto, Santiago, Región Metropolitana",-33.432689,-70.652090],
+            ["Estación Central","M","Estación Central, 9160018 Santiago, Estación Central, Región Metropolitana",-33.451303,-70.678825],
+            ["Los Héroes","M","Los Héroes, Santiago, Región Metropolitana",-33.446055,-70.660183],
+            ["Plaza Egaña","M","Plaza Egaña, La Reina, Región Metropolitana",-33.453221,-70.570558],
         ]
 
         datos_prueba_vehiculos = [
