@@ -564,3 +564,11 @@ footer {
     }
 }
 
+.fondo{
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+.fondo-choferes{
+    background-image: url('../images/choferes.png');
+}
