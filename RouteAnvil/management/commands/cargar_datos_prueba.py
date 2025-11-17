@@ -40,11 +40,11 @@ class Command(BaseCommand):
 
         datos_prueba_choferes = [
             # Formato: rut, nombre, apellido, tipo_licencia, dirección, fecha_ultimo_control, fecha_proximo_control
-            ["19532668-1","Juan","Pérez","Licencia Clase A3","Calle Falsa 123, Santiago","2023-02-12","2024-03-15"],
-            ["12588673-6","María","González","Licencia Clase A2","Avenida Siempre Viva 742, Maipú","2022-06-20","2023-06-20"],
-            ["13175300-4","Carlos","Ramírez","Licencia Clase A4","Calle del Sol 456, Providencia","2023-01-10","2024-01-10"],
-            ["5479269-7","Ana","López","Licencia Clase A5","Pasaje Los Pinos 789, Las Condes","2021-11-05","2022-11-05"],
-            ["10396020-7","Luis","Martínez","Licencia Clase B","Camino Real 321, Ñuñoa","2022-08-22","2023-08-22"],
+            ["19532668-1","Juan","Pérez","A3","Calle Falsa 123, Santiago","2023-02-12","2024-03-15"],
+            ["12588673-6","María","González","A2","Avenida Siempre Viva 742, Maipú","2022-06-20","2023-06-20"],
+            ["13175300-4","Carlos","Ramírez","A4","Calle del Sol 456, Providencia","2023-01-10","2024-01-10"],
+            ["5479269-7","Ana","López","A5","Pasaje Los Pinos 789, Las Condes","2021-11-05","2022-11-05"],
+            ["10396020-7","Luis","Martínez","B","Camino Real 321, Ñuñoa","2022-08-22","2023-08-22"],
         ]
 
         #Aqui tengo mis datos de prueba los traje de una lista que me habia hecho en .txt
