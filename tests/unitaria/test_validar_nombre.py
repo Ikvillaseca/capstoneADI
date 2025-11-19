@@ -25,6 +25,16 @@ class TestValidarNombre(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             validar_texto("12345")
         self.assertTrue("El texto solo debe contener letras." in str(context.exception))
+    
+    def test_nombre_vacio(self):
+        with self.assertRaises(Exception) as context:
+            validar_texto("")
+        self.assertTrue("El texto solo debe contener letras." in str(context.exception))
+
+    def test_nombre_con_caracter_especial(self):
+        with self.assertRaises(Exception) as context:
+            validar_texto("Jorge@")
+        self.assertTrue("El texto solo debe contener letras." in str(context.exception))
 
 
 
