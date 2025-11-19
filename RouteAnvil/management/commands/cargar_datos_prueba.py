@@ -19,13 +19,13 @@ class Command(BaseCommand):
 
         datos_prueba_paraderos = [
             # Formato: nombre, tipo, direccion, latitud, longitud
-            ["Plaza de maipu","Metro","Plaza de Maipú, Maipú, Región Metropolitana, Chile",-33.510520,-70.757230],
-            ["Metro Tobalaba","Metro","Tobalaba, 7510005 Providencia, Región Metropolitana, Chile",-33.418088,-70.601887],
-            ["metro las rejas","Metro","Las Rejas, Lo Prado, Estación Central, Región Metropolitana, Chile",-33.457457,-70.706325],
-            ["Puente Cal y Canto","Metro","Puente Cal y Canto, Santiago, Región Metropolitana",-33.432689,-70.652090],
-            ["Estación Central","Metro","Estación Central, 9160018 Santiago, Estación Central, Región Metropolitana",-33.451303,-70.678825],
-            ["Los Héroes","Metro","Los Héroes, Santiago, Región Metropolitana",-33.446055,-70.660183],
-            ["Plaza Egaña","Metro","Plaza Egaña, La Reina, Región Metropolitana",-33.453221,-70.570558],
+            ["Plaza de maipu","M","Plaza de Maipú, Maipú, Región Metropolitana, Chile",-33.510520,-70.757230],
+            ["Metro Tobalaba","M","Tobalaba, 7510005 Providencia, Región Metropolitana, Chile",-33.418088,-70.601887],
+            ["metro las rejas","M","Las Rejas, Lo Prado, Estación Central, Región Metropolitana, Chile",-33.457457,-70.706325],
+            ["Puente Cal y Canto","M","Puente Cal y Canto, Santiago, Región Metropolitana",-33.432689,-70.652090],
+            ["Estación Central","M","Estación Central, 9160018 Santiago, Estación Central, Región Metropolitana",-33.451303,-70.678825],
+            ["Los Héroes","M","Los Héroes, Santiago, Región Metropolitana",-33.446055,-70.660183],
+            ["Plaza Egaña","M","Plaza Egaña, La Reina, Región Metropolitana",-33.453221,-70.570558],
         ]
 
         datos_prueba_vehiculos = [
@@ -40,11 +40,11 @@ class Command(BaseCommand):
 
         datos_prueba_choferes = [
             # Formato: rut, nombre, apellido, tipo_licencia, dirección, fecha_ultimo_control, fecha_proximo_control
-            ["19532668-1","Juan","Pérez","Licencia Clase A3","Calle Falsa 123, Santiago","2023-02-12","2024-03-15"],
-            ["12588673-6","María","González","Licencia Clase A2","Avenida Siempre Viva 742, Maipú","2022-06-20","2023-06-20"],
-            ["13175300-4","Carlos","Ramírez","Licencia Clase A4","Calle del Sol 456, Providencia","2023-01-10","2024-01-10"],
-            ["5479269-7","Ana","López","Licencia Clase A5","Pasaje Los Pinos 789, Las Condes","2021-11-05","2022-11-05"],
-            ["10396020-7","Luis","Martínez","Licencia Clase B","Camino Real 321, Ñuñoa","2022-08-22","2023-08-22"],
+            ["19532668-1","Juan","Pérez","A3","Calle Falsa 123, Santiago","2023-02-12","2024-03-15"],
+            ["12588673-6","María","González","A2","Avenida Siempre Viva 742, Maipú","2022-06-20","2023-06-20"],
+            ["13175300-4","Carlos","Ramírez","A4","Calle del Sol 456, Providencia","2023-01-10","2024-01-10"],
+            ["5479269-7","Ana","López","A5","Pasaje Los Pinos 789, Las Condes","2021-11-05","2022-11-05"],
+            ["10396020-7","Luis","Martínez","B","Camino Real 321, Ñuñoa","2022-08-22","2023-08-22"],
         ]
 
         #Aqui tengo mis datos de prueba los traje de una lista que me habia hecho en .txt
@@ -93,7 +93,7 @@ class Command(BaseCommand):
        #Crear paraderos de prueba
         for dato_prueba in datos_prueba_paraderos:
             nombre, tipo_parada, direccion, latitud, longitud = dato_prueba
-            Parada.objects.get_or_create(
+            Parada.objects.create(
                 nombre=nombre,
                 tipo_parada=tipo_parada,
                 direccion=direccion,
@@ -106,7 +106,7 @@ class Command(BaseCommand):
         #Crear vehiculos de prueba
         for dato_prueba in datos_prueba_vehiculos:
             patente, marca, modelo, anio, capacidad, estado, revision_tecnica, proxima_revision = dato_prueba
-            Vehiculo.objects.get_or_create(
+            Vehiculo.objects.create(
                 patente=patente,
                 marca=marca,
                 modelo=modelo,
@@ -122,7 +122,7 @@ class Command(BaseCommand):
         #Crear choferes de prueba
         for dato_prueba in datos_prueba_choferes:
             rut, nombre, apellido, tipo_licencia, direccion, fecha_ultimo_control, fecha_proximo_control = dato_prueba
-            Chofer.objects.get_or_create(
+            Chofer.objects.create(
                 rut=rut,
                 nombre=nombre,
                 apellido=apellido,

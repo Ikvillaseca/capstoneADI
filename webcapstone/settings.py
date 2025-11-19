@@ -35,6 +35,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if IS_HEROKU_APP:
     SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
     GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
+    GOOGLE_MAPS_API_EMBED = os.environ.get('GOOGLE_MAPS_API_EMBED')
 if API_EXISTE:
     GOOGLE_MAPS_API_KEY = api.GOOGLE_MAPS_API_KEY
     SECRET_KEY = 'e!wu4o2&%aavtm!(!bqy8fyma9nq(#*yhheeb#(l8ry2@35*gs'
@@ -45,7 +46,7 @@ else:
     SECRET_KEY = 'e!wu4o2&%aavtm!(!bqy8fyma9nq(#*yhheeb#(l8ry2@35*gs'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # ALLOWED HOSTS
 if IS_HEROKU_APP:
