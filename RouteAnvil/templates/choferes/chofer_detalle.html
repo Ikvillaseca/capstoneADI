@@ -36,7 +36,6 @@
                     </dl>
                 </div>
 
-
                 <div class="mb-4">
                     <h5 class="text-secondary mb-3 border-bottom pb-2">
                         <i class="fas fa-id-badge"></i> Información Profesional
@@ -51,11 +50,10 @@
                         <dt class="col-sm-4 text-muted">Próximo Control:</dt>
                         <dd class="col-sm-8">{{ chofer.fecha_proximo_control }}</dd>
                         
-                        <!-- ✅ MOVER LA INFORMACIÓN DEL VEHÍCULO AQUÍ -->
                         <dt class="col-sm-4 text-muted">Vehículo Asignado:</dt>
                         <dd class="col-sm-8">
                             {% if chofer.id_vehiculo %}
-                                <span class="badge bg-success">{{ chofer.id_vehiculo.patente }} - {{ chofer.id_vehiculo.marca }}</span>
+                                <span class="badge bg-success mono">{{ chofer.id_vehiculo.patente }} - {{ chofer.id_vehiculo.marca }}</span>
                                 <br><small class="text-muted">Capacidad: {{ chofer.id_vehiculo.capacidad }} pasajeros</small>
                             {% else %}
                                 <span class="badge bg-secondary">Sin vehículo asignado</span>

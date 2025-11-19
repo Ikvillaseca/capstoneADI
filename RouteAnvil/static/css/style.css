@@ -77,6 +77,8 @@ body {
     flex-direction: column;
 }
 
+
+
 main {
     flex: 1;
 }
@@ -579,4 +581,8 @@ footer {
 
 .botones-acciones{
     display: inline-block;
+}
+
+.mono {
+    font-family: "IBM Plex Mono", monospace;
 }

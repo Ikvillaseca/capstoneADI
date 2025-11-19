@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block titulo %}Lista de Vehículos{% endblock titulo %}
+{% block background %}fondo-choferes{% endblock background %}
 
 {% block contenido %}
 
@@ -23,38 +24,39 @@
                             <th scope="col">Modelo</th>
                             <th scope="col">Año</th>
                             <th scope="col">Capacidad</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Próxima Revisión</th>
+                            <th scope="col" class="text-center">Estado</th>
+                            <th scope="col" class="text-center">Próxima Revisión</th>
                             <th scope="col" class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for vehiculo in vehiculos %}
                         <tr>
-                            <td><strong>{{ vehiculo.patente }}</strong></td>
+                            <td><span class="mono"><strong>{{ vehiculo.patente }}</strong></span></td>
                             <td>{{ vehiculo.marca }}</td>
                             <td>{{ vehiculo.modelo }}</td>
                             <td>{{ vehiculo.anio }}</td>
                             <td>{{ vehiculo.capacidad }}</td>
                             <td>
                                 {% if vehiculo.estado == 'A' %}
-                                    <span class="badge bg-success">
-                                        <i class="fas fa-check-circle"></i> Activo
+                                    <span class="badge bg-success w-100 d-flex justify-content-between align-items-center">
+                                        <i class="fas fa-check-circle"></i> 
+                                        <span class="flex-grow-1 text-center">Activo</span>
                                     </span>
                                 {% elif vehiculo.estado == 'I' %}
-                                    <span class="badge bg-danger">
+                                    <span class="badge bg-danger w-100 d-flex justify-content-between align-items-center">
                                         <i class="fas fa-times-circle"></i> Inactivo
                                     </span>
                                 {% elif vehiculo.estado == 'M' %}
-                                    <span class="badge bg-secondary">
+                                    <span class="badge bg-secondary w-100 d-flex justify-content-between align-items-center">
                                         <i class="fas fa-wrench"></i> Mantenimiento
                                     </span>
                                 {% elif vehiculo.estado == 'E' %}
-                                    <span class="badge bg-warning text-dark">
+                                    <span class="badge bg-warning text-dark w-100 d-flex justify-content-between align-items-center">
                                         <i class="fas fa-road"></i> En Ruta
                                     </span>
                                 {% else %}
-                                    <span class="badge bg-info">
+                                    <span class="badge bg-info w-100 d-flex justify-content-between align-items-center">
                                         <i class="fas fa-question-circle"></i> {{ vehiculo.estado }}
                                     </span>
                                 {% endif %}
@@ -63,16 +65,19 @@
                                 {% load static %}
                                 {% now "Y-m-d" as today %}
                                 {% if vehiculo.proxima_revision|date:"Y-m-d" < today %}
-                                    <span class="badge bg-danger">
-                                        <i class="fas fa-exclamation-triangle"></i> {{ vehiculo.proxima_revision }}
+                                    <span class="badge bg-danger w-100 d-flex justify-content-between align-items-center">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <span class="flex-grow-1 text-center">{{ vehiculo.proxima_revision }}</span>
                                     </span>
                                 {% elif vehiculo.proxima_revision|date:"Y-m-d" == today %}
-                                    <span class="badge bg-warning text-dark">
-                                        <i class="fas fa-clock"></i> {{ vehiculo.proxima_revision }}
+                                    <span class="badge bg-warning w-100 d-flex justify-content-between align-items-center">
+                                        <i class="fas fa-clock"></i>
+                                        <span class="flex-grow-1 text-center">{{ vehiculo.proxima_revision }}</span>
                                     </span>
                                 {% else %}
-                                    <span class="badge bg-success">
-                                        <i class="fas fa-calendar-check"></i> {{ vehiculo.proxima_revision }}
+                                    <span class="badge bg-success w-100 d-flex justify-content-between align-items-center">
+                                        <i class="fas fa-calendar-check"></i>
+                                        <span class="flex-grow-1 text-center">{{ vehiculo.proxima_revision }}</span>
                                     </span>
                                 {% endif %}
                             </td>

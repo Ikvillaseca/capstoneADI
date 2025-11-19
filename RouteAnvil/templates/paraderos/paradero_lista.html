@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block titulo %}Lista de Paraderos{% endblock titulo %}
+{% block background %}fondo-choferes{% endblock background %}
 
 {% block contenido %}
 
@@ -38,10 +39,10 @@
                             </td>
                             <td class="text-center">
                                 <a href="{% url 'paradero_detalles' paradero.id_ubicacion %}" 
-                                   class="btn btn-primary btn-sm me-2">
+                                   class="btn btn-primary btn-sm me-2" scope="row">
                                     <i class="fas fa-eye"></i> Ver Detalles
                                 </a>
-                                <form class ="botones-acciones"method="post" action="{% url 'paradero_eliminar' paradero.id_ubicacion %}" 
+                                <form class="botones-acciones" method="post" action="{% url 'paradero_eliminar' paradero.id_ubicacion %}" 
                                     onsubmit="return confirm('¿Estás seguro de que deseas eliminar este paradero?')">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger btn-sm">
