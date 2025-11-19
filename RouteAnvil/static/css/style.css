@@ -3,7 +3,11 @@
     border-radius: 0.5rem;
     overflow: hidden;
 }
-
+.div-tabla {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
 .card {
     border: none;
     border-radius: 1rem;
@@ -571,4 +575,8 @@ footer {
 }
 .fondo-choferes{
     background-image: url('../images/choferes.png');
+}
+
+.botones-acciones{
+    display: inline-block;
 }
