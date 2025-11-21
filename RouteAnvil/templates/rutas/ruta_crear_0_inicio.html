@@ -20,7 +20,7 @@
     <!-- Formulario -->
     <form method="post" id="formHorario">
         {% csrf_token %}
-        
+
         <div class="card shadow">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0">
@@ -29,47 +29,46 @@
             </div>
             <div class="card-body">
                 <!-- Tipo de Viaje -->
-<div class="mb-4">
-<label class="form-label fw-bold">
-    <i class="fas fa-route"></i> {{ form.tipo_viaje.label }}
-    <span class="text-danger">*</span>
-</label>
-<div class="row g-3">
-    {% for radio in form.tipo_viaje %}
-    <div class="col-md-6">
-        <div class="card border-primary h-100 tipo-viaje-card" data-tipo="{{ radio.data.value }}">
-            <div class="card-body text-center">
-                <div class="form-check">
-                    {{ radio.tag }}
-                    <label class="form-check-label w-100" for="{{ radio.id_for_label }}">
-                        {% if radio.data.value == 'IDA' %}
-                            <i class="fas fa-arrow-right fa-3x text-success mb-3"></i>
-                            <h5 class="text-success">{{ radio.choice_label }}</h5>
-                            <p class="text-muted small">
-                                Recoger pasajeros en sus paraderos y llevarlos a un punto común
-                            </p>
-                        {% elif radio.data.value == 'VUELTA' %}
-                            <i class="fas fa-arrow-left fa-3x text-info mb-3"></i>
-                            <h5 class="text-info">{{ radio.choice_label }}</h5>
-                            <p class="text-muted small">
-                                Recoger pasajeros en un punto común y dejarlos en sus paraderos
-                            </p>
-                        {% endif %}
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-route"></i> {{ form.tipo_viaje.label }}
+                        <span class="text-danger">*</span>
                     </label>
+                    <div class="row g-3">
+                        {% for radio in form.tipo_viaje %}
+                        <div class="col-md-6">
+                            <div class="card h-100 tipo-viaje-card" data-tipo="{{ radio.data.value }}">
+                                <div class="card-body text-center ">
+                                    <div class="form-check">
+                                        {{ radio.tag }}
+                                        <label class="form-check-label w-100" for="{{ radio.id_for_label }}">
+                                            {% if radio.data.value == 'IDA' %}
+                                            <i class="fas fa-arrow-right fa-3x text-success mb-3"></i>
+                                            <h5 class="text-success">{{ radio.choice_label }}</h5>
+                                            <p class="text-muted small">
+                                                Recoger pasajeros en sus paraderos y llevarlos a un punto común
+                                            </p>
+                                            {% elif radio.data.value == 'VUELTA' %}
+                                            <i class="fas fa-arrow-left fa-3x text-info mb-3"></i>
+                                            <h5 class="text-info">{{ radio.choice_label }}</h5>
+                                            <p class="text-muted small">
+                                                Recoger pasajeros en un punto común y dejarlos en sus paraderos
+                                            </p>
+                                            {% endif %}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if form.tipo_viaje.errors %}
+                    <div class="text-danger mt-2">
+                        <i class="fas fa-exclamation-triangle"></i> {{ form.tipo_viaje.errors }}
+                    </div>
+                    {% endif %}
                 </div>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-{% if form.tipo_viaje.errors %}
-    <div class="text-danger mt-2">
-        <i class="fas fa-exclamation-triangle"></i> {{ form.tipo_viaje.errors }}
-    </div>
-{% endif %}
-</div>
-
-<hr>
+                <hr>
                 <div class="mb-4">
                     <label class="form-label fw-bold">
                         <i class="fas fa-hourglass-half"></i> {{ form.tipo_hora_deseada.label }}
@@ -78,21 +77,28 @@
                     <div class="row g-3">
                         {% for radio in form.tipo_hora_deseada %}
                         <div class="col-md-6">
-                            <div class="card border-secondary h-100 tipo-hora-card">
-                                <div class="card-body">
+                            <div class="card h-100 tipo-hora-card">
+                                <div class="card-body ">
                                     <div class="form-check">
                                         {{ radio.tag }}
                                         <label class="form-check-label" for="{{ radio.id_for_label }}">
-                                            {% if radio.choice_value == 'INICIO' %}
-                                                <strong><i class="fas fa-play-circle text-success"></i> {{ radio.choice_label }}</strong>
-                                                <p class="text-muted small mb-0 mt-2" id="texto-inicio">
-                                                    La hora indicada es cuando el primer vehículo debe salir
-                                                </p>
-                                            {% else %}
-                                                <strong><i class="fas fa-stop-circle text-danger"></i> {{ radio.choice_label }}</strong>
-                                                <p class="text-muted small mb-0 mt-2" id="texto-fin">
-                                                    La hora indicada es cuando todos los vehículos deben haber llegado
-                                                </p>
+                                            {% if radio.data.value == 'INICIO' %}
+                                            <strong><i class="fas fa-play-circle text-info"></i> {{ radio.choice_label
+                                                }}</strong>
+                                            <p class="text-muted small mb-0 mt-2" id="texto-inicio">
+                                                La hora indicada es cuando el viaje comienza en el primer paradero.
+                                            </p>
+                                            <p class="text-muted small">(Recomendado al crear viajes de vuelta)</p>
+
+                                            {% elif radio.data.value == 'LLEGADA' %}
+                                            <strong><i class="fas fa-stop-circle text-success"></i> {{
+                                                radio.choice_label }}</strong>
+                                            <p class="text-muted small mb-0 mt-2" id="texto-fin">
+                                                La hora indicada es la hora a la que todos los vehículos deben haber
+                                                llegado al último paradero.
+                                            </p>
+                                            <p class="text-muted small">(Recomendado al crear viajes de IDA)</p>
+
                                             {% endif %}
                                         </label>
                                     </div>
@@ -102,9 +108,9 @@
                         {% endfor %}
                     </div>
                     {% if form.tipo_hora_deseada.errors %}
-                        <div class="text-danger mt-2">
-                            <i class="fas fa-exclamation-triangle"></i> {{ form.tipo_hora_deseada.errors }}
-                        </div>
+                    <div class="text-danger mt-2">
+                        <i class="fas fa-exclamation-triangle"></i> {{ form.tipo_hora_deseada.errors }}
+                    </div>
                     {% endif %}
                 </div>
                 <!-- Fecha y Hora (Separados) -->
@@ -121,12 +127,12 @@
                             </label>
                             {{ form.fecha }}
                             {% if form.fecha.errors %}
-                                <div class="text-danger mt-2">
-                                    <i class="fas fa-exclamation-triangle"></i> {{ form.fecha.errors }}
-                                </div>
+                            <div class="text-danger mt-2">
+                                <i class="fas fa-exclamation-triangle"></i> {{ form.fecha.errors }}
+                            </div>
                             {% endif %}
                         </div>
-                        
+
                         <!-- Campo Hora -->
                         <div class="col-md-6">
                             <label for="{{ form.hora.id_for_label }}" class="form-label">
@@ -134,33 +140,29 @@
                             </label>
                             {{ form.hora }}
                             {% if form.hora.errors %}
-                                <div class="text-danger mt-2">
-                                    <i class="fas fa-exclamation-triangle"></i> {{ form.hora.errors }}
-                                </div>
+                            <div class="text-danger mt-2">
+                                <i class="fas fa-exclamation-triangle"></i> {{ form.hora.errors }}
+                            </div>
                             {% endif %}
                         </div>
                     </div>
                     <small class="text-muted d-block mt-2">
-                        <i class="fas fa-info-circle"></i> 
+                        <i class="fas fa-info-circle"></i>
                         Seleccione la fecha y hora en que se realizará el viaje
                     </small>
                 </div>
 
                 <hr>
-
-                <!-- Tipo de Hora -->
-                
-
                 <!-- Errores generales del formulario -->
                 {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-circle"></i> 
-                        {{ form.non_field_errors }}
-                    </div>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ form.non_field_errors }}
+                </div>
                 {% endif %}
 
             </div>
-            
+
             <!-- Footer con botones -->
             <div class="card-footer bg-light">
                 <div class="d-flex gap-2 justify-content-end">

@@ -43,6 +43,6 @@ tipo_viaje = [
     ]
 
 tipo_hora_deseada = [
-    ('INICIO', 'Hora inicio de viaje'),
     ('LLEGADA', 'Hora finalización de viaje'),
+    ('INICIO', 'Hora inicio de viaje'),
     ]
