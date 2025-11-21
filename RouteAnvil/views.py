@@ -18,7 +18,8 @@ from .forms import (
     FormularioPasajeroModificar,
     FormularioParadero,
     FormularioParaderoModificar,
-    FormularioDestinoViaje
+    FormularioDestinoViaje,
+    ViajeInicioForm
 )
 
 
@@ -293,9 +294,34 @@ def ruta_crear(request):
         }
         return render(request, 'rutas/ruta_crear.html', datos)
 
+# Paso 0 de creación de viaje - Seleccionar pasajeros
+@login_required
+def ruta_crear_inicio(request):
+    if request.method == 'GET':
+        form = ViajeInicioForm()
+        datos = {
+            'form' : form,
+        }
+        return render(request, 'rutas/ruta_crear_0_inicio.html', datos)
+    
+    if request.method == 'POST':
+        form = ViajeInicioForm(request.POST)        
+        if form.is_valid():
+            grupo = form.save(commit=False)
+            grupo.estado_creacion_viaje = "1"
+            grupo.save()
+            
+            return redirect('ruta_crear_seleccionar1_pasajeros', id_grupo_pasajeros=grupo.id_grupo_pasajeros)
+        else:
+            print("error")
+
+
+
 # Paso 1 de creación de viaje - Seleccionar pasajeros
 @login_required
-def ruta_crear_seleccionar_pasajeros(request):
+@validar_estado_grupo_requerido("1")
+def ruta_crear_seleccionar_pasajeros(request, id_grupo_pasajeros):
+    grupo = request.grupo_pasajeros 
     if request.method == 'GET':
         ### === Formulario de seleccion de pasajeros === ###
         pasajeros = Pasajero.objects.all().order_by('empresa_trabajo','apellido','nombre')
@@ -330,13 +356,6 @@ def ruta_crear_seleccionar_pasajeros(request):
         # Validar que los IDs recibidos son validos
         ids_validos = set(str(p.id_pasajero) for p in Pasajero.objects.all())
         opciones_validadas = [id for id in opciones_elegidas if id in ids_validos]
-
-        #Crear grupo de pasajeros , luego agregar cada uno de los pasajeros al viaje
-        grupo = Grupo_Pasajeros.objects.create()
-        
-        #Cambiar estado a seleccionando pasajeros
-        grupo.estado_creacion_viaje = "1"
-        grupo.save()
 
         for id_pasajero in opciones_validadas:
             grupo.pasajero.add(id_pasajero)
@@ -417,6 +436,7 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
 
         datos = {
             "form": form,
+            "grupo": grupo, 
             "lista_pasajeros": lista_pasajeros,
             "cantidad_pasajeros": cantidad_pasajeros,
             "lista_choferes_vehiculo": lista_choferes_vehiculo,
@@ -432,8 +452,7 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
             try:
                 # Obtener los datos del form
                 punto_encuentro = form.get_punto_encuentro()
-                tipo_viaje = form.cleaned_data["tipo_viaje"]
-
+                tipo_viaje = grupo.tipo_viaje
                 # Hacer el trabajo pesado
                 ids_viajes = asignar_viajes(grupo, punto_encuentro, tipo_viaje)
 
@@ -468,6 +487,7 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
         
         datos = {
             "form": form,
+            "grupo": grupo,
             "lista_pasajeros": lista_pasajeros,
             "cantidad_pasajeros": cantidad_pasajeros,
             "lista_choferes_vehiculo": lista_choferes_vehiculo,

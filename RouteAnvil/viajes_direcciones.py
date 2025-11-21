@@ -332,8 +332,8 @@ def estimar_tiempo_viaje(distancia_km, velocidad_promedio=30):
     """
     tiempo_horas = distancia_km / velocidad_promedio
     tiempo_minutos = tiempo_horas * 60
-    # Agregar 3 minutos por parada (tiempo de subida/bajada)
-    return int(tiempo_minutos) + 3
+    # Agregar 5 minutos por parada (tiempo de espera)
+    return int(tiempo_minutos) + 5
 
 def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje='IDA', hora_salida_base=None, grupo=None):
     """
@@ -512,31 +512,33 @@ def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje='I
     
     return viajes_creados
 
-def asignar_viajes(grupo, punto_encuentro, tipo_viaje='IDA', hora_salida=None):
+def asignar_viajes(grupo, punto_encuentro, tipo_viaje="IDA", hora_salida=None):
     """
     Función principal que orquesta toda la asignación de viajes
     """
     print("===!=== INICIANDO ASIGNACION DE VIAJES ===!===")
     print(f"Tipo de viaje: {tipo_viaje}")
     print(f"Punto de encuentro: {punto_encuentro}")
-    
+
     paraderos_deseados = agrupar_pasajeros_mismo_paradero(grupo)
     print(f"Paraderos únicos: {len(paraderos_deseados)}")
-    
+
     detalles_vehiculos = obtener_detalles_vehiculos(grupo)
     print(f"Vehículos disponibles: {len(detalles_vehiculos)}")
-    
+
     num_clusters = len(detalles_vehiculos)
     clusters = agrupar_paraderos_cercanos(paraderos_deseados, num_clusters)
     print(f"Clusters creados: {len(clusters)}")
-    
+
     asignaciones = asignar_vehiculos_a_clusters(clusters, detalles_vehiculos)
     print(f"Asignaciones realizadas: {len(asignaciones)}")
-    
-    viajes = crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje, hora_salida, grupo)  # PASAR GRUPO
-    
-    print(f"✓ Total viajes creados: {len(viajes)}")
+
+    viajes = crear_viajes_desde_asignaciones(
+        asignaciones, punto_encuentro, tipo_viaje, hora_salida, grupo
+    )
+
+    print(f"Total viajes creados: {len(viajes)}")
     print("===!=== ASIGNACION COMPLETADA ===!===")
-    
-    ids_viajes = [v['viaje'].id_viaje for v in viajes]
+
+    ids_viajes = [v["viaje"].id_viaje for v in viajes]
     return ids_viajes

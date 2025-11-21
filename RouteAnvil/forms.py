@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import Q
-from .models import Chofer, Pasajero, Vehiculo, Parada
-from .choices import estado, tipo_licencia, parada
+from .models import Chofer, Pasajero, Vehiculo, Parada, Grupo_Pasajeros
+from .choices import estado, tipo_licencia, parada, tipo_viaje
 from .validadores import (
     validar_rut, validar_telefono, validar_direccion,
     validar_empresa, validar_patente, validar_capacidad, 
@@ -9,6 +9,8 @@ from .validadores import (
     validar_vehiculo_unico_chofer, validar_nombre_paradero, validar_texto  
 )
 from .viajes_direcciones import geocoding_desde_direccion
+from django.utils import timezone
+import datetime
 
 
 #Formulario para poder crear un chofer
@@ -369,16 +371,6 @@ class FormularioParaderoModificar(forms.ModelForm):
 
 # Formulario para seleccionar destino en creación de viajes
 class FormularioDestinoViaje(forms.Form):
-    tipo_viaje = forms.ChoiceField(
-        choices=[
-            ('IDA', 'Viaje de Ida - Recoger pasajeros en paraderos y llevarlos a empresa'),
-            ('VUELTA', 'Viaje de Vuelta - Recoger pasajeros en empresa y llevarlos a paraderos')
-        ],
-        widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
-        initial='IDA',
-        label='Tipo de viaje'
-    )
-    
     tipo_seleccion = forms.ChoiceField(
         choices=[
             ('paradero', 'Seleccionar paradero/empresa existente'),
@@ -455,3 +447,73 @@ class FormularioDestinoViaje(forms.Form):
             return destino
         else:
             raise forms.ValidationError('No se pudo geocodificar la dirección')
+        
+class ViajeInicioForm(forms.ModelForm):
+    fecha = forms.DateField(
+        required=True,
+        widget=forms.DateInput(attrs={
+            'class': 'form-control',
+            'type': 'date'
+        }),
+        label='Fecha del viaje'
+    )
+
+    hora = forms.TimeField(
+        required=True,
+        widget=forms.TimeInput(attrs={
+            'class': 'form-control',
+            'type': 'time'
+        }),
+        label='Hora del viaje'
+    )
+    class Meta:
+        model = Grupo_Pasajeros
+        fields = ['tipo_viaje', 'tipo_hora_deseada']
+        widgets = {
+            'tipo_viaje': forms.RadioSelect(attrs={'class': 'form-check-input'}),
+            'tipo_hora_deseada': forms.RadioSelect(attrs={'class': 'form-check-input'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Si existe una instancia con fecha_hora_deseada, separar en fecha y hora
+        if self.instance and self.instance.fecha_hora_deseada:
+            self.fields['fecha'].initial = self.instance.fecha_hora_deseada.date()
+            self.fields['hora'].initial = self.instance.fecha_hora_deseada.time()
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        fecha = cleaned_data.get('fecha')
+        hora = cleaned_data.get('hora')
+        
+        # Combinar fecha y hora
+        if fecha and hora:
+            # Crear datetime naive
+            fecha_hora = datetime.datetime.combine(fecha, hora)
+            
+            # Convertir a timezone-aware si tu proyecto usa timezones
+            if timezone.is_aware(timezone.now()):
+                fecha_hora = timezone.make_aware(fecha_hora)
+            
+            # Validar que no sea en el pasado
+            if fecha_hora < timezone.now():
+                raise forms.ValidationError('La fecha y hora no puede ser en el pasado')
+            
+            # Guardar en cleaned_data
+            cleaned_data['fecha_hora_deseada'] = fecha_hora
+        
+        tipo_viaje = cleaned_data.get('tipo_viaje')
+        tipo_hora = cleaned_data.get('tipo_hora_deseada')
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        
+        # Asignar el datetime combinado
+        instance.fecha_hora_deseada = self.cleaned_data['fecha_hora_deseada']
+        
+        if commit:
+            instance.save()
+        
+        return instance
