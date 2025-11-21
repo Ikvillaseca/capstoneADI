@@ -13,7 +13,10 @@ def step_impl(context, nombre_pagina):
 
     #Diccionario de urls para poder implementar urls que sean distintas al nombre de la pagina
     urls = {
-        'inicio' : '/'
+        "inicio": "/",
+        "pasajeros": "/pasajeros/",
+        "choferes": "/choferes/",
+        "vehiculos": "/vehiculos/",
     }
 
     #Intenta buscar url usando el diccionario, o sino usa el nombre como path
