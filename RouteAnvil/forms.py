@@ -460,9 +460,11 @@ class ViajeInicioForm(forms.ModelForm):
 
     hora = forms.TimeField(
         required=True,
+        input_formats=['%H:%M'],
         widget=forms.TimeInput(attrs={
             'class': 'form-control',
-            'type': 'time'
+            'type': 'time',
+            'step': '300'
         }),
         label='Hora del viaje'
     )
@@ -478,6 +480,11 @@ class ViajeInicioForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         
         # Si existe una instancia con fecha_hora_deseada, separar en fecha y hora
+        if not self.instance.pk:
+            self.fields['tipo_viaje'].initial = 'IDA'  # Preseleccionar IDA
+            self.fields['tipo_hora_deseada'].initial = 'LLEGADA'  # Preseleccionar FIN
+            self.fields['fecha'].initial = timezone.now().date().isoformat()
+
         if self.instance and self.instance.fecha_hora_deseada:
             self.fields['fecha'].initial = self.instance.fecha_hora_deseada.date()
             self.fields['hora'].initial = self.instance.fecha_hora_deseada.time()
@@ -490,16 +497,20 @@ class ViajeInicioForm(forms.ModelForm):
         # Combinar fecha y hora
         if fecha and hora:
             # Crear datetime naive
-            fecha_hora = datetime.datetime.combine(fecha, hora)
+            fecha_hora_naive = datetime.datetime.combine(fecha, hora)
             
-            # Convertir a timezone-aware si tu proyecto usa timezones
-            if timezone.is_aware(timezone.now()):
-                fecha_hora = timezone.make_aware(fecha_hora)
+            # Siempre convertir a timezone-aware usando la timezone del proyecto
+            fecha_hora = timezone.make_aware(fecha_hora_naive)
             
             # Validar que no sea en el pasado
-            if fecha_hora < timezone.now():
-                raise forms.ValidationError('La fecha y hora no puede ser en el pasado')
-            
+            ahora = timezone.now()
+            if fecha_hora < ahora:
+                diferencia = ahora - fecha_hora
+                raise forms.ValidationError(
+                    f'La fecha y hora no puede ser en el pasado. '
+                    f'Está {diferencia.total_seconds() / 3600:.1f} horas atrás.'
+                )
+                
             # Guardar en cleaned_data
             cleaned_data['fecha_hora_deseada'] = fecha_hora
         

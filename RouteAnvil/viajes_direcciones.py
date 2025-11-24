@@ -9,6 +9,19 @@ from collections import defaultdict
 import datetime
 from .models import Viaje, Pasajero_Viaje, Parada_Viaje, Chofer, Vehiculo
 
+#Verificar si la api funciona correctamente
+def verificar_api_key():
+    try:
+        api_key = settings.GOOGLE_MAPS_API_KEY
+        return api_key is not None and len(str(api_key).strip()) > 0
+    except Exception:
+        return False
+
+API_EXISTE = verificar_api_key()
+
+
+
+#Diccionario de prioridades para el geocoding
 TIPO_PRIORIDAD = [
     "airport",
     "bus_station",
@@ -360,15 +373,15 @@ def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje='I
         # Determinar primer paradero del recorrido
         primer_paradero = pasajeros[0].paradero_deseado
         
-        # Calcular ruta óptima
         if tipo_viaje == 'IDA':
-            ruta_ordenada = calcular_ruta_optima(paraderos_cluster, primer_paradero, punto_encuentro)
             origen_viaje = primer_paradero
             destino_viaje = punto_encuentro
         else:
-            ruta_ordenada = calcular_ruta_optima(paraderos_cluster, punto_encuentro, primer_paradero)
             origen_viaje = punto_encuentro
             destino_viaje = primer_paradero
+
+        # Calcular el orden de los paraderos
+        ruta_ordenada = calcular_ruta_optima(paraderos_cluster, origen_viaje, destino_viaje)
         
         # Calcular distancia total
         distancia_total = 0
@@ -395,7 +408,7 @@ def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje='I
         hora_llegada = (datetime.datetime.combine(datetime.date.today(), hora_salida_base) + 
                        datetime.timedelta(minutes=tiempo_total_minutos)).time()
         
-        # Crear viaje CON REFERENCIA AL GRUPO
+        # Crear viaje
         viaje = Viaje.objects.create(
             tipo_viaje=tipo_viaje,
             hora_Salida=hora_salida_base,
@@ -403,11 +416,12 @@ def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje='I
             id_vehiculo_id=vehiculo['id_vehiculo'],
             id_chofer=chofer,
             punto_encuentro=punto_encuentro,
-            id_grupo=grupo  # AGREGAR GRUPO
+            id_grupo=grupo
         )
                 
         hora_actual = hora_salida_base
         coord_anterior = [float(origen_viaje.latitud), float(origen_viaje.longitud)]
+        #Crear los paraderos
         
         #Viaje de IDA (primero los paraderos luego el final definido)
         if tipo_viaje == 'IDA':
@@ -512,6 +526,11 @@ def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje='I
     
     return viajes_creados
 
+def crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaje='IDA', hora_salida_base=None, grupo=None):
+    print("Trabajando con la api de google maps para crear viajes")
+
+    
+
 def asignar_viajes(grupo, punto_encuentro, tipo_viaje="IDA", hora_salida=None):
     """
     Función principal que orquesta toda la asignación de viajes
@@ -533,9 +552,13 @@ def asignar_viajes(grupo, punto_encuentro, tipo_viaje="IDA", hora_salida=None):
     asignaciones = asignar_vehiculos_a_clusters(clusters, detalles_vehiculos)
     print(f"Asignaciones realizadas: {len(asignaciones)}")
 
-    viajes = crear_viajes_desde_asignaciones(
-        asignaciones, punto_encuentro, tipo_viaje, hora_salida, grupo
-    )
+    # AQUI CREO QUE SE DESVÍA TODA LA RUTA, Y DEBO HACER EL METODO ANTIGUO SI ES QUE LA API NO ESTA DISPONIBLE
+    # y EL METODO CON API SI ESQUE ESTE ES 
+    if API_EXISTE:
+        viajes = crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaje, hora_salida, grupo)
+    else:
+        viajes = crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje, hora_salida, grupo)
+
 
     print(f"Total viajes creados: {len(viajes)}")
     print("===!=== ASIGNACION COMPLETADA ===!===")

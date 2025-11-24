@@ -83,16 +83,14 @@
                                         {{ radio.tag }}
                                         <label class="form-check-label" for="{{ radio.id_for_label }}">
                                             {% if radio.data.value == 'INICIO' %}
-                                            <strong><i class="fas fa-play-circle text-info"></i> {{ radio.choice_label
-                                                }}</strong>
+                                            <strong><i class="fas fa-play-circle text-info"></i>{{ radio.choice_label }}</strong>
                                             <p class="text-muted small mb-0 mt-2" id="texto-inicio">
                                                 La hora indicada es cuando el viaje comienza en el primer paradero.
                                             </p>
                                             <p class="text-muted small">(Recomendado al crear viajes de vuelta)</p>
 
                                             {% elif radio.data.value == 'LLEGADA' %}
-                                            <strong><i class="fas fa-stop-circle text-success"></i> {{
-                                                radio.choice_label }}</strong>
+                                            <strong><i class="fas fa-stop-circle text-success"></i> {{ radio.choice_label }}</strong>
                                             <p class="text-muted small mb-0 mt-2" id="texto-fin">
                                                 La hora indicada es la hora a la que todos los vehículos deben haber
                                                 llegado al último paradero.
@@ -136,9 +134,16 @@
                         <!-- Campo Hora -->
                         <div class="col-md-6">
                             <label for="{{ form.hora.id_for_label }}" class="form-label">
-                                <i class="fas fa-clock"></i> Hora
+                                <i class="fas fa-clock"></i> Hora (formato 24h)
                             </label>
-                            {{ form.hora }}
+                            <input type="text" 
+                                   name="hora" 
+                                   id="id_hora" 
+                                   class="form-control" 
+                                   placeholder="HH:MM (ej: 14:30)"
+                                   pattern="[0-2][0-9]:[0-5][0-9]"
+                                   value="{{ form.hora.value|default:'' }}"
+                                   required>
                             {% if form.hora.errors %}
                             <div class="text-danger mt-2">
                                 <i class="fas fa-exclamation-triangle"></i> {{ form.hora.errors }}
@@ -177,5 +182,7 @@
         </div>
     </form>
 </div>
+
+<script src="{% static 'js/routeanvil.viaje-selector-hora.js' %}"></script>
 
 {% endblock contenido %}

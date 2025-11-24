@@ -310,10 +310,14 @@ def ruta_crear_inicio(request):
             grupo = form.save(commit=False)
             grupo.estado_creacion_viaje = "1"
             grupo.save()
-            
+            print(grupo)
+
             return redirect('ruta_crear_seleccionar1_pasajeros', id_grupo_pasajeros=grupo.id_grupo_pasajeros)
         else:
-            print("error")
+            # Devolver el form porque puede contener errores
+            datos = {'form': form,}
+            return render(request, 'rutas/ruta_crear_0_inicio.html', datos)
+
 
 
 
@@ -465,6 +469,7 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
                 # Redirigir a página de resumen de viajes
                 return redirect("viajes_resumen", id_grupo_pasajeros=id_grupo_pasajeros)
             except Exception as e:
+                print(f"Error al crear viajes: {str(e)}")
                 messages.error(request, f"Error al crear viajes: {str(e)}")
         else:
             messages.error(request, "Corrija los errores en el formulario")
