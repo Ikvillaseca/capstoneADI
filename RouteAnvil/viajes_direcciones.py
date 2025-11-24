@@ -529,7 +529,7 @@ def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje='I
 def crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaje='IDA', hora_salida_base=None, grupo=None):
     print("Trabajando con la api de google maps para crear viajes")
 
-    
+
 
 def asignar_viajes(grupo, punto_encuentro, tipo_viaje="IDA", hora_salida=None):
     """
@@ -554,9 +554,9 @@ def asignar_viajes(grupo, punto_encuentro, tipo_viaje="IDA", hora_salida=None):
 
     # AQUI CREO QUE SE DESVÍA TODA LA RUTA, Y DEBO HACER EL METODO ANTIGUO SI ES QUE LA API NO ESTA DISPONIBLE
     # y EL METODO CON API SI ESQUE ESTE ES 
-    if API_EXISTE:
+    if API_EXISTE: # Metodo que utiliza api de Google Maps
         viajes = crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaje, hora_salida, grupo)
-    else:
+    else: # Metodo fallback para crear viajes sin depender de la API (Contiene imperfecciones en las estimaciones ya que no considera calles y usa aproximaciones)
         viajes = crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje, hora_salida, grupo)
 
 
@@ -565,3 +565,69 @@ def asignar_viajes(grupo, punto_encuentro, tipo_viaje="IDA", hora_salida=None):
 
     ids_viajes = [v["viaje"].id_viaje for v in viajes]
     return ids_viajes
+
+# Funcion para generar la imagen del mapa para visualizar
+def generar_imagen_clusters(grupo, punto_encuentro, guardar_como="clusters_visualization.png"):
+    """
+    Genera una imagen estática de los clusters para presentación
+    Guarda el archivo en la carpeta del proyecto
+    """
+
+    # Obtener datos
+    paraderos_deseados = agrupar_pasajeros_mismo_paradero(grupo)
+    detalles_vehiculos = obtener_detalles_vehiculos(grupo)
+    num_clusters = len(detalles_vehiculos)
+    clusters = agrupar_paraderos_cercanos(paraderos_deseados, num_clusters)
+
+    # Construir URL
+    api_key = settings.GOOGLE_MAPS_API_KEY
+    base_url = "https://maps.googleapis.com/maps/api/staticmap"
+
+    # Parametros
+    markers = []
+
+    colores_clusters = [
+        "blue",
+        "green",
+        "purple",
+        "yellow",
+        "orange",
+        "brown",
+        "gray",
+        "black",
+    ]
+    # Agregar clusters (simplificado)
+    for cluster_id, paraderos_cluster in clusters.items():
+        color = colores_clusters[cluster_id % len(colores_clusters)]
+        for p in paraderos_cluster:
+            lat = float(p["paradero"].latitud)
+            lng = float(p["paradero"].longitud)
+            cantidad = p["cantidad"]
+            label = str(cantidad) if cantidad < 10 else "9"
+            markers.append(f"color:{color}|label:{label}|{lat},{lng}")
+
+    # Punto de encuentro
+    pe_lat = float(punto_encuentro.latitud)
+    pe_lng = float(punto_encuentro.longitud)
+    markers.append(f"color:red|size:large|{pe_lat},{pe_lng}")
+
+    params = [
+        ("size", "1400x900"),
+        ("scale", "2"),
+        ("maptype", "roadmap"),
+        ("format", "png"),
+        ("markers", markers),
+        ("style", "feature:poi.business|visibility:off"),
+        ("style", "feature:transit.station|visibility:off"),
+        ("style", "feature:road|element:labels.icon|visibility:off"),
+        ("style", "feature:all|saturation:-50|lightness:20"),
+        ("key", api_key),
+    ]
+
+    response = requests.get(base_url, params=params)
+
+    with open(guardar_como, "wb") as f:
+        f.write(response.content)
+
+    print(f"Imagen guardada: {guardar_como}")
+    return guardar_como

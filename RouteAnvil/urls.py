@@ -44,6 +44,8 @@ urlpatterns = [
     path('ruta/crear/confirmacion/<int:id_grupo_pasajeros>/', views.ruta_crear_seleccionar_confirmar, name='ruta_crear_seleccionar_confirmar'),
     path('ruta/viajes-resumen/<int:id_grupo_pasajeros>/', views.viajes_resumen, name='viajes_resumen'),
     
+    path('ruta/generar-imagen/<int:id_grupo_pasajeros>/', views.generar_imagen_presentacion, name='viaje_cluster_imagen'),
+
     # URLs para viajes creados
     path('viajes/', views.viajes_lista, name='viajes_listado'),
     path('viaje/<int:id_viaje>/', views.viaje_detalle, name='viaje_detalle'),

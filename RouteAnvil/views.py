@@ -1,6 +1,6 @@
 import requests
 import json
-from .viajes_direcciones import asignar_viajes, geocoding_desde_direccion
+from .viajes_direcciones import asignar_viajes, generar_imagen_clusters, geocoding_desde_direccion
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib import messages
@@ -684,3 +684,32 @@ def testeo_api(request):
             'error': 'Error de conexión',
             'error_body': str(e)
         })
+
+@login_required
+def generar_imagen_presentacion(request, id_grupo_pasajeros):
+    grupo = get_object_or_404(Grupo_Pasajeros, id_grupo_pasajeros=id_grupo_pasajeros)
+    
+    # Verificar que el grupo tenga viajes creados
+    if grupo.estado_creacion_viaje != "A":
+        messages.error(request, "Debe completar la creación de viajes antes de generar la visualización")
+        return redirect('ruta_crear_seleccionar_confirmar', id_grupo_pasajeros=id_grupo_pasajeros)
+    
+    # Obtener el punto de encuentro desde los viajes creados
+    viaje_ejemplo = Viaje.objects.filter(id_grupo=grupo).first()
+    
+    if not viaje_ejemplo:
+        messages.error(request, "No se encontraron viajes para este grupo")
+        return redirect('viajes_resumen', id_grupo_pasajeros=id_grupo_pasajeros)
+    
+    punto_encuentro = viaje_ejemplo.punto_encuentro
+    
+    # Generar imagen
+    ruta_imagen = generar_imagen_clusters(
+        grupo, 
+        punto_encuentro, 
+        f'cluster_grupo_{id_grupo_pasajeros}.png'
+    )
+    
+    # Servir la imagen
+    from django.http import FileResponse
+    return FileResponse(open(ruta_imagen, 'rb'), content_type='image/png')
