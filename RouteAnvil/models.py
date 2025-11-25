@@ -99,7 +99,7 @@ class Grupo_Pasajeros(models.Model):
     estado_creacion_viaje = models.CharField(max_length=1, choices=estado_creacion_viaje, default='0', verbose_name="Estado de creacion")
     fecha_hora_deseada = models.DateTimeField(blank=True)
     tipo_viaje = models.CharField(max_length=10, choices=tipo_viaje, default='IDA')
-    tipo_hora_deseada = models.CharField(max_length=10, choices=tipo_hora_deseada, default='INICIO')
+    tipo_hora_deseada = models.CharField(max_length=10, choices=tipo_hora_deseada, default='LLEGADA')
     def __str__(self):
         return f"Grupo {self.id_grupo_pasajeros}"
 

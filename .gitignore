@@ -213,3 +213,8 @@ behave-report.html
 api.py
 experimental.py
 staticfiles/
+
+# Credenciales de Google Cloud
+RouteAnvil/credentials/*.json
+*.json
+!package.json

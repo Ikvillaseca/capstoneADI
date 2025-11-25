@@ -457,14 +457,16 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
                 # Obtener los datos del form
                 punto_encuentro = form.get_punto_encuentro()
                 tipo_viaje = grupo.tipo_viaje
+                fecha_hora_deseada = grupo.fecha_hora_deseada
+                tipo_hora_deseada = grupo.tipo_hora_deseada
                 # Hacer el trabajo pesado
-                ids_viajes = asignar_viajes(grupo, punto_encuentro, tipo_viaje)
+                ids_viajes = asignar_viajes(grupo, punto_encuentro, tipo_viaje, fecha_hora_deseada, tipo_hora_deseada)
 
                 # Actualizar el estado del grupo para que solo me sirva visualizar, ya no modificar
                 grupo.estado_creacion_viaje = "A"
                 grupo.save()
 
-                messages.success(request, f"Se crearon {len(ids_viajes)} viajes de {tipo_viaje} exitosamente")
+                print(f"Se crearon {len(ids_viajes)} viajes de {tipo_viaje} con {tipo_hora_deseada} a las {fecha_hora_deseada} exitosamente")
 
                 # Redirigir a página de resumen de viajes
                 return redirect("viajes_resumen", id_grupo_pasajeros=id_grupo_pasajeros)
@@ -475,21 +477,21 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
             messages.error(request, "Corrija los errores en el formulario")
 
         # Recargar datos
-        lista_pasajeros = grupo.pasajero.select_related('paradero_deseado').all()
+        lista_pasajeros = grupo.pasajero.select_related("paradero_deseado").all()
         cantidad_pasajeros = len(lista_pasajeros)
         lista_choferes_vehiculo = grupo.chofer.all().select_related("id_vehiculo")
-        
+
         paraderos_contador = defaultdict(list)
         for pasajero in lista_pasajeros:
             if pasajero.paradero_deseado:
                 paradero_id = pasajero.paradero_deseado.id_ubicacion
                 paraderos_contador[paradero_id].append(pasajero)
-        
+
         lista_paraderos = []
         for paradero_id, pasajeros in paraderos_contador.items():
             paradero = pasajeros[0].paradero_deseado
             lista_paraderos.append(f"{len(pasajeros)} pasajeros => {paradero.nombre}")
-        
+
         datos = {
             "form": form,
             "grupo": grupo,

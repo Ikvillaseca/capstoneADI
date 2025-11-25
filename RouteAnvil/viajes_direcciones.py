@@ -7,9 +7,13 @@ from sklearn.cluster import KMeans
 import numpy as np
 from collections import defaultdict
 import datetime
+import traceback
 from .models import Viaje, Pasajero_Viaje, Parada_Viaje, Chofer, Vehiculo
+import google.auth
+from google.auth.transport.requests import Request
 
-#Verificar si la api funciona correctamente
+
+# Verificar si la api funciona correctamente
 def verificar_api_key():
     try:
         api_key = settings.GOOGLE_MAPS_API_KEY
@@ -19,7 +23,29 @@ def verificar_api_key():
 
 API_EXISTE = verificar_api_key()
 
-
+def obtener_access_token():
+    """
+    Obtiene el token OAuth2 usando las credenciales del service account
+    """
+    try:
+        # Cargar credenciales desde el archivo JSON configurado
+        credentials, project = google.auth.default(
+            scopes=['https://www.googleapis.com/auth/cloud-platform']
+        )
+        
+        # Refrescar el token si es necesario
+        auth_req = Request()
+        credentials.refresh(auth_req)
+        
+        print(f"✓ Token OAuth2 obtenido exitosamente")
+        print(f"  Proyecto: {project}")
+        
+        return credentials.token
+        
+    except Exception as e:
+        print(f"✗ Error obteniendo token OAuth2: {str(e)}")
+        traceback.print_exc()
+        return None
 
 #Diccionario de prioridades para el geocoding
 TIPO_PRIORIDAD = [
@@ -348,7 +374,7 @@ def estimar_tiempo_viaje(distancia_km, velocidad_promedio=30):
     # Agregar 5 minutos por parada (tiempo de espera)
     return int(tiempo_minutos) + 5
 
-def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje='IDA', hora_salida_base=None, grupo=None):
+def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje="IDA", fecha_hora_deseada=None, tipo_hora_deseada='LLEGADA', grupo=None):
     """
     Crea objetos Viaje con sus paradas ordenadas
     tipo_viaje: 'IDA' (recoger) o 'VUELTA' (dejar)
@@ -356,6 +382,7 @@ def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje='I
     #Punto encuentro: Destino si es IDA, Origen si es VUELTA
 
     """
+    hora_salida_base = fecha_hora_deseada
     # Definir un campo para definir la hora de inicio del viaje (Probablemente tambien el dia)
     if hora_salida_base is None:
         hora_salida_base = datetime.time(7, 0)
@@ -526,12 +553,428 @@ def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje='I
     
     return viajes_creados
 
-def crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaje='IDA', hora_salida_base=None, grupo=None):
-    print("Trabajando con la api de google maps para crear viajes")
+def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaje, hora_deseada, tipo_hora_deseada, chofer, grupo):
+    """
+    Procesa la respuesta de la API y crea los objetos Viaje y Parada_Viaje
+    """
+    try:
+        routes = resultado_api.get('routes', [])
+        if not routes:
+            print("No se encontraron rutas en la respuesta")
+            return None
+        
+        route = routes[0]
+        vehiculo = asignacion['vehiculo']
+        pasajeros = asignacion['pasajeros']
+        
+        visits = route.get('visits', [])
+        metrics = route.get('metrics', {})
+        transitions = route.get('transitions', [])
+        
+        # Extraer horas reales de la respuesta de la API
+        primera_visita = visits[0]
+        ultima_visita = visits[-1]
+        
+        hora_salida_str = primera_visita.get('startTime', '')
+        hora_llegada_str = ultima_visita.get('startTime', '')
+        
+        hora_salida = datetime.datetime.fromisoformat(hora_salida_str.replace('Z', '+00:00')).time()
+        hora_llegada = datetime.datetime.fromisoformat(hora_llegada_str.replace('Z', '+00:00')).time()
+        
+        # Crear el viaje con las horas reales de la API
+        viaje = Viaje.objects.create(
+            tipo_viaje=tipo_viaje,
+            hora_Salida=hora_salida,
+            hora_Llegada=hora_llegada,
+            id_vehiculo_id=vehiculo['id_vehiculo'],
+            id_chofer=chofer,
+            punto_encuentro=punto_encuentro,
+            id_grupo=grupo
+        )
+        
+        print(f"\n=== Creando paradas del viaje ===")
+        print(f"Hora salida real: {hora_salida}")
+        print(f"Hora llegada real: {hora_llegada}")
+        print(f"Total paradas: {len(visits)}")
+        
+        # Crear las paradas según las visitas optimizadas
+        for orden, visit in enumerate(visits, start=1):
+            start_time_str = visit.get('startTime', '')
+            start_datetime = datetime.datetime.fromisoformat(start_time_str.replace('Z', '+00:00'))
+            hora_parada = start_datetime.time()
+            
+            is_pickup = visit.get('isPickup', False)
+            shipment_label = visit.get('shipmentLabel', '')
+            
+            # Extraer cantidad de pasajeros del label
+            cantidad_pasajeros = 0
+            if 'Pasajeros_' in shipment_label:
+                try:
+                    cantidad_pasajeros = int(shipment_label.split('Pasajeros_')[1])
+                except:
+                    cantidad_pasajeros = 1
+            
+            if tipo_viaje == "IDA":
+                if is_pickup:
+                    # Buscar paradero correspondiente
+                    paradero = None
+                    for paradero_info in asignacion['paraderos']:
+                        if str(paradero_info['paradero'].id_ubicacion) in shipment_label:
+                            paradero = paradero_info['paradero']
+                            cantidad_pasajeros = paradero_info['cantidad']
+                            break
+                    
+                    if paradero:
+                        Parada_Viaje.objects.create(
+                            id_viaje=viaje,
+                            id_parada=paradero,
+                            orden=orden,
+                            pasajeros_suben=cantidad_pasajeros,
+                            pasajeros_bajan=0,
+                            hora_estimada_llegada=hora_parada
+                        )
+                        print(f"  Parada {orden}: Paradero {paradero.id_ubicacion} - Suben {cantidad_pasajeros} - {hora_parada}")
+                else:
+                    # Punto de encuentro (destino)
+                    Parada_Viaje.objects.create(
+                        id_viaje=viaje,
+                        id_parada=punto_encuentro,
+                        orden=orden,
+                        pasajeros_suben=0,
+                        pasajeros_bajan=len(pasajeros),
+                        hora_estimada_llegada=hora_parada
+                    )
+                    print(f"  Parada {orden}: Punto Encuentro - Bajan {len(pasajeros)} - {hora_parada}")
+            
+            else:  # VUELTA
+                if is_pickup:
+                    # Punto de encuentro (origen)
+                    Parada_Viaje.objects.create(
+                        id_viaje=viaje,
+                        id_parada=punto_encuentro,
+                        orden=orden,
+                        pasajeros_suben=len(pasajeros),
+                        pasajeros_bajan=0,
+                        hora_estimada_llegada=hora_parada
+                    )
+                    print(f"  Parada {orden}: Punto Encuentro - Suben {len(pasajeros)} - {hora_parada}")
+                else:
+                    # Buscar paradero correspondiente
+                    paradero = None
+                    for paradero_info in asignacion['paraderos']:
+                        if str(paradero_info['paradero'].id_ubicacion) in shipment_label:
+                            paradero = paradero_info['paradero']
+                            cantidad_pasajeros = paradero_info['cantidad']
+                            break
+                    
+                    if paradero:
+                        Parada_Viaje.objects.create(
+                            id_viaje=viaje,
+                            id_parada=paradero,
+                            orden=orden,
+                            pasajeros_suben=0,
+                            pasajeros_bajan=cantidad_pasajeros,
+                            hora_estimada_llegada=hora_parada
+                        )
+                        print(f"  Parada {orden}: Paradero {paradero.id_ubicacion} - Bajan {cantidad_pasajeros} - {hora_parada}")
+        
+        # Asociar pasajeros al viaje
+        for pasajero in pasajeros:
+            Pasajero_Viaje.objects.create(
+                id_viaje=viaje,
+                id_pasajero=pasajero
+            )
+        
+        print(f"✓ Viaje creado exitosamente: {viaje.id_viaje}")
+        
+        return {
+            'viaje': viaje,
+            'tipo': tipo_viaje,
+            'pasajeros_count': len(pasajeros),
+            'capacidad_usada': asignacion['capacidad_usada'],
+            'paradas_count': len(visits),
+            'distancia_km': round(float(metrics.get('travelDistanceMeters', 0)) / 1000, 2)
+        }
+        
+    except Exception as e:
+        print(f"Error procesando respuesta API: {str(e)}")
+        traceback.print_exc()
+        return None
+    
 
+def crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaje="IDA", fecha_hora_deseada=None, tipo_hora_deseada='LLEGADA', grupo=None):
+    # Optimizar el orden y la ruta
+    # Route optimization API (Testear la viabilidad de esto)
+    print("Creando viajes usando API")
+    
+    # Configurar acceso a la API
+    project_id = settings.GOOGLE_CLOUD_PROJECT_ID
+    base_url_optimization = f"https://routeoptimization.googleapis.com/v1/projects/{project_id}:optimizeTours"
+    
+    # Obtener token OAuth2
+    access_token = obtener_access_token()
+    if not access_token:
+        print("No se pudo obtener token OAuth2")
+        print("Usando método fallback sin API...")
+        return crear_viajes_desde_asignaciones(
+            asignaciones, 
+            punto_encuentro, 
+            tipo_viaje, 
+            fecha_hora_deseada, 
+            tipo_hora_deseada, 
+            grupo
+        )
+    
+    # Headers con Bearer token
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+    
+    
+    viajes_creados = []
+    
+    # Configurar hora base
+    if fecha_hora_deseada is None:
+        fecha_hora_deseada = datetime.datetime.now()
+    
+    if isinstance(fecha_hora_deseada, datetime.time):
+        fecha_hora_deseada = datetime.datetime.combine(datetime.date.today(), fecha_hora_deseada)
+    
+    # Convertir a naive datetime (sin timezone) ya que la API espera UTC implícito
+    if fecha_hora_deseada.tzinfo is not None:
+        fecha_hora_deseada = fecha_hora_deseada.replace(tzinfo=None)
+    
+    hora_base = fecha_hora_deseada
+    
+    # Crear un viaje por cada asignación
+    for idx, asignacion in enumerate(asignaciones, start=1):
+        try:
+            print(f"\n=== Procesando asignación {idx}/{len(asignaciones)} ===")
+            
+            vehiculo = asignacion['vehiculo']
+            pasajeros = asignacion['pasajeros']
+            paraderos_cluster = asignacion['paraderos']
+            chofer = Chofer.objects.get(id_chofer=vehiculo['id_chofer'])
+            
+            # Construir shipments
+            shipments = []
+            
+            for paradero_info in paraderos_cluster:
+                paradero = paradero_info['paradero']
+                cantidad_pasajeros = paradero_info['cantidad']
+                
+                print(f"Creando ventanas basando en la hora de {tipo_hora_deseada} ESPERADA")
+                
+                # Configurar ventanas de tiempo según tipo de hora deseada
+                if tipo_hora_deseada == 'LLEGADA':
+                    if tipo_viaje == "IDA":
+                        pickup_start = (hora_base - datetime.timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        pickup_end = (hora_base - datetime.timedelta(minutes=15)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_start = (hora_base - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_end = (hora_base + datetime.timedelta(minutes=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                    else:  # VUELTA
+                        pickup_start = (hora_base - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        pickup_end = (hora_base + datetime.timedelta(minutes=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_start = (hora_base + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_end = (hora_base + datetime.timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                else:  # SALIDA
+                    if tipo_viaje == "IDA":
+                        pickup_start = hora_base.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        pickup_end = (hora_base + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_start = (hora_base + datetime.timedelta(minutes=15)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_end = (hora_base + datetime.timedelta(hours=3)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                    else:  # VUELTA
+                        pickup_start = hora_base.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        pickup_end = (hora_base + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_start = (hora_base + datetime.timedelta(minutes=10)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_end = (hora_base + datetime.timedelta(hours=3)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                
+                if tipo_viaje == "IDA":
+                    shipment = {
+                        "pickups": [{
+                            "arrivalWaypoint": {
+                                "location": {
+                                    "latLng": {
+                                        "latitude": float(paradero.latitud),
+                                        "longitude": float(paradero.longitud)
+                                    }
+                                }
+                            },
+                            "timeWindows": [{
+                                "startTime": pickup_start,
+                                "endTime": pickup_end
+                            }],
+                            "duration": "300s"
+                        }],
+                        "deliveries": [{
+                            "arrivalWaypoint": {
+                                "location": {
+                                    "latLng": {
+                                        "latitude": float(punto_encuentro.latitud),
+                                        "longitude": float(punto_encuentro.longitud)
+                                    }
+                                }
+                            },
+                            "timeWindows": [{
+                                "startTime": delivery_start,
+                                "endTime": delivery_end
+                            }],
+                            "duration": "180s"
+                        }],
+                        "label": f"Paradero_{paradero.id_ubicacion}_Pasajeros_{cantidad_pasajeros}",
+                        "loadDemands": {
+                            "pasajeros": {"amount": str(cantidad_pasajeros)}
+                        }
+                    }
+                else:  # VUELTA
+                    shipment = {
+                        "pickups": [{
+                            "arrivalWaypoint": {
+                                "location": {
+                                    "latLng": {
+                                        "latitude": float(punto_encuentro.latitud),
+                                        "longitude": float(punto_encuentro.longitud)
+                                    }
+                                }
+                            },
+                            "timeWindows": [{
+                                "startTime": pickup_start,
+                                "endTime": pickup_end
+                            }],
+                            "duration": "180s"
+                        }],
+                        "deliveries": [{
+                            "arrivalWaypoint": {
+                                "location": {
+                                    "latLng": {
+                                        "latitude": float(paradero.latitud),
+                                        "longitude": float(paradero.longitud)
+                                    }
+                                }
+                            },
+                            "timeWindows": [{
+                                "startTime": delivery_start,
+                                "endTime": delivery_end
+                            }],
+                            "duration": "180s"
+                        }],
+                        "label": f"Paradero_{paradero.id_ubicacion}_Pasajeros_{cantidad_pasajeros}",
+                        "loadDemands": {
+                            "pasajeros": {"amount": str(cantidad_pasajeros)}
+                        }
+                    }
+                
+                shipments.append(shipment)
+            
+            # Configurar vehículo
+            if tipo_hora_deseada == 'SALIDA':
+                vehiculo_start = hora_base.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_start_end = (hora_base + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_end_start = hora_base.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_end_end = (hora_base + datetime.timedelta(hours=4)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+            else:  # LLEGADA
+                vehiculo_start = (hora_base - datetime.timedelta(hours=3)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_start_end = (hora_base - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_end_start = (hora_base - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_end_end = (hora_base + datetime.timedelta(minutes=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+            
+            vehicle_config = {
+                "loadLimits": {
+                    "pasajeros": {
+                        "maxLoad": vehiculo['capacidad']
+                    }
+                },
+                "costPerHour": 30,
+                "costPerKilometer": 1,
+                "startTimeWindows": [{
+                    "startTime": vehiculo_start,
+                    "endTime": vehiculo_start_end
+                }],
+                "endTimeWindows": [{
+                    "startTime": vehiculo_end_start,
+                    "endTime": vehiculo_end_end
+                }],
+                "label": f"Vehiculo_{vehiculo['id_vehiculo']}_Chofer_{chofer.id_chofer}"
+            }
+            
+            global_start = (hora_base - datetime.timedelta(hours=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+            global_end = (hora_base + datetime.timedelta(hours=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+            
+            data = {
+                "timeout": "30s",
+                "model": {
+                    "shipments": shipments,
+                    "vehicles": [vehicle_config],
+                    "globalStartTime": global_start,
+                    "globalEndTime": global_end
+                },
+                "considerRoadTraffic": True,
+                "populatePolylines": True,
+            }
+            
+            print(f"\n=== Enviando request a Route Optimization API ===")
+            print(f"Tipo viaje: {tipo_viaje}")
+            print(f"Tipo hora: {tipo_hora_deseada} - {hora_base}")
+            if tipo_hora_deseada == 'LLEGADA':
+                print(f"  Ventana llegada: {hora_base} (+2 min máximo)")
+            else:
+                print(f"  Ventana salida: {hora_base} (+5 min máximo)")
+            print(f"Shipments: {len(shipments)}")
+            print(f"Vehículo capacidad: {vehiculo['capacidad']}")
+            
+            response = requests.post(base_url_optimization, headers=headers, json=data)
+            
+            if response.status_code == 200:
+                resultado = response.json()
+                print("Respuesta exitosa de la API")
+                
+                # Procesar la respuesta y crear el viaje
+                viaje_creado = procesar_respuesta_api(
+                    resultado, 
+                    asignacion, 
+                    punto_encuentro, 
+                    tipo_viaje, 
+                    hora_base.time(),
+                    tipo_hora_deseada,
+                    chofer, 
+                    grupo
+                )
+                
+                if viaje_creado:
+                    viajes_creados.append(viaje_creado)
+                    print(f"Viaje {idx} creado exitosamente")
+                else:
+                    print(f"No se pudo crear el viaje {idx}")
+                
+            else:
+                print(f"=!= Error en API: {response.status_code}")
+                print(f"Respuesta: {response.text}")
+                print(f"Saltando asignación {idx}")
+                
+        except Exception as e:
+            print(f"Error procesando asignación {idx}: {str(e)}")
+            traceback.print_exc()
+            print(f"Continuando con siguiente asignación...")
+            continue
+    
+    # Si no se creó ningún viaje con API, usar fallback
+    if not viajes_creados:
+        print("\nNo se pudo crear ningún viaje con API")
+        print("Usando método fallback sin API...")
+        return crear_viajes_desde_asignaciones(
+            asignaciones, 
+            punto_encuentro, 
+            tipo_viaje, 
+            hora_base.time(), 
+            tipo_hora_deseada, 
+            grupo
+        )
+    
+    print(f"\n✓ Total de viajes creados con API: {len(viajes_creados)}")
+    return viajes_creados
 
-
-def asignar_viajes(grupo, punto_encuentro, tipo_viaje="IDA", hora_salida=None):
+def asignar_viajes(grupo, punto_encuentro, tipo_viaje="IDA", fecha_hora_deseada=None, tipo_hora_deseada='LLEGADA'):
     """
     Función principal que orquesta toda la asignación de viajes
     """
@@ -555,9 +998,9 @@ def asignar_viajes(grupo, punto_encuentro, tipo_viaje="IDA", hora_salida=None):
     # AQUI CREO QUE SE DESVÍA TODA LA RUTA, Y DEBO HACER EL METODO ANTIGUO SI ES QUE LA API NO ESTA DISPONIBLE
     # y EL METODO CON API SI ESQUE ESTE ES 
     if API_EXISTE: # Metodo que utiliza api de Google Maps
-        viajes = crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaje, hora_salida, grupo)
+        viajes = crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaje, fecha_hora_deseada, tipo_hora_deseada, grupo)
     else: # Metodo fallback para crear viajes sin depender de la API (Contiene imperfecciones en las estimaciones ya que no considera calles y usa aproximaciones)
-        viajes = crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje, hora_salida, grupo)
+        viajes = crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje, fecha_hora_deseada, tipo_hora_deseada, grupo)
 
 
     print(f"Total viajes creados: {len(viajes)}")
