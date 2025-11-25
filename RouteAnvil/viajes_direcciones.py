@@ -11,7 +11,8 @@ import traceback
 from .models import Viaje, Pasajero_Viaje, Parada_Viaje, Chofer, Vehiculo
 import google.auth
 from google.auth.transport.requests import Request
-
+from django.utils import timezone
+from django.utils.timezone import make_aware, localtime
 
 # Verificar si la api funciona correctamente
 def verificar_api_key():
@@ -578,8 +579,17 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
         hora_salida_str = primera_visita.get('startTime', '')
         hora_llegada_str = ultima_visita.get('startTime', '')
         
-        hora_salida = datetime.datetime.fromisoformat(hora_salida_str.replace('Z', '+00:00')).time()
-        hora_llegada = datetime.datetime.fromisoformat(hora_llegada_str.replace('Z', '+00:00')).time()
+        # Convertir strings UTC a datetime aware
+        hora_salida_utc = datetime.datetime.fromisoformat(hora_salida_str.replace('Z', '+00:00'))
+        hora_llegada_utc = datetime.datetime.fromisoformat(hora_llegada_str.replace('Z', '+00:00'))
+        
+        # Convertir a hora local de Chile automáticamente
+        hora_salida_local = localtime(hora_salida_utc)
+        hora_llegada_local = localtime(hora_llegada_utc)
+        
+        # Extraer solo el time para guardar en BD
+        hora_salida = hora_salida_local.time()
+        hora_llegada = hora_llegada_local.time()
         
         # Crear el viaje con las horas reales de la API
         viaje = Viaje.objects.create(
@@ -600,8 +610,9 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
         # Crear las paradas según las visitas optimizadas
         for orden, visit in enumerate(visits, start=1):
             start_time_str = visit.get('startTime', '')
-            start_datetime = datetime.datetime.fromisoformat(start_time_str.replace('Z', '+00:00'))
-            hora_parada = start_datetime.time()
+            start_datetime_utc = datetime.datetime.fromisoformat(start_time_str.replace('Z', '+00:00'))
+            start_datetime_local = localtime(start_datetime_utc)
+            hora_parada = start_datetime_local.time()
             
             is_pickup = visit.get('isPickup', False)
             shipment_label = visit.get('shipmentLabel', '')
@@ -685,7 +696,7 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
                 id_pasajero=pasajero
             )
         
-        print(f"✓ Viaje creado exitosamente: {viaje.id_viaje}")
+        print(f"Viaje creado exitosamente: {viaje.id_viaje}")
         
         return {
             'viaje': viaje,
@@ -736,17 +747,21 @@ def crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaj
     
     # Configurar hora base
     if fecha_hora_deseada is None:
-        fecha_hora_deseada = datetime.datetime.now()
+        fecha_hora_deseada = timezone.now()
     
     if isinstance(fecha_hora_deseada, datetime.time):
         fecha_hora_deseada = datetime.datetime.combine(datetime.date.today(), fecha_hora_deseada)
     
-    # Convertir a naive datetime (sin timezone) ya que la API espera UTC implícito
-    if fecha_hora_deseada.tzinfo is not None:
-        fecha_hora_deseada = fecha_hora_deseada.replace(tzinfo=None)
+    # Hacer aware si es naive (Django lo convierte automáticamente a TIME_ZONE)
+    if timezone.is_naive(fecha_hora_deseada):
+        fecha_hora_deseada = make_aware(fecha_hora_deseada)
     
-    hora_base = fecha_hora_deseada
+    # Guardar hora local para prints
+    hora_base_local = localtime(fecha_hora_deseada)
     
+    # Convertir a UTC para la API
+    hora_base_utc = fecha_hora_deseada.astimezone(datetime.timezone.utc)
+
     # Crear un viaje por cada asignación
     for idx, asignacion in enumerate(asignaciones, start=1):
         try:
@@ -769,26 +784,26 @@ def crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaj
                 # Configurar ventanas de tiempo según tipo de hora deseada
                 if tipo_hora_deseada == 'LLEGADA':
                     if tipo_viaje == "IDA":
-                        pickup_start = (hora_base - datetime.timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        pickup_end = (hora_base - datetime.timedelta(minutes=15)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        delivery_start = (hora_base - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        delivery_end = (hora_base + datetime.timedelta(minutes=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        pickup_start = (hora_base_utc - datetime.timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        pickup_end = (hora_base_utc - datetime.timedelta(minutes=15)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_start = (hora_base_utc - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_end = (hora_base_utc + datetime.timedelta(minutes=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
                     else:  # VUELTA
-                        pickup_start = (hora_base - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        pickup_end = (hora_base + datetime.timedelta(minutes=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        delivery_start = (hora_base + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        delivery_end = (hora_base + datetime.timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                else:  # SALIDA
+                        pickup_start = (hora_base_utc - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        pickup_end = (hora_base_utc + datetime.timedelta(minutes=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_start = (hora_base_utc + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_end = (hora_base_utc + datetime.timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                else:  # INICIO
                     if tipo_viaje == "IDA":
-                        pickup_start = hora_base.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        pickup_end = (hora_base + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        delivery_start = (hora_base + datetime.timedelta(minutes=15)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        delivery_end = (hora_base + datetime.timedelta(hours=3)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        pickup_start = hora_base_utc.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        pickup_end = (hora_base_utc + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_start = (hora_base_utc + datetime.timedelta(minutes=15)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_end = (hora_base_utc + datetime.timedelta(hours=3)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
                     else:  # VUELTA
-                        pickup_start = hora_base.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        pickup_end = (hora_base + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        delivery_start = (hora_base + datetime.timedelta(minutes=10)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                        delivery_end = (hora_base + datetime.timedelta(hours=3)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        pickup_start = hora_base_utc.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        pickup_end = (hora_base_utc + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_start = (hora_base_utc + datetime.timedelta(minutes=10)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                        delivery_end = (hora_base_utc + datetime.timedelta(hours=3)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
                 
                 if tipo_viaje == "IDA":
                     shipment = {
@@ -868,16 +883,16 @@ def crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaj
                 shipments.append(shipment)
             
             # Configurar vehículo
-            if tipo_hora_deseada == 'SALIDA':
-                vehiculo_start = hora_base.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                vehiculo_start_end = (hora_base + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                vehiculo_end_start = hora_base.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                vehiculo_end_end = (hora_base + datetime.timedelta(hours=4)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-            else:  # LLEGADA
-                vehiculo_start = (hora_base - datetime.timedelta(hours=3)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                vehiculo_start_end = (hora_base - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                vehiculo_end_start = (hora_base - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-                vehiculo_end_end = (hora_base + datetime.timedelta(minutes=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+            if tipo_hora_deseada == 'LLEGADA':
+                vehiculo_start = (hora_base_utc - datetime.timedelta(hours=3)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_start_end = (hora_base_utc - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_end_start = (hora_base_utc - datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_end_end = (hora_base_utc + datetime.timedelta(minutes=2)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+            else:  # INICIO
+                vehiculo_start = hora_base_utc.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_start_end = (hora_base_utc + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_end_start = hora_base_utc.strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+                vehiculo_end_end = (hora_base_utc + datetime.timedelta(hours=4)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"  
             
             vehicle_config = {
                 "loadLimits": {
@@ -898,8 +913,8 @@ def crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaj
                 "label": f"Vehiculo_{vehiculo['id_vehiculo']}_Chofer_{chofer.id_chofer}"
             }
             
-            global_start = (hora_base - datetime.timedelta(hours=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
-            global_end = (hora_base + datetime.timedelta(hours=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+            global_start = (hora_base_utc - datetime.timedelta(hours=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+            global_end = (hora_base_utc + datetime.timedelta(hours=5)).strftime('%Y-%m-%dT%H:%M:%S') + "Z"
             
             data = {
                 "timeout": "30s",
@@ -915,11 +930,11 @@ def crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaj
             
             print(f"\n=== Enviando request a Route Optimization API ===")
             print(f"Tipo viaje: {tipo_viaje}")
-            print(f"Tipo hora: {tipo_hora_deseada} - {hora_base}")
+            print(f"Tipo hora: {tipo_hora_deseada} - {hora_base_local}")
             if tipo_hora_deseada == 'LLEGADA':
-                print(f"  Ventana llegada: {hora_base} (+2 min máximo)")
+                print(f"  Ventana llegada: {hora_base_local} (+2 min máximo)")
             else:
-                print(f"  Ventana salida: {hora_base} (+5 min máximo)")
+                print(f"  Ventana salida: {hora_base_local} (+5 min máximo)")
             print(f"Shipments: {len(shipments)}")
             print(f"Vehículo capacidad: {vehiculo['capacidad']}")
             
@@ -935,7 +950,7 @@ def crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaj
                     asignacion, 
                     punto_encuentro, 
                     tipo_viaje, 
-                    hora_base.time(),
+                    hora_base_local.time(),
                     tipo_hora_deseada,
                     chofer, 
                     grupo
@@ -966,12 +981,12 @@ def crear_viajes_desde_asignaciones_api(asignaciones, punto_encuentro, tipo_viaj
             asignaciones, 
             punto_encuentro, 
             tipo_viaje, 
-            hora_base.time(), 
+            hora_base_local.time(), 
             tipo_hora_deseada, 
             grupo
         )
     
-    print(f"\n✓ Total de viajes creados con API: {len(viajes_creados)}")
+    print(f"\nTotal de viajes creados con API: {len(viajes_creados)}")
     return viajes_creados
 
 def asignar_viajes(grupo, punto_encuentro, tipo_viaje="IDA", fecha_hora_deseada=None, tipo_hora_deseada='LLEGADA'):
