@@ -1,3 +1,9 @@
+import os, sys
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+STEPS_DIR = os.path.join(BASE_DIR, "steps")
+if STEPS_DIR not in sys.path:
+    sys.path.append(STEPS_DIR)
+
 from behave import fixture, use_fixture
 from selenium.webdriver import Chrome #Firefox
 from selenium.webdriver.chrome.options import Options
