@@ -1,6 +1,6 @@
 import requests
 import json
-from .viajes_direcciones import asignar_viajes, geocoding_desde_direccion
+from .viajes_direcciones import asignar_viajes, generar_imagen_clusters, geocoding_desde_direccion
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib import messages
@@ -18,7 +18,8 @@ from .forms import (
     FormularioPasajeroModificar,
     FormularioParadero,
     FormularioParaderoModificar,
-    FormularioDestinoViaje
+    FormularioDestinoViaje,
+    ViajeInicioForm
 )
 
 
@@ -293,9 +294,38 @@ def ruta_crear(request):
         }
         return render(request, 'rutas/ruta_crear.html', datos)
 
+# Paso 0 de creación de viaje - Seleccionar pasajeros
+@login_required
+def ruta_crear_inicio(request):
+    if request.method == 'GET':
+        form = ViajeInicioForm()
+        datos = {
+            'form' : form,
+        }
+        return render(request, 'rutas/ruta_crear_0_inicio.html', datos)
+    
+    if request.method == 'POST':
+        form = ViajeInicioForm(request.POST)        
+        if form.is_valid():
+            grupo = form.save(commit=False)
+            grupo.estado_creacion_viaje = "1"
+            grupo.save()
+            print(grupo)
+
+            return redirect('ruta_crear_seleccionar1_pasajeros', id_grupo_pasajeros=grupo.id_grupo_pasajeros)
+        else:
+            # Devolver el form porque puede contener errores
+            datos = {'form': form,}
+            return render(request, 'rutas/ruta_crear_0_inicio.html', datos)
+
+
+
+
 # Paso 1 de creación de viaje - Seleccionar pasajeros
 @login_required
-def ruta_crear_seleccionar_pasajeros(request):
+@validar_estado_grupo_requerido("1")
+def ruta_crear_seleccionar_pasajeros(request, id_grupo_pasajeros):
+    grupo = request.grupo_pasajeros 
     if request.method == 'GET':
         ### === Formulario de seleccion de pasajeros === ###
         pasajeros = Pasajero.objects.all().order_by('empresa_trabajo','apellido','nombre')
@@ -330,13 +360,6 @@ def ruta_crear_seleccionar_pasajeros(request):
         # Validar que los IDs recibidos son validos
         ids_validos = set(str(p.id_pasajero) for p in Pasajero.objects.all())
         opciones_validadas = [id for id in opciones_elegidas if id in ids_validos]
-
-        #Crear grupo de pasajeros , luego agregar cada uno de los pasajeros al viaje
-        grupo = Grupo_Pasajeros.objects.create()
-        
-        #Cambiar estado a seleccionando pasajeros
-        grupo.estado_creacion_viaje = "1"
-        grupo.save()
 
         for id_pasajero in opciones_validadas:
             grupo.pasajero.add(id_pasajero)
@@ -417,6 +440,7 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
 
         datos = {
             "form": form,
+            "grupo": grupo, 
             "lista_pasajeros": lista_pasajeros,
             "cantidad_pasajeros": cantidad_pasajeros,
             "lista_choferes_vehiculo": lista_choferes_vehiculo,
@@ -432,42 +456,45 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
             try:
                 # Obtener los datos del form
                 punto_encuentro = form.get_punto_encuentro()
-                tipo_viaje = form.cleaned_data["tipo_viaje"]
-
+                tipo_viaje = grupo.tipo_viaje
+                fecha_hora_deseada = grupo.fecha_hora_deseada
+                tipo_hora_deseada = grupo.tipo_hora_deseada
                 # Hacer el trabajo pesado
-                ids_viajes = asignar_viajes(grupo, punto_encuentro, tipo_viaje)
+                ids_viajes = asignar_viajes(grupo, punto_encuentro, tipo_viaje, fecha_hora_deseada, tipo_hora_deseada)
 
                 # Actualizar el estado del grupo para que solo me sirva visualizar, ya no modificar
                 grupo.estado_creacion_viaje = "A"
                 grupo.save()
 
-                messages.success(request, f"Se crearon {len(ids_viajes)} viajes de {tipo_viaje} exitosamente")
+                print(f"Se crearon {len(ids_viajes)} viajes de {tipo_viaje} con {tipo_hora_deseada} a las {fecha_hora_deseada} exitosamente")
 
                 # Redirigir a página de resumen de viajes
                 return redirect("viajes_resumen", id_grupo_pasajeros=id_grupo_pasajeros)
             except Exception as e:
+                print(f"Error al crear viajes: {str(e)}")
                 messages.error(request, f"Error al crear viajes: {str(e)}")
         else:
             messages.error(request, "Corrija los errores en el formulario")
 
         # Recargar datos
-        lista_pasajeros = grupo.pasajero.select_related('paradero_deseado').all()
+        lista_pasajeros = grupo.pasajero.select_related("paradero_deseado").all()
         cantidad_pasajeros = len(lista_pasajeros)
         lista_choferes_vehiculo = grupo.chofer.all().select_related("id_vehiculo")
-        
+
         paraderos_contador = defaultdict(list)
         for pasajero in lista_pasajeros:
             if pasajero.paradero_deseado:
                 paradero_id = pasajero.paradero_deseado.id_ubicacion
                 paraderos_contador[paradero_id].append(pasajero)
-        
+
         lista_paraderos = []
         for paradero_id, pasajeros in paraderos_contador.items():
             paradero = pasajeros[0].paradero_deseado
             lista_paraderos.append(f"{len(pasajeros)} pasajeros => {paradero.nombre}")
-        
+
         datos = {
             "form": form,
+            "grupo": grupo,
             "lista_pasajeros": lista_pasajeros,
             "cantidad_pasajeros": cantidad_pasajeros,
             "lista_choferes_vehiculo": lista_choferes_vehiculo,
@@ -659,3 +686,32 @@ def testeo_api(request):
             'error': 'Error de conexión',
             'error_body': str(e)
         })
+
+@login_required
+def generar_imagen_presentacion(request, id_grupo_pasajeros):
+    grupo = get_object_or_404(Grupo_Pasajeros, id_grupo_pasajeros=id_grupo_pasajeros)
+    
+    # Verificar que el grupo tenga viajes creados
+    if grupo.estado_creacion_viaje != "A":
+        messages.error(request, "Debe completar la creación de viajes antes de generar la visualización")
+        return redirect('ruta_crear_seleccionar_confirmar', id_grupo_pasajeros=id_grupo_pasajeros)
+    
+    # Obtener el punto de encuentro desde los viajes creados
+    viaje_ejemplo = Viaje.objects.filter(id_grupo=grupo).first()
+    
+    if not viaje_ejemplo:
+        messages.error(request, "No se encontraron viajes para este grupo")
+        return redirect('viajes_resumen', id_grupo_pasajeros=id_grupo_pasajeros)
+    
+    punto_encuentro = viaje_ejemplo.punto_encuentro
+    
+    # Generar imagen
+    ruta_imagen = generar_imagen_clusters(
+        grupo, 
+        punto_encuentro, 
+        f'cluster_grupo_{id_grupo_pasajeros}.png'
+    )
+    
+    # Servir la imagen
+    from django.http import FileResponse
+    return FileResponse(open(ruta_imagen, 'rb'), content_type='image/png')

@@ -31,6 +31,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+GOOGLE_APPLICATION_CREDENTIALS = os.path.join(
+    BASE_DIR, 
+    'RouteAnvil', 
+    'credentials', 
+    'google-service-account.json'
+)
+GOOGLE_CLOUD_PROJECT_ID = "routeanvil"
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = GOOGLE_APPLICATION_CREDENTIALS
 
 if IS_HEROKU_APP:
     SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
@@ -46,7 +54,7 @@ else:
     SECRET_KEY = 'e!wu4o2&%aavtm!(!bqy8fyma9nq(#*yhheeb#(l8ry2@35*gs'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # ALLOWED HOSTS
 if IS_HEROKU_APP:
@@ -174,7 +182,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-CL'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 

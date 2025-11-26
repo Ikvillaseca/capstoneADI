@@ -36,3 +36,13 @@ estado_creacion_viaje = (
     ("3", "Confirmando Viaje"),
     ("A", "Viajes Creados"),
 )
+
+tipo_viaje = [
+    ('IDA', 'Ida - Recoger pasajeros'),
+    ('VUELTA', 'Vuelta - Dejar pasajeros'),
+    ]
+
+tipo_hora_deseada = [
+    ('LLEGADA', 'Hora finalización de viaje'),
+    ('INICIO', 'Hora inicio de viaje'),
+    ]

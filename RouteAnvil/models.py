@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from django.core.exceptions import ValidationError
-from .choices import estado, tipo_licencia, parada, estado_creacion_viaje
+from .choices import estado, tipo_licencia, parada, estado_creacion_viaje, tipo_viaje, tipo_hora_deseada
 
 # Create your models here.
 
@@ -94,29 +94,26 @@ class Pasajero(models.Model):
 # Creada en el primer paso cuando se seleccionan pasajeros (Simplifica la consulta de pasajeros que van en la creación del viaje, y evita la repeticion de muchos datos)
 class Grupo_Pasajeros(models.Model):
     id_grupo_pasajeros = models.AutoField(primary_key=True, verbose_name="ID Reserva")
-    pasajero = models.ManyToManyField(Pasajero, verbose_name=("Pasajeros"))
+    pasajero = models.ManyToManyField(Pasajero, verbose_name=("Pasajeros"), blank=True)
     chofer = models.ManyToManyField(Chofer, verbose_name=("Choferes"), blank=True)
     estado_creacion_viaje = models.CharField(max_length=1, choices=estado_creacion_viaje, default='0', verbose_name="Estado de creacion")
-
+    fecha_hora_deseada = models.DateTimeField(blank=True)
+    tipo_viaje = models.CharField(max_length=10, choices=tipo_viaje, default='IDA')
+    tipo_hora_deseada = models.CharField(max_length=10, choices=tipo_hora_deseada, default='LLEGADA')
     def __str__(self):
         return f"Grupo {self.id_grupo_pasajeros}"
 
 #Tabla Viajes 
-class Viaje(models.Model):
-    TIPO_VIAJE_CHOICES = [
-        ('IDA', 'Ida - Recoger pasajeros'),
-        ('VUELTA', 'Vuelta - Dejar pasajeros'),
-    ]
-    
+class Viaje(models.Model):    
     id_viaje = models.AutoField(primary_key=True)
-    tipo_viaje = models.CharField(max_length=10, choices=TIPO_VIAJE_CHOICES, default='IDA')
+    tipo_viaje = models.CharField(max_length=10, choices=tipo_viaje, default='IDA')
     hora_Salida = models.TimeField()
     hora_Llegada = models.TimeField()
     id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
     id_chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE)
     punto_encuentro = models.ForeignKey(Parada, on_delete=models.CASCADE, related_name='viajes_punto_encuentro')
-    id_grupo = models.ForeignKey(Grupo_Pasajeros, on_delete=models.CASCADE, related_name='viajes', null=True, blank=True)  # NUEVO
-    fecha_creacion = models.DateTimeField(auto_now_add=True)  # NUEVO - para ordenar por recientes
+    id_grupo = models.ForeignKey(Grupo_Pasajeros, on_delete=models.CASCADE, related_name='viajes', null=True, blank=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
     # punto_encuentro puede ser origen (si tipo=VUELTA) o destino (si tipo=IDA)
     
     def __str__(self):
