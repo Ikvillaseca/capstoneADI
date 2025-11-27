@@ -107,8 +107,8 @@ class Grupo_Pasajeros(models.Model):
 class Viaje(models.Model):    
     id_viaje = models.AutoField(primary_key=True)
     tipo_viaje = models.CharField(max_length=10, choices=tipo_viaje, default='IDA')
-    hora_Salida = models.TimeField()
-    hora_Llegada = models.TimeField()
+    hora_salida = models.DateTimeField()
+    hora_llegada = models.DateTimeField()
     id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
     id_chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE)
     punto_encuentro = models.ForeignKey(Parada, on_delete=models.CASCADE, related_name='viajes_punto_encuentro')
@@ -128,7 +128,7 @@ class Parada_Viaje(models.Model):
     orden = models.IntegerField()
     pasajeros_suben = models.IntegerField(default=0)
     pasajeros_bajan = models.IntegerField(default=0)
-    hora_estimada_llegada = models.TimeField(null=True, blank=True)
+    hora_estimada_llegada = models.DateTimeField(null=True, blank=True)
     
     class Meta:
         ordering = ['orden']

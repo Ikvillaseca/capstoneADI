@@ -24,8 +24,8 @@
                             {{ viaje.get_tipo_viaje_display }}
                         </span>
                     </p>
-                    <p><strong>Hora Salida:</strong> {{ viaje.hora_Salida|time:"H:i" }}</p>
-                    <p><strong>Hora Llegada:</strong> {{ viaje.hora_Llegada|time:"H:i" }}</p>
+                    <p><strong>Hora Salida:</strong> {{ viaje.hora_salida|date:"d/m/Y H:i" }}</p>
+                    <p><strong>Hora Llegada:</strong> {{ viaje.hora_llegada|date:"d/m/Y H:i" }}</p>
                     <p><strong>Punto Encuentro:</strong> {{ viaje.punto_encuentro.nombre }}</p>
                     <p class="mb-0"><strong>Dirección:</strong> {{ viaje.punto_encuentro.direccion }}</p>
                 </div>
@@ -72,7 +72,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <i class="fas fa-clock text-primary"></i> 
-                                            <strong>{{ parada.hora_estimada_llegada|time:"H:i" }}</strong>
+                                            <strong>{{ parada.hora_estimada_llegada|date:"d/m/Y H:i" }}</strong>
                                         </div>
                                         {% if parada.pasajeros_suben > 0 %}
                                         <div class="col-md-4">

@@ -75,11 +75,11 @@
                         <div class="row">
                             <div class="col-6">
                                 <i class="fas fa-clock text-success"></i> 
-                                <strong>Salida:</strong> {{ viaje_info.viaje.hora_Salida|time:"H:i" }}
+                                <strong>Salida:</strong> {{ viaje_info.viaje.hora_salida|date:"d/m/Y H:i" }}
                             </div>
                             <div class="col-6">
                                 <i class="fas fa-clock text-danger"></i> 
-                                <strong>Llegada:</strong> {{ viaje_info.viaje.hora_Llegada|time:"H:i" }}
+                                <strong>Llegada:</strong> {{ viaje_info.viaje.hora_llegada|date:"d/m/Y H:i" }}
                             </div>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                                 <div class="ms-2 me-auto">
                                     <div class="fw-bold">{{ parada.id_parada.nombre }}</div>
                                     <small class="text-muted">
-                                        {{ parada.hora_estimada_llegada|time:"H:i" }}
+                                        {{ parada.hora_estimada_llegada|date:"d/m/Y H:i" }}
                                         {% if parada.pasajeros_suben > 0 %}
                                         - <span class="text-success">↑ {{ parada.pasajeros_suben }}</span>
                                         {% endif %}
