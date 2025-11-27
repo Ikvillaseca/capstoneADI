@@ -24,8 +24,8 @@
                             {{ viaje.get_tipo_viaje_display }}
                         </span>
                     </p>
-                    <p><strong>Hora Salida:</strong> {{ viaje.hora_salida|date:"d/m/Y H:i" }}</p>
-                    <p><strong>Hora Llegada:</strong> {{ viaje.hora_llegada|date:"d/m/Y H:i" }}</p>
+                    <p><strong>Hora Salida:</strong> {{ viaje.hora_salida|date:"H:i" }} - {{ viaje.hora_salida|date:"l"|capfirst }} {{ viaje.hora_salida|date:"d/m/Y" }}</p>
+                    <p><strong>Hora Llegada:</strong> {{ viaje.hora_llegada|date:"H:i" }} - {{ viaje.hora_llegada|date:"l"|capfirst }} {{ viaje.hora_llegada|date:"d/m/Y" }}</p>
                     <p><strong>Punto Encuentro:</strong> {{ viaje.punto_encuentro.nombre }}</p>
                     <p class="mb-0"><strong>Dirección:</strong> {{ viaje.punto_encuentro.direccion }}</p>
                 </div>
@@ -53,16 +53,16 @@
             <h5><i class="fas fa-map-marked-alt"></i> Itinerario de Paradas ({{ paradas.count }})</h5>
         </div>
         <div class="card-body">
-            <div class="timeline">
+            <div>
                 {% for parada in paradas %}
-                <div class="timeline-item mb-3">
+                <div class="mb-3">
                     <div class="d-flex">
-                        <div class="timeline-marker">
+                        <div>
                             <span class="badge bg-primary rounded-circle" style="width: 30px; height: 30px; line-height: 20px;">
                                 {{ parada.orden }}
                             </span>
                         </div>
-                        <div class="timeline-content ms-3 w-100">
+                        <div class="ms-3 w-100">
                             <div class="card">
                                 <div class="card-body">
                                     <h6 class="card-title">{{ parada.id_parada.nombre }}</h6>
@@ -72,7 +72,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <i class="fas fa-clock text-primary"></i> 
-                                            <strong>{{ parada.hora_estimada_llegada|date:"d/m/Y H:i" }}</strong>
+                                            <strong>{{ parada.hora_estimada_llegada|date:"H:i" }}</strong> - {{ parada.hora_estimada_llegada|date:"(d/m/Y) " }}
                                         </div>
                                         {% if parada.pasajeros_suben > 0 %}
                                         <div class="col-md-4">
@@ -139,29 +139,4 @@
     </div>
 </div>
 
-<style>
-.timeline {
-    position: relative;
-    padding-left: 20px;
-}
-
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 15px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #dee2e6;
-}
-
-.timeline-marker {
-    position: relative;
-    z-index: 1;
-}
-
-.timeline-content {
-    flex: 1;
-}
-</style>
 {% endblock contenido %}
