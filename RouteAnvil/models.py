@@ -2,8 +2,10 @@ import uuid
 from django.db import models
 from django.core.exceptions import ValidationError
 from .choices import estado, tipo_licencia, parada, estado_creacion_viaje, tipo_viaje, tipo_hora_deseada
-
-# Create your models here.
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import Group
 
 #Tabla de destinos posibles
 class Parada(models.Model):
@@ -28,7 +30,11 @@ class Chofer(models.Model):
     fecha_ultimo_control = models.DateField(verbose_name="Fecha Ultimo Control")
     fecha_proximo_control = models.DateField(verbose_name="Fecha Proximo Control")
     id_vehiculo = models.ForeignKey('Vehiculo', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Vehiculo Asignado")
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='chofer', verbose_name="Usuario")
     
+    def __str__(self):
+        return f"{self.nombre} {self.apellido}"
+        
     def clean(self):
         # Validación para evitar vehículos duplicados
         super().clean()
@@ -54,6 +60,13 @@ class Chofer(models.Model):
     class Meta:
         verbose_name = "Chofer"
         verbose_name_plural = "Choferes"
+        
+# Signal para agregar automáticamente al grupo Choferes cuando se vincula un usuario
+@receiver(post_save, sender=Chofer)
+def agregar_a_grupo_choferes(sender, instance, created, **kwargs):
+    if instance.user:
+        grupo_choferes = Group.objects.get(name='Choferes')
+        instance.user.groups.add(grupo_choferes)
 
 #Tabla Vehiculos
 class Vehiculo(models.Model):

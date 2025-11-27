@@ -2,6 +2,9 @@ from functools import wraps
 from django.shortcuts import redirect
 from django.contrib import messages
 from .models import Grupo_Pasajeros
+from django.contrib.auth.decorators import user_passes_test
+
+
 
 # En proceso de testeo, estoy intentando crear un decorador para poder lograr verificar el estadod el grupo, 
 # y poder redirigir de manera acorde al sitio correcto
@@ -41,3 +44,4 @@ def validar_estado_grupo_requerido(estado_requerido):
                 return redirect('rutas')
         return wrapper
     return decorator
+    
