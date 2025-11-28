@@ -50,11 +50,11 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <i class="fas fa-clock text-success"></i> 
-                                            <strong>Salida:</strong> {{ viaje_info.viaje.hora_salida|time:"H:i" }}
+                                            <strong>Salida:</strong> {{ viaje_info.viaje.hora_salida|date:"H:i" }} - {{ viaje_info.viaje.hora_salida|date:"d/m/Y" }}
                                         </div>
                                         <div class="col-6">
                                             <i class="fas fa-clock text-danger"></i> 
-                                            <strong>Llegada:</strong> {{ viaje_info.viaje.hora_llegada|time:"H:i" }}
+                                            <strong>Llegada:</strong> {{ viaje_info.viaje.hora_llegada|date:"H:i" }} - {{ viaje_info.viaje.hora_llegada|date:"d/m/Y" }}
                                         </div>
                                     </div>
                                 </div>
@@ -70,7 +70,7 @@
 
                                 <!-- Estadísticas -->
                                 <div class="row text-center">
-                                    <div class="col-4">
+                                    <div class="col-6">
                                         <div class="border rounded p-2">
                                             <i class="fas fa-users fa-2x text-primary"></i>
                                             <div class="mt-1">
@@ -79,21 +79,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-6">
                                         <div class="border rounded p-2">
                                             <i class="fas fa-map-signs fa-2x text-success"></i>
                                             <div class="mt-1">
                                                 <strong>{{ viaje_info.cantidad_paradas }}</strong>
                                                 <br><small>Paradas</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="border rounded p-2">
-                                            <i class="fas fa-percentage fa-2x text-warning"></i>
-                                            <div class="mt-1">
-                                                <strong>{{ viaje_info.cantidad_pasajeros|divisibleby:viaje_info.viaje.id_vehiculo.capacidad|floatformat:0 }}%</strong>
-                                                <br><small>Ocupación</small>
                                             </div>
                                         </div>
                                     </div>
@@ -118,13 +109,19 @@
                                                 </small>
                                             </div>
                                         </li>
-                                        {% endfor %}
-                                        {% if viaje_info.cantidad_paradas > 3 %}
-                                        <li class="list-group-item text-center">
+                                        {% if viaje_info.cantidad_paradas == 4 %}
+                                        <div class="text-center">
                                             <small class="text-muted">
-                                                + {{ viaje_info.cantidad_paradas|add:"-3" }} paradas más
+                                                <strong>+ 1 parada más</strong>
                                             </small>
-                                        </li>
+                                        </div>
+                                        {% endif %}
+                                        {% if viaje_info.cantidad_paradas > 4 %}
+                                        <div class="text-center">
+                                            <small class="text-muted">
+                                                <strong>+ {{ viaje_info.cantidad_paradas|add:"-3" }} paradas más</strong>
+                                            </small>
+                                        </div>
                                         {% endif %}
                                     </ol>
                                 </div>

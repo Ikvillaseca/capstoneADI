@@ -49,6 +49,7 @@ if API_EXISTE:
     GOOGLE_MAPS_API_KEY = api.GOOGLE_MAPS_API_KEY
     SECRET_KEY = 'e!wu4o2&%aavtm!(!bqy8fyma9nq(#*yhheeb#(l8ry2@35*gs'
     GOOGLE_MAPS_API_EMBED = api.EMBED_MAPS
+    GOOGLE_MAPS_API_JS_MAPS = api.GOOGLE_MAPS_API_JS_MAPS
 else:
     #Borrar una vez que se haga el deploy
     GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
