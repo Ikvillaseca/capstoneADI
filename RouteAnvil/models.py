@@ -127,6 +127,9 @@ class Viaje(models.Model):
     punto_encuentro = models.ForeignKey(Parada, on_delete=models.CASCADE, related_name='viajes_punto_encuentro')
     id_grupo = models.ForeignKey(Grupo_Pasajeros, on_delete=models.CASCADE, related_name='viajes', null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    polyline = models.TextField(blank=True, null=True)
+    distancia_total_metros = models.IntegerField(null=True, blank=True)
+
     # punto_encuentro puede ser origen (si tipo=VUELTA) o destino (si tipo=IDA)
     
     def __str__(self):

@@ -715,3 +715,8 @@ def generar_imagen_presentacion(request, id_grupo_pasajeros):
     # Servir la imagen
     from django.http import FileResponse
     return FileResponse(open(ruta_imagen, 'rb'), content_type='image/png')
+
+def chofer_dashboard(request):
+    datos = {
+    }
+    return render(request, 'choferes/dashboard/index.html', datos)

@@ -38,13 +38,13 @@ def obtener_access_token():
         auth_req = Request()
         credentials.refresh(auth_req)
         
-        print(f"✓ Token OAuth2 obtenido exitosamente")
+        print(f"Token OAuth2 obtenido exitosamente")
         print(f"  Proyecto: {project}")
         
         return credentials.token
         
     except Exception as e:
-        print(f"✗ Error obteniendo token OAuth2: {str(e)}")
+        print(f"Error obteniendo token OAuth2: {str(e)}")
         traceback.print_exc()
         return None
 
@@ -571,7 +571,12 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
         visits = route.get('visits', [])
         metrics = route.get('metrics', {})
         transitions = route.get('transitions', [])
-        
+
+        route_polyline = route.get('routePolyline', {}).get('points', '')
+        if route_polyline:
+            print(f"Polyline obtenida: {len(route_polyline)} caracteres")
+        else:
+            print("No se obtuvo polyline de la ruta")
         # Extraer horas reales de la respuesta de la API
         primera_visita = visits[0]
         ultima_visita = visits[-1]
@@ -587,6 +592,7 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
         hora_salida_local = localtime(hora_salida_utc)
         hora_llegada_local = localtime(hora_llegada_utc)
 
+        distancia_total_metros = metrics.get('travelDistanceMeters', 0)
         
         # Crear el viaje con las horas reales de la API
         viaje = Viaje.objects.create(
@@ -596,7 +602,10 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
             id_vehiculo_id=vehiculo['id_vehiculo'],
             id_chofer=chofer,
             punto_encuentro=punto_encuentro,
-            id_grupo=grupo
+            id_grupo=grupo,
+            polyline=route_polyline,
+            distancia_total_metros=distancia_total_metros
+
         )
         
         print(f"\n=== Creando paradas del viaje ===")
