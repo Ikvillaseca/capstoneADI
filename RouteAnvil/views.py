@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict
-from .decorators import validar_estado_grupo_requerido
+from .decorators import validar_estado_grupo_requerido, chofer_requerido, administrador_requerido
 from .models import Chofer, Pasajero, Vehiculo, Parada, Grupo_Pasajeros, Viaje, Parada_Viaje, Pasajero_Viaje, Grupo_Pasajeros
 from django.utils import timezone
 
@@ -39,11 +39,13 @@ def index(request):
 # ============ VISTAS CHOFERES ============
 
 #READ
+@administrador_requerido
 def chofer_lista(request):
     choferes = Chofer.objects.all()
     return render(request, 'choferes/chofer_lista.html', {'choferes': choferes})
 
 #CREATE
+@administrador_requerido
 def chofer_crear(request):
     if request.method == 'POST':
         form = FormularioChofer(request.POST)
@@ -55,11 +57,13 @@ def chofer_crear(request):
     return render(request, 'choferes/chofer_crear.html', {'form': form})
 
 #DETAIL (READ ONE)
+@administrador_requerido
 def chofer_detalle(request, id_chofer):
     chofer = get_object_or_404(Chofer, id_chofer=id_chofer)
     return render(request, 'choferes/chofer_detalle.html', {'chofer': chofer})
 
 #UPDATE
+@administrador_requerido
 def chofer_modificar(request, id_chofer):
     chofer = get_object_or_404(Chofer, id_chofer=id_chofer)
     if request.method == 'POST':
@@ -72,6 +76,7 @@ def chofer_modificar(request, id_chofer):
     return render(request, 'choferes/chofer_modificar.html', {'form': form, 'chofer': chofer})
 
 #DELETE 
+@administrador_requerido
 def chofer_eliminar(request, id_chofer):
     chofer = get_object_or_404(Chofer, id_chofer=id_chofer)
     if request.method == 'POST':
@@ -82,11 +87,13 @@ def chofer_eliminar(request, id_chofer):
 # ============ VISTAS PASAJEROS ============
 
 #READ
+@administrador_requerido
 def pasajeros_lista(request):
     pasajeros = Pasajero.objects.all()
     return render(request, 'pasajeros/pasajero_lista.html', {'pasajeros': pasajeros})
 
 #CREATE
+@administrador_requerido
 def pasajero_crear(request):
     if request.method == 'POST':
         form = FormularioPasajero(request.POST)
@@ -97,11 +104,13 @@ def pasajero_crear(request):
         form = FormularioPasajero()
     return render(request, 'pasajeros/pasajero_crear.html', {'form': form})
 
+@administrador_requerido
 def pasajero_detalles(request, id_pasajero):
     pasajero = get_object_or_404(Pasajero, id_pasajero=id_pasajero)
     return render(request, 'pasajeros/pasajero_detalles.html', {'pasajero': pasajero})
 
 #UPDATE
+@administrador_requerido
 def pasajero_modificar(request, id_pasajero):
     pasajero = get_object_or_404(Pasajero, id_pasajero=id_pasajero)
     if request.method == 'POST':
@@ -113,7 +122,8 @@ def pasajero_modificar(request, id_pasajero):
         form = FormularioPasajeroModificar(instance=pasajero)  # Usar nuevo formulario
     return render(request, 'pasajeros/pasajero_modificar.html', {'form': form, 'pasajero': pasajero})
 
-#DELETE 
+#DELETE
+@administrador_requerido
 def pasajero_eliminar(request, id_pasajero):
     pasajero = get_object_or_404(Pasajero, id_pasajero=id_pasajero)
     if request.method == 'POST':
@@ -124,11 +134,13 @@ def pasajero_eliminar(request, id_pasajero):
 # ============ VISTAS VEHICULOS ============
 
 #READ
+@administrador_requerido
 def vehiculo_lista(request):
     vehiculos = Vehiculo.objects.all()
     return render(request, 'vehiculos/vehiculo_lista.html', {'vehiculos': vehiculos})
 
 #CREATE
+@administrador_requerido
 def vehiculo_crear(request):
     if request.method == 'POST':
         form = VehiculoForm(request.POST)
@@ -140,6 +152,7 @@ def vehiculo_crear(request):
     return render(request, 'vehiculos/vehiculo_crear.html', {'form': form})
 
 #DETAIL (READ ONE)
+@administrador_requerido
 def vehiculo_detalle(request, patente):
     try:
         vehiculo = Vehiculo.objects.get(patente=patente)
@@ -151,6 +164,7 @@ def vehiculo_detalle(request, patente):
     return render(request, 'vehiculos/vehiculo_detalle.html', {'vehiculo': vehiculo})
 
 #UPDATE
+@administrador_requerido
 def vehiculo_modificar(request, patente):
     try:
         vehiculo = Vehiculo.objects.get(patente=patente)
@@ -170,7 +184,8 @@ def vehiculo_modificar(request, patente):
         form = VehiculoModificarForm(instance=vehiculo)
     return render(request, 'vehiculos/vehiculo_modificar.html', {'form': form, 'vehiculo': vehiculo})
 
-#DELETE 
+#DELETE
+@administrador_requerido
 def vehiculo_eliminar(request, patente):
     try:
         vehiculo = Vehiculo.objects.get(patente=patente)
@@ -193,11 +208,13 @@ def vehiculo_eliminar(request, patente):
 # ============ VISTAS PARADEROS ============
 
 #READ
+@administrador_requerido
 def paraderos_lista(request):
     paraderos = Parada.objects.all()
     return render(request, 'paraderos/paradero_lista.html', {'paraderos': paraderos})
 
 #CREATE
+@administrador_requerido
 def paradero_crear(request):
     if request.method == 'POST':
         form = FormularioParadero(request.POST)
@@ -231,6 +248,7 @@ def paradero_crear(request):
     }
     return render(request, 'paraderos/paradero_crear.html', datos)
 
+@administrador_requerido
 def paradero_detalles(request, id_ubicacion):
     paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)
     datos = {
@@ -240,6 +258,7 @@ def paradero_detalles(request, id_ubicacion):
     return render(request, 'paraderos/paradero_detalles.html', datos)
 
 #UPDATE
+@administrador_requerido
 def paradero_modificar(request, id_ubicacion):
     paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)
     
@@ -257,7 +276,8 @@ def paradero_modificar(request, id_ubicacion):
         'GOOGLE_MAPS_API_EMBED': settings.GOOGLE_MAPS_API_EMBED
     }
     return render(request, 'paraderos/paradero_modificar.html', datos)
-#DELETE 
+#DELETE
+@administrador_requerido
 def paradero_eliminar(request, id_ubicacion):
     paradero = get_object_or_404(Parada, id_ubicacion=id_ubicacion)
     if request.method == 'POST':
@@ -270,12 +290,13 @@ def paradero_eliminar(request, id_ubicacion):
 
 
 # ============ VISTAS RUTAS/API ============
-
+@administrador_requerido
 def ruta_home(request):
     return render(request, 'rutas/generador_rutas.html')
 
 
 # TEST CONEXION DE DATOS PARA GENERAR VIAJE
+@administrador_requerido
 def ruta_crear(request):
     if request.method == 'POST':
         """ form = VehiculoForm(request.POST)
@@ -297,6 +318,7 @@ def ruta_crear(request):
 
 # Paso 0 de creación de viaje - Seleccionar pasajeros
 @login_required
+@administrador_requerido
 def ruta_crear_inicio(request):
     if request.method == 'GET':
         form = ViajeInicioForm()
@@ -324,6 +346,7 @@ def ruta_crear_inicio(request):
 
 # Paso 1 de creación de viaje - Seleccionar pasajeros
 @login_required
+@administrador_requerido
 @validar_estado_grupo_requerido("1")
 def ruta_crear_seleccionar_pasajeros(request, id_grupo_pasajeros):
     grupo = request.grupo_pasajeros 
@@ -372,6 +395,7 @@ def ruta_crear_seleccionar_pasajeros(request, id_grupo_pasajeros):
 
 # Paso 2 de creación de viaje - Seleccionar choferes disponibles
 @login_required
+@administrador_requerido
 @validar_estado_grupo_requerido("2")
 def ruta_crear_seleccionar_choferes(request, id_grupo_pasajeros):
     # Obtiene el grupo desde el decorator
@@ -417,6 +441,7 @@ def ruta_crear_seleccionar_choferes(request, id_grupo_pasajeros):
         
 # Paso 3 de creación de viaje - Confirmar seleccion
 @login_required
+@administrador_requerido
 @validar_estado_grupo_requerido("3")
 def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
     grupo = request.grupo_pasajeros
@@ -505,6 +530,7 @@ def ruta_crear_seleccionar_confirmar(request, id_grupo_pasajeros):
         return render(request, 'rutas/ruta_crear_seleccionar3_confirmar.html', datos)
     
 @login_required
+@administrador_requerido
 def viajes_lista(request):
     # Obtener el grupo desde la request
     # Filtrar los viajes creados a partir del grupo de creacion
@@ -535,6 +561,7 @@ def viajes_lista(request):
 
 # Nueva vista para mostrar resumen de viajes
 @login_required
+@administrador_requerido
 def viajes_resumen(request, id_grupo_pasajeros):
     # Obtener el grupo desde la request
     grupo = get_object_or_404(Grupo_Pasajeros, id_grupo_pasajeros=id_grupo_pasajeros)
@@ -612,6 +639,7 @@ def viaje_detalle(request, id_viaje):
 
 
 # Vista para mostrar el itinerario del chofer
+@administrador_requerido
 def vista_itinerario_chofer(request, id_chofer):
     chofer = get_object_or_404(Chofer, id_chofer=id_chofer)
 
@@ -620,7 +648,7 @@ def vista_itinerario_chofer(request, id_chofer):
         .select_related("id_vehiculo", "id_chofer", "punto_encuentro")
         .prefetch_related("paradas_viaje__id_parada", "pasajero_viaje_set__id_pasajero")
         .order_by("-fecha_creacion")
-    )  # Más recientes primero
+    )
 
     # Preparar datos detallados
     viajes_detallados = []
@@ -646,6 +674,7 @@ def vista_itinerario_chofer(request, id_chofer):
 
 # TEST FUNCIONAMIENTO API
 @login_required()
+@administrador_requerido
 def testeo_api(request):
     api_key = settings.GOOGLE_MAPS_API_KEY
     
@@ -711,6 +740,7 @@ def testeo_api(request):
         })
 
 @login_required
+@administrador_requerido
 def generar_imagen_presentacion(request, id_grupo_pasajeros):
     grupo = get_object_or_404(Grupo_Pasajeros, id_grupo_pasajeros=id_grupo_pasajeros)
     
@@ -739,7 +769,45 @@ def generar_imagen_presentacion(request, id_grupo_pasajeros):
     from django.http import FileResponse
     return FileResponse(open(ruta_imagen, 'rb'), content_type='image/png')
 
+@chofer_requerido
 def chofer_dashboard(request):
+    try:
+        chofer = get_object_or_404(Chofer, user = request.user )
+    except Chofer.DoesNotExist:
+        messages.error(request, 'No tienes un perfil de chofer asignado')
+        return redirect('index')
+    
+    id_chofer = chofer.id_chofer
+    hoy = timezone.now()
+    inicio_dia = hoy.replace(hour=0, minute=0, second=0, microsecond=0)
+    fin_dia = hoy.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+    viajes_asignados = (
+        Viaje.objects.filter(
+            id_chofer=chofer, hora_salida__gte=inicio_dia, hora_salida__lte=fin_dia
+        )
+        .select_related("id_vehiculo", "id_chofer", "punto_encuentro")
+        .prefetch_related("paradas_viaje__id_parada", "pasajero_viaje_set__id_pasajero")
+        .order_by("-fecha_creacion")
+    )
+
+    viajes_detallados = []
+    for viaje in viajes_asignados:
+        paradas = viaje.paradas_viaje.all().order_by('orden')
+        pasajeros = viaje.pasajero_viaje_set.all().select_related('id_pasajero')
+        
+        viajes_detallados.append({
+            'viaje': viaje,
+            'paradas': paradas,
+            'pasajeros': pasajeros,
+            'cantidad_pasajeros': pasajeros.count(),
+            'cantidad_paradas': paradas.count(),
+        })
+    
     datos = {
+        "chofer" : chofer,
+        'viajes_detallados': viajes_detallados,
+        'hoy': hoy,
     }
+
     return render(request, 'choferes/dashboard/index.html', datos)

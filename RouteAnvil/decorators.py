@@ -44,4 +44,31 @@ def validar_estado_grupo_requerido(estado_requerido):
                 return redirect('rutas')
         return wrapper
     return decorator
-    
+
+def es_administrador(user):
+    return user.groups.filter(name='Administradores').exists() or user.is_staff
+
+def es_chofer(user):
+    return user.groups.filter(name='Choferes').exists()
+
+def administrador_requerido(view_func):
+    """Decorador que requiere que el usuario sea administrador"""
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.error(request, 'Debes iniciar sesión para acceder a esta página.')
+            return redirect('login')
+        
+        if not es_administrador(request.user):
+            messages.error(request, 'No tienes permisos de administrador para acceder a esta página.')
+            return redirect('index')
+        
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+def chofer_requerido(view_func):
+    """Decorador que requiere que el usuario sea chofer"""
+    decorated_view = user_passes_test(
+        es_chofer, login_url="index", redirect_field_name=None
+    )(view_func)
+    return decorated_view
