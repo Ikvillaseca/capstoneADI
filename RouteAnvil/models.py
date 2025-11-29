@@ -2,8 +2,10 @@ import uuid
 from django.db import models
 from django.core.exceptions import ValidationError
 from .choices import estado, tipo_licencia, parada, estado_creacion_viaje, tipo_viaje, tipo_hora_deseada
-
-# Create your models here.
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import Group
 
 #Tabla de destinos posibles
 class Parada(models.Model):
@@ -28,7 +30,11 @@ class Chofer(models.Model):
     fecha_ultimo_control = models.DateField(verbose_name="Fecha Ultimo Control")
     fecha_proximo_control = models.DateField(verbose_name="Fecha Proximo Control")
     id_vehiculo = models.ForeignKey('Vehiculo', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Vehiculo Asignado")
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='chofer', verbose_name="Usuario")
     
+    def __str__(self):
+        return f"{self.nombre} {self.apellido}"
+        
     def clean(self):
         # Validación para evitar vehículos duplicados
         super().clean()
@@ -54,6 +60,13 @@ class Chofer(models.Model):
     class Meta:
         verbose_name = "Chofer"
         verbose_name_plural = "Choferes"
+        
+# Signal para agregar automáticamente al grupo Choferes cuando se vincula un usuario
+@receiver(post_save, sender=Chofer)
+def agregar_a_grupo_choferes(sender, instance, created, **kwargs):
+    if instance.user:
+        grupo_choferes = Group.objects.get(name='Choferes')
+        instance.user.groups.add(grupo_choferes)
 
 #Tabla Vehiculos
 class Vehiculo(models.Model):
@@ -107,13 +120,16 @@ class Grupo_Pasajeros(models.Model):
 class Viaje(models.Model):    
     id_viaje = models.AutoField(primary_key=True)
     tipo_viaje = models.CharField(max_length=10, choices=tipo_viaje, default='IDA')
-    hora_Salida = models.TimeField()
-    hora_Llegada = models.TimeField()
+    hora_salida = models.DateTimeField()
+    hora_llegada = models.DateTimeField()
     id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
     id_chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE)
     punto_encuentro = models.ForeignKey(Parada, on_delete=models.CASCADE, related_name='viajes_punto_encuentro')
     id_grupo = models.ForeignKey(Grupo_Pasajeros, on_delete=models.CASCADE, related_name='viajes', null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    polyline = models.TextField(blank=True, null=True)
+    distancia_total_metros = models.IntegerField(null=True, blank=True)
+
     # punto_encuentro puede ser origen (si tipo=VUELTA) o destino (si tipo=IDA)
     
     def __str__(self):
@@ -128,7 +144,7 @@ class Parada_Viaje(models.Model):
     orden = models.IntegerField()
     pasajeros_suben = models.IntegerField(default=0)
     pasajeros_bajan = models.IntegerField(default=0)
-    hora_estimada_llegada = models.TimeField(null=True, blank=True)
+    hora_estimada_llegada = models.DateTimeField(null=True, blank=True)
     
     class Meta:
         ordering = ['orden']

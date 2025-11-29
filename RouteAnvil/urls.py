@@ -51,4 +51,9 @@ urlpatterns = [
     path('viaje/<int:id_viaje>/', views.viaje_detalle, name='viaje_detalle'),
     path('viaje/chofer/<uuid:id_chofer>/', views.vista_itinerario_chofer, name='vista_itinerario_chofer'),
     
+
+    # URLs para vistas de chofer/dashboard
+    path('c/dashboard/', views.chofer_dashboard, name='chofer_dashboard'),
+
+
 ]

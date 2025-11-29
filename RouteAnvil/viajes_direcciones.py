@@ -38,13 +38,13 @@ def obtener_access_token():
         auth_req = Request()
         credentials.refresh(auth_req)
         
-        print(f"✓ Token OAuth2 obtenido exitosamente")
+        print(f"Token OAuth2 obtenido exitosamente")
         print(f"  Proyecto: {project}")
         
         return credentials.token
         
     except Exception as e:
-        print(f"✗ Error obteniendo token OAuth2: {str(e)}")
+        print(f"Error obteniendo token OAuth2: {str(e)}")
         traceback.print_exc()
         return None
 
@@ -439,8 +439,8 @@ def crear_viajes_desde_asignaciones(asignaciones, punto_encuentro, tipo_viaje="I
         # Crear viaje
         viaje = Viaje.objects.create(
             tipo_viaje=tipo_viaje,
-            hora_Salida=hora_salida_base,
-            hora_Llegada=hora_llegada,
+            hora_salida=hora_salida_base,
+            hora_llegada=hora_llegada,
             id_vehiculo_id=vehiculo['id_vehiculo'],
             id_chofer=chofer,
             punto_encuentro=punto_encuentro,
@@ -571,7 +571,12 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
         visits = route.get('visits', [])
         metrics = route.get('metrics', {})
         transitions = route.get('transitions', [])
-        
+
+        route_polyline = route.get('routePolyline', {}).get('points', '')
+        if route_polyline:
+            print(f"Polyline obtenida: {len(route_polyline)} caracteres")
+        else:
+            print("No se obtuvo polyline de la ruta")
         # Extraer horas reales de la respuesta de la API
         primera_visita = visits[0]
         ultima_visita = visits[-1]
@@ -586,25 +591,26 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
         # Convertir a hora local de Chile automáticamente
         hora_salida_local = localtime(hora_salida_utc)
         hora_llegada_local = localtime(hora_llegada_utc)
-        
-        # Extraer solo el time para guardar en BD
-        hora_salida = hora_salida_local.time()
-        hora_llegada = hora_llegada_local.time()
+
+        distancia_total_metros = metrics.get('travelDistanceMeters', 0)
         
         # Crear el viaje con las horas reales de la API
         viaje = Viaje.objects.create(
             tipo_viaje=tipo_viaje,
-            hora_Salida=hora_salida,
-            hora_Llegada=hora_llegada,
+            hora_salida=hora_salida_local,
+            hora_llegada=hora_llegada_local,
             id_vehiculo_id=vehiculo['id_vehiculo'],
             id_chofer=chofer,
             punto_encuentro=punto_encuentro,
-            id_grupo=grupo
+            id_grupo=grupo,
+            polyline=route_polyline,
+            distancia_total_metros=distancia_total_metros
+
         )
         
         print(f"\n=== Creando paradas del viaje ===")
-        print(f"Hora salida real: {hora_salida}")
-        print(f"Hora llegada real: {hora_llegada}")
+        print(f"Hora salida real: {hora_salida_local}")
+        print(f"Hora llegada real: {hora_llegada_local}")
         print(f"Total paradas: {len(visits)}")
         
         # Crear las paradas según las visitas optimizadas
@@ -612,7 +618,6 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
             start_time_str = visit.get('startTime', '')
             start_datetime_utc = datetime.datetime.fromisoformat(start_time_str.replace('Z', '+00:00'))
             start_datetime_local = localtime(start_datetime_utc)
-            hora_parada = start_datetime_local.time()
             
             is_pickup = visit.get('isPickup', False)
             shipment_label = visit.get('shipmentLabel', '')
@@ -642,9 +647,9 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
                             orden=orden,
                             pasajeros_suben=cantidad_pasajeros,
                             pasajeros_bajan=0,
-                            hora_estimada_llegada=hora_parada
+                            hora_estimada_llegada=start_datetime_local
                         )
-                        print(f"  Parada {orden}: Paradero {paradero.id_ubicacion} - Suben {cantidad_pasajeros} - {hora_parada}")
+                        print(f"  Parada {orden}: Paradero {paradero.id_ubicacion} - Suben {cantidad_pasajeros} - {start_datetime_local}")
                 else:
                     # Punto de encuentro (destino)
                     Parada_Viaje.objects.create(
@@ -653,9 +658,9 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
                         orden=orden,
                         pasajeros_suben=0,
                         pasajeros_bajan=len(pasajeros),
-                        hora_estimada_llegada=hora_parada
+                        hora_estimada_llegada=start_datetime_local
                     )
-                    print(f"  Parada {orden}: Punto Encuentro - Bajan {len(pasajeros)} - {hora_parada}")
+                    print(f"  Parada {orden}: Punto Encuentro - Bajan {len(pasajeros)} - {start_datetime_local}")
             
             else:  # VUELTA
                 if is_pickup:
@@ -666,9 +671,9 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
                         orden=orden,
                         pasajeros_suben=len(pasajeros),
                         pasajeros_bajan=0,
-                        hora_estimada_llegada=hora_parada
+                        hora_estimada_llegada=start_datetime_local
                     )
-                    print(f"  Parada {orden}: Punto Encuentro - Suben {len(pasajeros)} - {hora_parada}")
+                    print(f"  Parada {orden}: Punto Encuentro - Suben {len(pasajeros)} - {start_datetime_local}")
                 else:
                     # Buscar paradero correspondiente
                     paradero = None
@@ -685,9 +690,9 @@ def procesar_respuesta_api(resultado_api, asignacion, punto_encuentro, tipo_viaj
                             orden=orden,
                             pasajeros_suben=0,
                             pasajeros_bajan=cantidad_pasajeros,
-                            hora_estimada_llegada=hora_parada
+                            hora_estimada_llegada=start_datetime_local
                         )
-                        print(f"  Parada {orden}: Paradero {paradero.id_ubicacion} - Bajan {cantidad_pasajeros} - {hora_parada}")
+                        print(f"  Parada {orden}: Paradero {paradero.id_ubicacion} - Bajan {cantidad_pasajeros} - {start_datetime_local}")
         
         # Asociar pasajeros al viaje
         for pasajero in pasajeros:

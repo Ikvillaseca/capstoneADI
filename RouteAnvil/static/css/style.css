@@ -586,3 +586,24 @@ footer {
 .mono {
     font-family: "IBM Plex Mono", monospace;
 }
+
+#map {
+    height: 500px;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.info-window {
+    font-family: Arial, sans-serif;
+}
+
+.info-window h6 {
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.info-window p {
+    margin: 3px 0;
+    font-size: 12px;
+}

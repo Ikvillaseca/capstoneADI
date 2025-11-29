@@ -34,9 +34,10 @@
                             <i class="fas fa-home"></i> Inicio
                         </a>
                     </li>
+                    {% if request.user.is_staff %}
                     <!-- Nuevo Menu desplegable para las funciones -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if url_name == 'chofer_lista' or url_name == 'pasajeros_lista' or url_name == 'vehiculo_lista' or url_name == 'paraderos_lista'%}active{% endif %}" href="#" id="navbarDropdownGestion" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle {% if url_name == 'chofer_lista' or url_name == 'pasajeros_lista' or url_name == 'vehiculo_lista' or url_name == 'paraderos_lista' %}active{% endif %}" href="#" id="navbarDropdownGestion" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-cogs"></i> Gestión
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownGestion">
@@ -69,13 +70,16 @@
                             <i class="fa-solid fa-route"></i> Rutas
                         </a>
                     </li>
-                    {% comment "" %}
+                    {% endif %}
+                    {% if user.groups.all.0.name == 'Choferes' %}
                     <li class="nav-item">
-                        <a class="nav-link {% if url_name == 'vista_itinerario_choferes' %}active{% endif %}" href="{% url 'vista_itinerario_choferes' %}">
+                        <a class="nav-link {% if url_name == 'chofer_dashboard' %}active{% endif %}" href="{% url 'chofer_dashboard' %}">
                             <i class="fas fa-calendar-alt"></i> Itinerario Chofer
                         </a>
                     </li>
-                    {% endcomment %}
+                    {% endif %}
+
+                    
 
                 </ul>
                 <ul class="navbar-nav ms-auto">
@@ -109,6 +113,12 @@
 
     <!-- Contenido Principal -->
     <main class="container my-4">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message|safe }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
         {% block contenido %}
         {% endblock contenido %}
     </main>

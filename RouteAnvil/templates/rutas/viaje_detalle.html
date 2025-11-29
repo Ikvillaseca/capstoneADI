@@ -11,6 +11,25 @@
         </a>
     </div>
 
+    <!-- Mapa de la ruta -->
+    {% if tiene_polyline %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5><i class="fas fa-map"></i> Mapa de la Ruta</h5>
+        </div>
+        <div class="card-body">
+            <div id="map"></div>
+            {% if distancia_km %}
+            <div class="mt-3">
+                <span class="badge bg-info">
+                    <i class="fas fa-road"></i> Distancia Total: {{ distancia_km }} km
+                </span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Información principal -->
     <div class="row mb-4">
         <div class="col-md-6">
@@ -24,8 +43,8 @@
                             {{ viaje.get_tipo_viaje_display }}
                         </span>
                     </p>
-                    <p><strong>Hora Salida:</strong> {{ viaje.hora_Salida|time:"H:i" }}</p>
-                    <p><strong>Hora Llegada:</strong> {{ viaje.hora_Llegada|time:"H:i" }}</p>
+                    <p><strong>Hora Salida:</strong> {{ viaje.hora_salida|date:"H:i" }} - {{ viaje.hora_salida|date:"l"|capfirst }} {{ viaje.hora_salida|date:"d/m/Y" }}</p>
+                    <p><strong>Hora Llegada:</strong> {{ viaje.hora_llegada|date:"H:i" }} - {{ viaje.hora_llegada|date:"l"|capfirst }} {{ viaje.hora_llegada|date:"d/m/Y" }}</p>
                     <p><strong>Punto Encuentro:</strong> {{ viaje.punto_encuentro.nombre }}</p>
                     <p class="mb-0"><strong>Dirección:</strong> {{ viaje.punto_encuentro.direccion }}</p>
                 </div>
@@ -53,16 +72,16 @@
             <h5><i class="fas fa-map-marked-alt"></i> Itinerario de Paradas ({{ paradas.count }})</h5>
         </div>
         <div class="card-body">
-            <div class="timeline">
+            <div>
                 {% for parada in paradas %}
-                <div class="timeline-item mb-3">
+                <div class="mb-3">
                     <div class="d-flex">
-                        <div class="timeline-marker">
+                        <div>
                             <span class="badge bg-primary rounded-circle" style="width: 30px; height: 30px; line-height: 20px;">
                                 {{ parada.orden }}
                             </span>
                         </div>
-                        <div class="timeline-content ms-3 w-100">
+                        <div class="ms-3 w-100">
                             <div class="card">
                                 <div class="card-body">
                                     <h6 class="card-title">{{ parada.id_parada.nombre }}</h6>
@@ -72,7 +91,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <i class="fas fa-clock text-primary"></i> 
-                                            <strong>{{ parada.hora_estimada_llegada|time:"H:i" }}</strong>
+                                            <strong>{{ parada.hora_estimada_llegada|date:"H:i" }}</strong> - {{ parada.hora_estimada_llegada|date:"(d/m/Y) " }}
                                         </div>
                                         {% if parada.pasajeros_suben > 0 %}
                                         <div class="col-md-4">
@@ -139,29 +158,149 @@
     </div>
 </div>
 
-<style>
-.timeline {
-    position: relative;
-    padding-left: 20px;
-}
+<!-- Cargar Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=geometry"></script>
 
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 15px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #dee2e6;
-}
+<!-- Script del mapa -->
+<script>
+    let map;
+    const paradas = {{ paradas_coords|safe }};
+    const polylineEncoded = "{{ polyline_encoded|escapejs }}";
+    const tipoViaje = "{{ viaje.tipo_viaje }}";
 
-.timeline-marker {
-    position: relative;
-    z-index: 1;
-}
+    function initMap() {
+        // Configuración inicial del mapa
+        const mapOptions = {
+            zoom: 13,
+            mapTypeControl: true,
+            streetViewControl: false,
+            fullscreenControl: true,
+        };
+        
 
-.timeline-content {
-    flex: 1;
-}
-</style>
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+        // Verificar que la polyline existe y tiene contenido
+        if (polylineEncoded && polylineEncoded.length > 0) {
+            console.log("Polyline length:", polylineEncoded.length);
+            
+            try {
+                // Decodificar y mostrar la polyline
+                const decodedPath = google.maps.geometry.encoding.decodePath(polylineEncoded);
+                
+                if (decodedPath && decodedPath.length > 0) {
+                    console.log("Decoded path points:", decodedPath.length);
+                    const colorRuta = tipoViaje === 'IDA' ? '#FF6D00' : '#9C27B0';
+                    const lineSymbol = {
+                        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                        scale: 3,
+                        strokeColor: '#FFFFFF'
+                    };
+                    const routeLine = new google.maps.Polyline({
+                        path: decodedPath,
+                        geodesic: true,
+                        strokeColor: colorRuta,
+                        strokeOpacity: 1.0,
+                        strokeWeight: 6,
+                        map: map
+                    });
+                    
+                    const routeLineBorder = new google.maps.Polyline({
+                        path: decodedPath,
+                        geodesic: true,
+                        strokeColor: '#000000',
+                        strokeOpacity: 0.4,
+                        strokeWeight: 8,
+                        map: map,
+                        zIndex: 1
+                    });
+
+                    // La línea principal va encima
+                    routeLine.setOptions({ zIndex: 2 });
+
+                    // Ajustar el mapa para mostrar toda la ruta
+                    const bounds = new google.maps.LatLngBounds();
+                    decodedPath.forEach(point => bounds.extend(point));
+                    map.fitBounds(bounds);
+                } else {
+                    console.error("No se pudo decodificar la polyline");
+                }
+            } catch (error) {
+                console.error("Error al decodificar polyline:", error);
+            }
+        } else {
+            console.warn("No hay polyline disponible");
+            // Centrar en la primera parada si no hay polyline
+            if (paradas.length > 0) {
+                map.setCenter({ lat: paradas[0].lat, lng: paradas[0].lng });
+            }
+        }
+
+        // Agregar marcadores para cada parada
+        paradas.forEach((parada, index) => {
+            const marker = new google.maps.Marker({
+                position: { lat: parada.lat, lng: parada.lng },
+                map: map,
+                title: parada.nombre,
+                label: {
+                    text: parada.orden.toString(),
+                    color: 'white',
+                    fontWeight: 'bold'
+                },
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 14,
+                    fillColor: index === 0 ? '#4CAF50' : (index === paradas.length - 1 ? '#F44336' : '#FF9800'),
+                    fillOpacity: 1,
+                    strokeColor: 'white',
+                    strokeWeight: 3,
+                },
+                zIndex: 10
+            });
+
+            // Info window para cada parada
+            const infoContent = `
+                <div class="info-window">
+                    <h6><strong>${parada.nombre}</strong></h6>
+                    <p><i class="fas fa-clock"></i> ${parada.hora}</p>
+                    ${parada.suben > 0 ? `<p><span class="badge bg-success">Suben: ${parada.suben}</span></p>` : ''}
+                    ${parada.bajan > 0 ? `<p><span class="badge bg-danger">Bajan: ${parada.bajan}</span></p>` : ''}
+                </div>
+            `;
+
+            const infoWindow = new google.maps.InfoWindow({
+                content: infoContent
+            });
+
+            marker.addListener('click', () => {
+                infoWindow.open(map, marker);
+            });
+
+            // Mostrar info del primer marcador automáticamente
+            if (index === 0) {
+                infoWindow.open(map, marker);
+            }
+        });
+
+        // Si no hay polyline pero hay paradas, ajustar bounds a las paradas
+        if ((!polylineEncoded || polylineEncoded.length === 0) && paradas.length > 0) {
+            const bounds = new google.maps.LatLngBounds();
+            paradas.forEach(parada => {
+                bounds.extend({ lat: parada.lat, lng: parada.lng });
+            });
+            map.fitBounds(bounds);
+        }
+    }
+
+    // Inicializar el mapa cuando el DOM esté completamente cargado
+    if (document.getElementById('map')) {
+        // Usar DOMContentLoaded en lugar de 'load' para mayor rapidez
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMap);
+        } else {
+            // El DOM ya está listo
+            initMap();
+        }
+    }
+</script>
 {% endblock contenido %}

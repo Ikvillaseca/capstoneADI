@@ -17,6 +17,7 @@ try:
 except ImportError:
     API_EXISTE=False
 import dj_database_url
+from django.contrib.messages import constants as messages
 
 #Para poder detectar que la app de Django está corriendo en Heroku y no localmente 
 #(Y tambien cuando está en CI)
@@ -48,6 +49,7 @@ if API_EXISTE:
     GOOGLE_MAPS_API_KEY = api.GOOGLE_MAPS_API_KEY
     SECRET_KEY = 'e!wu4o2&%aavtm!(!bqy8fyma9nq(#*yhheeb#(l8ry2@35*gs'
     GOOGLE_MAPS_API_EMBED = api.EMBED_MAPS
+    GOOGLE_MAPS_API_JS_MAPS = api.GOOGLE_MAPS_API_JS_MAPS
 else:
     #Borrar una vez que se haga el deploy
     GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
@@ -263,3 +265,11 @@ if API_EXISTE:
     EMAIL_USE_SSL = bool(api.EMAIL_USE_SSL)
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}

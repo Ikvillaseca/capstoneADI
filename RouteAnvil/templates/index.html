@@ -29,7 +29,6 @@
             </div>
         </div>
 
-
         <div class="carousel-item">
             <div class="carousel-design-container gradient-slide-2">
                 <div class="carousel-design-content">
@@ -45,7 +44,6 @@
             </div>
         </div>
 
-
         <div class="carousel-item">
             <div class="carousel-design-container gradient-slide-3">
                 <div class="carousel-design-content">
@@ -60,7 +58,6 @@
                 </div>
             </div>
         </div>
-
  
         <div class="carousel-item">
             <div class="carousel-design-container gradient-slide-4">
@@ -140,7 +137,7 @@
         </div>
     </div>
 </div>
-
+{% if request.user.is_staff %}
 <!-- Sección de Características -->
 <div class="container mb-5">
     <div class="row text-center mb-5">
@@ -272,7 +269,7 @@
         </div>
     </div>
 </div>
-
+{% endif %}
 {% endblock contenido %}
 
 {% block extra_js %}
