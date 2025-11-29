@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from collections import defaultdict
 from .decorators import validar_estado_grupo_requerido
 from .models import Chofer, Pasajero, Vehiculo, Parada, Grupo_Pasajeros, Viaje, Parada_Viaje, Pasajero_Viaje, Grupo_Pasajeros
+from django.utils import timezone
 
 from .forms import (
     VehiculoForm,
@@ -579,11 +580,33 @@ def viaje_detalle(request, id_viaje):
     pasajeros = viaje.pasajero_viaje_set.all().select_related(
         "id_pasajero__paradero_deseado"
     )
+    # Convertir horas a local
+    hora_salida_local = timezone.localtime(viaje.hora_salida)
+    hora_llegada_local = timezone.localtime(viaje.hora_llegada)
+    paradas_coords = []
+    for parada in paradas:
+        paradas_coords.append({
+            'lat': float(parada.id_parada.latitud),
+            'lng': float(parada.id_parada.longitud),
+            'nombre': parada.id_parada.nombre,
+            'orden': parada.orden,
+            'hora': parada.hora_estimada_llegada.strftime('%H:%M') if parada.hora_estimada_llegada else '',
+            'suben': parada.pasajeros_suben,
+            'bajan': parada.pasajeros_bajan
+        })
 
+    distancia_km = round(viaje.distancia_total_metros / 1000, 2) if viaje.distancia_total_metros else None
     datos = {
         "viaje": viaje,
         "paradas": paradas,
         "pasajeros": pasajeros,
+        "hora_salida_local": hora_salida_local,
+        "hora_llegada_local": hora_llegada_local,
+        "paradas_coords": json.dumps(paradas_coords),
+        "tiene_polyline": bool(viaje.polyline),
+        "polyline_encoded": viaje.polyline if viaje.polyline else '',
+        "distancia_km": distancia_km,
+        "google_maps_api_key": settings.GOOGLE_MAPS_API_JS_MAPS,
     }
     return render(request, "rutas/viaje_detalle.html", datos)
 
