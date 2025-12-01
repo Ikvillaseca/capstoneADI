@@ -1,0 +1,1 @@
+echo ${GOOGLE_CREDENTIALS} > /RouteAnvil/credentials/google-service-account.json
