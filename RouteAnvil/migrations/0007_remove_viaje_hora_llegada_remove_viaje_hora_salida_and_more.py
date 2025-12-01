@@ -11,6 +11,28 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AddField(
+            model_name='viaje',
+            name='hora_llegada_temp',
+            field=models.DateTimeField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name='viaje',
+            name='hora_salida_temp',
+            field=models.DateTimeField(blank=True, null=True),
+        ),
+        migrations.RunSQL(
+            sql="""
+                UPDATE "RouteAnvil_viaje"
+                SET "hora_llegada_temp" = CURRENT_DATE + "hora_Llegada"
+                WHERE "hora_Llegada" IS NOT NULL;
+                
+                UPDATE "RouteAnvil_viaje"
+                SET "hora_salida_temp" = CURRENT_DATE + "hora_Salida"
+                WHERE "hora_Salida" IS NOT NULL;
+            """,
+            reverse_sql=migrations.RunSQL.noop,
+        ),
         migrations.RemoveField(
             model_name='viaje',
             name='hora_Llegada',
@@ -19,26 +41,41 @@ class Migration(migrations.Migration):
             model_name='viaje',
             name='hora_Salida',
         ),
+        migrations.RenameField(
+            model_name='viaje',
+            old_name='hora_llegada_temp',
+            new_name='hora_llegada',
+        ),
+        migrations.RenameField(
+            model_name='viaje',
+            old_name='hora_salida_temp',
+            new_name='hora_salida',
+        ),
         migrations.AlterField(
             model_name='grupo_pasajeros',
             name='tipo_hora_deseada',
             field=models.CharField(choices=[('LLEGADA', 'Hora finalización de viaje'), ('INICIO', 'Hora inicio de viaje')], default='LLEGADA', max_length=10),
         ),
-        migrations.AlterField(
+        migrations.AddField(
             model_name='parada_viaje',
-            name='hora_estimada_llegada',
+            name='hora_estimada_llegada_temp',
             field=models.DateTimeField(blank=True, null=True),
         ),
-        migrations.AddField(
-            model_name='viaje',
-            name='hora_llegada',
-            field=models.DateTimeField(default=django.utils.timezone.now),
-            preserve_default=False,
+        migrations.RunSQL(
+            sql="""
+                UPDATE "RouteAnvil_parada_viaje"
+                SET "hora_estimada_llegada_temp" = CURRENT_DATE + "hora_estimada_llegada"
+                WHERE "hora_estimada_llegada" IS NOT NULL;
+            """,
+            reverse_sql=migrations.RunSQL.noop,
         ),
-        migrations.AddField(
-            model_name='viaje',
-            name='hora_salida',
-            field=models.DateTimeField(default=django.utils.timezone.now),
-            preserve_default=False,
+        migrations.RemoveField(
+            model_name='parada_viaje',
+            name='hora_estimada_llegada',
+        ),
+        migrations.RenameField(
+            model_name='parada_viaje',
+            old_name='hora_estimada_llegada_temp',
+            new_name='hora_estimada_llegada',
         ),
     ]

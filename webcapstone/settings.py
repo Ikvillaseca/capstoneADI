@@ -42,21 +42,26 @@ GOOGLE_CLOUD_PROJECT_ID = "routeanvil"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = GOOGLE_APPLICATION_CREDENTIALS
 
 if IS_HEROKU_APP:
+    #P ara permitir ejecucion en Heroku
     SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
     GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
     GOOGLE_MAPS_API_EMBED = os.environ.get('GOOGLE_MAPS_API_EMBED')
+    GOOGLE_MAPS_API_JS_MAPS = os.environ.get('GOOGLE_MAPS_API_JS_MAPS')
 if API_EXISTE:
+    # Para permitir ejecucion local 
     GOOGLE_MAPS_API_KEY = api.GOOGLE_MAPS_API_KEY
-    SECRET_KEY = 'e!wu4o2&%aavtm!(!bqy8fyma9nq(#*yhheeb#(l8ry2@35*gs'
     GOOGLE_MAPS_API_EMBED = api.EMBED_MAPS
     GOOGLE_MAPS_API_JS_MAPS = api.GOOGLE_MAPS_API_JS_MAPS
+    SECRET_KEY = 'e!wu4o2&%aavtm!(!bqy8fyma9nq(#*yhheeb#(l8ry2@35*gs'
 else:
-    #Borrar una vez que se haga el deploy
+    # Metodo fallback por si nada resulta
     GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
+    GOOGLE_MAPS_API_EMBED = os.environ.get('GOOGLE_MAPS_API_EMBED')
+    GOOGLE_MAPS_API_JS_MAPS = os.environ.get('GOOGLE_MAPS_API_JS_MAPS')
     SECRET_KEY = 'e!wu4o2&%aavtm!(!bqy8fyma9nq(#*yhheeb#(l8ry2@35*gs'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # ALLOWED HOSTS
 if IS_HEROKU_APP:
