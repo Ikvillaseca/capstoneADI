@@ -1,1 +1,1 @@
-echo ${GOOGLE_CREDENTIALS} > /RouteAnvil/credentials/google-service-account.json
+echo ${GOOGLE_CREDENTIALS} > /app/RouteAnvil/credentials/google-service-account.json
