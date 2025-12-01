@@ -641,16 +641,21 @@ def viaje_detalle(request, id_viaje):
 # Vista para mostrar el itinerario del chofer
 @administrador_requerido
 def vista_itinerario_chofer(request, id_chofer):
-    chofer = get_object_or_404(Chofer, id_chofer=id_chofer)
+    chofer = get_object_or_404(Chofer, id_chofer = id_chofer )
+    id_chofer = chofer.id_chofer
+    hoy = timezone.now()
+    inicio_dia = hoy.replace(hour=0, minute=0, second=0, microsecond=0)
+    fin_dia = hoy.replace(hour=23, minute=59, second=59, microsecond=999999)
 
     viajes_asignados = (
-        Viaje.objects.filter(id_chofer=id_chofer)
+        Viaje.objects.filter(
+            id_chofer=chofer, hora_salida__gte=inicio_dia, hora_salida__lte=fin_dia
+        )
         .select_related("id_vehiculo", "id_chofer", "punto_encuentro")
         .prefetch_related("paradas_viaje__id_parada", "pasajero_viaje_set__id_pasajero")
         .order_by("-fecha_creacion")
     )
 
-    # Preparar datos detallados
     viajes_detallados = []
     for viaje in viajes_asignados:
         paradas = viaje.paradas_viaje.all().order_by('orden')
@@ -667,9 +672,10 @@ def vista_itinerario_chofer(request, id_chofer):
     datos = {
         "chofer" : chofer,
         'viajes_detallados': viajes_detallados,
+        'hoy': hoy,
     }
-   
-    return render(request, "vista_chofer/vista_chofer.html", datos)
+
+    return render(request, 'choferes/dashboard/index.html', datos)
 
 
 # TEST FUNCIONAMIENTO API

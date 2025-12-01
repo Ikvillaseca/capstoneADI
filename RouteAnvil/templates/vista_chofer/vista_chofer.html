@@ -1,143 +1,146 @@
 {% extends "base.html" %}
 {% load static %}
-{% block titulo %}Itinerario del Chofer{% endblock titulo %}
+{% block titulo %}Itinerario de Hoy{% endblock titulo %}
+{% block background %}fondo-choferes{% endblock background %}
 
 {% block contenido %}
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <h2>Itinerario del Chofer {{ chofer.nombre }} {{ chofer.apellido }}</h2>
+            <h2>Itinerario Chofer {{ chofer.nombre }} {{ chofer.apellido }} - Día: {{ hoy|date:"l"|capfirst }} {{ hoy|date:"d/m/Y" }}</h2>
+            <h3>{{ chofer.id_vehiculo.patente }} - {{ chofer.id_vehiculo.marca }} {{ chofer.id_vehiculo.modelo }} ({{ chofer.id_vehiculo.capacidad }} asientos) - <span class="text-muted">{{ chofer.user }}</span></h3>
             {% if viajes_detallados %}
-                <!-- Lista de viajes -->
-                <div class="row">
-                    {% for viaje_info in viajes_detallados %}
-                    <div class="col-lg-6 mb-4">
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-header {% if viaje_info.viaje.tipo_viaje == 'IDA' %}bg-success{% else %}bg-info{% endif %} text-white">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">
-                                        <i class="fas fa-route"></i> 
-                                        Viaje #{{ viaje_info.viaje.id_viaje }}
-                                        <span class="badge bg-light text-dark ms-2">
-                                            {{ viaje_info.viaje.get_tipo_viaje_display }}
-                                        </span>
-                                    </h5>
-                                    <a href="{% url 'viaje_detalle' viaje_info.viaje.id_viaje %}" 
+            <div class="row">
+                {% for viaje_info in viajes_detallados %}
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div
+                            class="card-header {% if viaje_info.viaje.tipo_viaje == 'IDA' %}bg-success{% else %}bg-info{% endif %} text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-route"></i>
+                                    Viaje #{{ viaje_info.viaje.id_viaje }}
+                                    <span class="badge bg-light text-dark ms-2">
+                                        {{ viaje_info.viaje.get_tipo_viaje_display }}
+                                    </span>
+                                </h5>
+                                <a href="{% url 'viaje_detalle' viaje_info.viaje.id_viaje %}"
                                     class="btn btn-sm btn-light">
-                                        <i class="fas fa-eye"></i> Ver detalle
-                                    </a>
+                                    <i class="fas fa-eye"></i> Ver detalle
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Información del chofer y vehículo -->
+                            <div class="mb-3 p-2 bg-light rounded">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong><i class="fas fa-user"></i> Chofer:</strong><br>
+                                        {{ viaje_info.viaje.id_chofer.nombre }} {{ viaje_info.viaje.id_chofer.apellido }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong><i class="fas fa-car"></i> Vehículo:</strong><br>
+                                        {{ viaje_info.viaje.id_vehiculo.patente }}
+                                        ({{ viaje_info.viaje.id_vehiculo.capacidad }} pasajeros)
+                                    </div>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <!-- Información del chofer y vehículo -->
-                                <div class="mb-3 p-2 bg-light rounded">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <strong><i class="fas fa-user"></i> Chofer:</strong><br>
-                                            {{ viaje_info.viaje.id_chofer.nombre }} {{ viaje_info.viaje.id_chofer.apellido }}
-                                        </div>
-                                        <div class="col-md-6">
-                                            <strong><i class="fas fa-car"></i> Vehículo:</strong><br>
-                                            {{ viaje_info.viaje.id_vehiculo.patente }} 
-                                            ({{ viaje_info.viaje.id_vehiculo.capacidad }} pasajeros)
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <!-- Horarios -->
-                                <div class="mb-3">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <i class="fas fa-clock text-success"></i> 
-                                            <strong>Salida:</strong> {{ viaje_info.viaje.hora_salida|date:"H:i" }} - {{ viaje_info.viaje.hora_salida|date:"d/m/Y" }}
-                                        </div>
-                                        <div class="col-6">
-                                            <i class="fas fa-clock text-danger"></i> 
-                                            <strong>Llegada:</strong> {{ viaje_info.viaje.hora_llegada|date:"H:i" }} - {{ viaje_info.viaje.hora_llegada|date:"d/m/Y" }}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Punto de encuentro -->
-                                <div class="mb-3">
-                                    <strong>
-                                        <i class="fas fa-map-marker-alt text-primary"></i> 
-                                        Punto de encuentro:
-                                    </strong><br>
-                                    {{ viaje_info.viaje.punto_encuentro.nombre }}
-                                </div>
-
-                                <!-- Estadísticas -->
-                                <div class="row text-center">
+                            <!-- Horarios -->
+                            <div class="mb-3">
+                                <div class="row">
                                     <div class="col-6">
-                                        <div class="border rounded p-2">
-                                            <i class="fas fa-users fa-2x text-primary"></i>
-                                            <div class="mt-1">
-                                                <strong>{{ viaje_info.cantidad_pasajeros }}</strong>
-                                                <br><small>Pasajeros</small>
-                                            </div>
-                                        </div>
+                                        <i class="fas fa-clock text-success"></i>
+                                        <strong>Salida:</strong> {{ viaje_info.viaje.hora_salida|date:"H:i" }} - {{
+                                        viaje_info.viaje.hora_salida|date:"d/m/Y" }}
                                     </div>
                                     <div class="col-6">
-                                        <div class="border rounded p-2">
-                                            <i class="fas fa-map-signs fa-2x text-success"></i>
-                                            <div class="mt-1">
-                                                <strong>{{ viaje_info.cantidad_paradas }}</strong>
-                                                <br><small>Paradas</small>
-                                            </div>
+                                        <i class="fas fa-clock text-danger"></i>
+                                        <strong>Llegada:</strong> {{ viaje_info.viaje.hora_llegada|date:"H:i" }} - {{
+                                        viaje_info.viaje.hora_llegada|date:"d/m/Y" }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Punto de encuentro -->
+                            <div class="mb-3">
+                                <strong>
+                                    <i class="fas fa-map-marker-alt text-primary"></i>
+                                    Punto de encuentro:
+                                </strong><br>
+                                {{ viaje_info.viaje.punto_encuentro.nombre }}
+                            </div>
+
+                            <!-- Estadísticas -->
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <div class="border rounded p-2">
+                                        <i class="fas fa-users fa-2x text-primary"></i>
+                                        <div class="mt-1">
+                                            <strong>{{ viaje_info.cantidad_pasajeros }}</strong>
+                                            <br><small>Pasajeros</small>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Primeras 3 paradas -->
-                                <div class="mt-3">
-                                    <strong>Paradas:</strong>
-                                    <ol class="list-group list-group-numbered mt-2">
-                                        {% for parada in viaje_info.paradas|slice:":3" %}
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div class="fw-bold">{{ parada.id_parada.nombre }}</div>
-                                                <small class="text-muted">
-                                                    {{ parada.hora_estimada_llegada|date:"d/m/Y H:i" }}
-                                                    {% if parada.pasajeros_suben > 0 %}
-                                                    - <span class="text-success">↑ {{ parada.pasajeros_suben }}</span>
-                                                    {% endif %}
-                                                    {% if parada.pasajeros_bajan > 0 %}
-                                                    - <span class="text-danger">↓ {{ parada.pasajeros_bajan }}</span>
-                                                    {% endif %}
-                                                </small>
-                                            </div>
-                                        </li>
-                                        {% if viaje_info.cantidad_paradas == 4 %}
-                                        <div class="text-center">
-                                            <small class="text-muted">
-                                                <strong>+ 1 parada más</strong>
-                                            </small>
+                                <div class="col-6">
+                                    <div class="border rounded p-2">
+                                        <i class="fas fa-map-signs fa-2x text-success"></i>
+                                        <div class="mt-1">
+                                            <strong>{{ viaje_info.cantidad_paradas }}</strong>
+                                            <br><small>Paradas</small>
                                         </div>
-                                        {% endif %}
-                                        {% if viaje_info.cantidad_paradas > 4 %}
-                                        <div class="text-center">
-                                            <small class="text-muted">
-                                                <strong>+ {{ viaje_info.cantidad_paradas|add:"-3" }} paradas más</strong>
-                                            </small>
-                                        </div>
-                                        {% endif %}
-                                    </ol>
+                                    </div>
                                 </div>
+                            </div>
+
+                            <!-- Primeras 3 paradas -->
+                            <div class="mt-3">
+                                <strong>Paradas:</strong>
+                                <ol class="list-group list-group-numbered mt-2">
+                                    {% for parada in viaje_info.paradas|slice:":3" %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">{{ parada.id_parada.nombre }}</div>
+                                            <small class="text-muted">
+                                                {{ parada.hora_estimada_llegada|date:"d/m/Y H:i" }}
+                                                {% if parada.pasajeros_suben > 0 %}
+                                                - <span class="text-success">↑ {{ parada.pasajeros_suben }}</span>
+                                                {% endif %}
+                                                {% if parada.pasajeros_bajan > 0 %}
+                                                - <span class="text-danger">↓ {{ parada.pasajeros_bajan }}</span>
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </li>
+                                    {% endfor %}
+                                    
+                                    {# Mostrar cuántas paradas más hay #}
+                                    {% if viaje_info.cantidad_paradas == 4 %}
+                                    <li class="list-group-item text-center">
+                                        <small class="text-muted">
+                                            <strong>+ 1 parada más</strong>
+                                        </small>
+                                    </li>
+                                    {% elif viaje_info.cantidad_paradas > 4 %}
+                                    <li class="list-group-item text-center">
+                                        <small class="text-muted">
+                                            <strong>+ {{ viaje_info.cantidad_paradas|add:"-3" }} paradas más</strong>
+                                        </small>
+                                    </li>
+                                    {% endif %}
+                                </ol>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
-                {% else %}
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i> No hay viajes creados para este chofer.
-                </div>
-                {% endif %}
+                {% endfor %}
             </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No hay viajes asignados para este chofer hoy.
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
-
 {% endblock contenido %}
